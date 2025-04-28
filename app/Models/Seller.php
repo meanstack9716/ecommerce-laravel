@@ -4,6 +4,7 @@ namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
 use App\Constants\Constants;
+use App\Enums\BusinessType;
 
 class Seller extends Model
 {
@@ -13,10 +14,8 @@ class Seller extends Model
         'business_name',
         'business_type',
         'business_email',
-        'business_logo_cloud_id',
-        'business_logo',
         'business_mobile',
-        'gst_number',
+        'gst_num',
         'status', 
         'processed_by',
     ];
@@ -24,10 +23,13 @@ class Seller extends Model
     protected $hidden = [
         'updated_at',
         'created_at',
-        'business_logo_cloud_id'
     ];
 
-    public function user()
+    protected $casts = [
+        'business_type' => BusinessType::class,
+    ];
+
+    public function userDetails()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }

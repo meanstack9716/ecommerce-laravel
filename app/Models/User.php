@@ -43,7 +43,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function seller()
+    public function sellerDetails()
     {
         return $this->hasOne(Seller::class);
     }
@@ -51,6 +51,11 @@ class User extends Authenticatable
     public function addresses()
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function identityProof()
+    {
+        return $this->hasOne(IdentityProof::class);
     }
 
     public function role()
@@ -75,7 +80,7 @@ class User extends Authenticatable
     /**
      * Always append the role relationship when serializing
      */
-    protected $with = ['role', 'seller', 'addresses'];
+    protected $with = ['role'];
 
     public $timestamps = true;
 }

@@ -2,6 +2,11 @@
 
 namespace App\ValidationSchemas;
 
+use Illuminate\Validation\Rule;
+use App\Enums\BusinessType;
+use App\Enums\AddressType;
+use App\Enums\IdentificationType;
+
 class Schemas
 {
     public static function get(): array
@@ -45,15 +50,37 @@ class Schemas
                 'last_name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'phone_number' => 'required|string|regex:/^[+]\d{2}?\d{10}$/|unique:users,phone_number',
-                'address1_line1' => 'required|string|min:3',
-                'address1_city' => 'required|string',
-                'address1_state' => 'required|string|min:3',
-                'address1_code' => 'required|string|min:3',
-                'address1_country' => 'required|string|min:3',
+                'address_line1' => 'required|string|min:3',
+                'address_city' => 'required|string',
+                'address_state' => 'required|string|min:3',
+                'address_code' => 'required|string|min:3',
+                'address_country' => 'required|string|min:3',
             ],
             'addClientBusinessSchema' => [
                 'business_name' => 'required|string|min:4',
-                'business_type' => 'required'
+                'business_email' => 'required|email|unique:sellers,email',
+                'business_type' => ['required', Rule::in(BusinessType::values())],
+                'business_mobile' => 'required|string|regex:/^[+]\d{2}?\d{10}$/|unique:sellers,phone_number',
+                'gst_num' => 'required',
+                'address_line1' => 'required|string|min:3',
+                'address_type' => ['required', Rule::in(AddressType::values())],
+                'address_city' => 'required|string',
+                'address_state' => 'required|string|min:3',
+                'address_code' => 'required|string|min:3',
+                'address_country' => 'required|string|min:3',
+            ],
+            'addClientIdentitySchema' => [
+                'pan_number' => 'required|string|max:255',
+                'pan_front' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'pan_back' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'id_type' => ['required', Rule::in(IdentificationType::values())],
+                'id_number' => 'required|string|max:255',
+                'id_front' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'id_back' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            ],
+            'addNewCategorySchema' => [
+                'category_name' => 'required|string|min:3|max:255',
+                'category_description' => 'required|string|min:3|max:255'
             ],
 
             // custom error messages
@@ -61,11 +88,12 @@ class Schemas
                 'email.exists' => 'This email is not registered.',
                 'role_id.exists' => 'The selected role is invalid.',
                 'phone_number.regex' => 'The phone number format is invalid.',
-                'address1_line1.required' => 'The Street Line1 is required.',
-                'address1_city.required' => 'The City is required.',
-                'address1_state.required' => 'The State is required.',
-                'address1_code.required' => 'The Postal Code is required.',
-                'address1_country.required' => 'The country Name is required.',
+                'address_type.required' => 'The Address type is required.',
+                'address_line1.required' => 'The Street Line1 is required.',
+                'address_city.required' => 'The City is required.',
+                'address_state.required' => 'The State is required.',
+                'address_code.required' => 'The Postal Code is required.',
+                'address_country.required' => 'The country Name is required.',
             ]
         ];
     }

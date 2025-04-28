@@ -12,5 +12,6 @@ class Constants
     public const STATUS_APPROVED = "Approved";
     public const STATUS_PENDING = "Pending";
     public const STATUS_REJECTED = "Rejected";
+    public const STATUS_VERIFIED = "Verified";
 
 }

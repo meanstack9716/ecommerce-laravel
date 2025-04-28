@@ -38,7 +38,40 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('seller.register.personal') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*users/register/seller*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*users/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            person_add
+                        </span>
+                        <span class="font-medium">Add New User</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="group">
+            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('sellers*') ? 'text-blue-500 bg-blue-100' : '' }}" 
+                onclick="toggleMenu(this)"
+            >
+                <div class="flex items-center text-center gap-3">
+                    <span class="material-symbols-outlined">
+                        supervisor_account
+                    </span>
+                    <span class="font-medium tracking-wide">Sellers</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
+            </div>
+
+            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
+                <li>
+                    <a href="{{ route('seller.list') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('sellers/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            groups
+                        </span>
+                        <span class="font-medium">List All sellers</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('seller.register.personal') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*sellers/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             person_add
                         </span>
@@ -72,7 +105,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('category.add') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             add_circle
                         </span>

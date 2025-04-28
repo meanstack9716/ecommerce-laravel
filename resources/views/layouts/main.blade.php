@@ -30,7 +30,7 @@
             <x-side-bar />
         </div>
 
-        <div class="duration-500 pt-18 3xl:pt-20 lg:ml-72 3xl:ml-80 w-full" id="main">
+        <div class="duration-500 pt-18 3xl:pt-20 lg:pl-72 3xl:pl-80 w-full" id="main">
             @yield('content')
 
             @include('partials.footer')
@@ -49,9 +49,9 @@
         toggleSideBarBtn.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
 
-            main.classList.toggle('lg:ml-72');
-            main.classList.toggle('3xl:ml-80');
-            main.classList.toggle('lg:ml-0');
+            main.classList.toggle('lg:pl-72');
+            main.classList.toggle('3xl:pl-80');
+            main.classList.toggle('lg:pl-0');
         });
     </script>
 </body>

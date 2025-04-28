@@ -11,8 +11,17 @@ Route::prefix('users')->group(function () {
 
         Route::middleware('is_admin')->group(function () {
             Route::get('/list', [UserController::class, 'fetchUserList'])->name('user.list');
+        });
+    });
+});
 
-            Route::prefix('register/seller')->group(function () {
+Route::prefix('sellers')->group(function () {
+    Route::middleware(['auth:sanctum', 'web'])->group(function () {
+
+        Route::middleware('is_admin')->group(function () {
+            Route::get('/list', [UserController::class, 'fetchSellerList'])->name('seller.list');
+
+            Route::prefix('register')->group(function () {
 
                 Route::get('/personal-details', [UserController::class, 'showRegistrationForm'])->name('seller.register.personal');
                 Route::post('/personal-details', [UserController::class, 'storePersonalDetails'])
