@@ -43,7 +43,7 @@ class Schemas
                 'isUniqueEmailExceptUsers' => true
             ],
             'imageSchema' => [
-                'image' => 'required|image|max:2048'
+                'image' => 'required|image|max:5120'
             ],
             'addClientPersonalSchema' => [
                 'first_name' => 'required|string|max:255',
@@ -71,16 +71,30 @@ class Schemas
             ],
             'addClientIdentitySchema' => [
                 'pan_number' => 'required|string|max:255',
-                'pan_front' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'pan_back' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+                'pan_front' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+                'pan_back' => 'required|image|mimes:jpeg,png,jpg|max:5120',
                 'id_type' => ['required', Rule::in(IdentificationType::values())],
                 'id_number' => 'required|string|max:255',
-                'id_front' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-                'id_back' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+                'id_front' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+                'id_back' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
             ],
             'addNewCategorySchema' => [
                 'category_name' => 'required|string|min:3|max:255',
-                'category_description' => 'required|string|min:3|max:255'
+                'category_description' => 'required|string|min:3|max:255',
+                'category_img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
+            ],
+            'addSubCategorySchema' => [
+                'category_type' => 'required|exists:categories,_id',
+                'category_name' => 'required|string|min:3|max:255',
+                'category_description' => 'required|string|min:3|max:255',
+                'category_img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
+            ],
+            'addProductTypeSchema' => [
+                'category' => 'required|exists:categories,_id',
+                'sub_category' => 'required|exists:sub_categories,_id',
+                'name' => 'required|string|min:3|max:255',
+                'description' => 'required|string|min:3|max:255',
+                'img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
             ],
 
             // custom error messages

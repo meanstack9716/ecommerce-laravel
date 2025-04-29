@@ -30,7 +30,7 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
-                    <a href="{{ route('user.list') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('users/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('user.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('users/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             groups
                         </span>
@@ -38,7 +38,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*users/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="" class="flex items-center text-center gap-3 text-sm hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*users/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             person_add
                         </span>
@@ -63,7 +63,7 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
-                    <a href="{{ route('seller.list') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('sellers/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('seller.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('sellers/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             groups
                         </span>
@@ -71,7 +71,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('seller.register.personal') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*sellers/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('seller.register.personal') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*sellers/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             person_add
                         </span>
@@ -97,7 +97,7 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('category.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             category
                         </span>
@@ -105,11 +105,43 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('category.add') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('category.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             add_circle
                         </span>
                         <span class="font-medium">Add New Category</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('sub-category.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            inventory
+                        </span>
+                        <span class="font-medium">Sub Categories List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('sub-category.add') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            add_box
+                        </span>
+                        <span class="font-medium">Add Sub-Category</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('product-type.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/product-type/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            format_list_bulleted
+                        </span>
+                        <span class="font-medium">List Product Types</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('product-type.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/product-type/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            add_circle
+                        </span>
+                        <span class="font-medium">Add New Product Type</span>
                     </a>
                 </li>
             </ul>
@@ -143,7 +175,7 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
-                    <a href="{{ route('user.list') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="{{ route('user.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             list_alt
                         </span>
@@ -151,7 +183,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             add_circle
                         </span>
@@ -163,7 +195,7 @@
 
         <!-- Categories -->
         <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('terms*') ? 'text-blue-500 bg-blue-100' : '' }}" 
+            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-1.5 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('terms*') ? 'text-blue-500 bg-blue-100' : '' }}" 
                 onclick="toggleMenu(this)"
             >
                 <div class="flex items-center text-center gap-3">
@@ -177,7 +209,7 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             list_alt
                         </span>
@@ -185,7 +217,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             contract_edit
                         </span>

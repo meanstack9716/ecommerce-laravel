@@ -4,7 +4,7 @@
         <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Business Information</h3>
         
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <div class="sm:col-span-4">
+            <div class="sm:col-span-6">
                 <label for="business_name" class="font-medium 3xl:text-xl 3xl:font-semibold">Business Name
                     <span class="text-red-600">*</span>
                 </label>

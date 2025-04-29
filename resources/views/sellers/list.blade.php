@@ -102,7 +102,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-4 py-4 text-center text-sm text-gray-500">
+                            <td colspan="9" class="px-4 py-4 text-center text-sm text-gray-500">
                                 No users found.
                             </td>
                         </tr>

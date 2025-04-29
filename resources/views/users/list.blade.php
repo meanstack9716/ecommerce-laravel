@@ -28,7 +28,7 @@
                 <div class="flex flex-col items-start gap-2">
                     <p class="m-0 text-gray-600 font-medium">Select Role</p>
                     <div class="relative">
-                        <select name="role" onchange="this.form.submit()" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none min-w-40 pr-10">
+                        <select name="role" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none min-w-40 pr-10">
                             <option value="">All Roles</option>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->id }}" {{ request('role') == $role->id ? 'selected' : '' }}>
