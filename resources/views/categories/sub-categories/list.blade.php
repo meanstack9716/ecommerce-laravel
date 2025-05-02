@@ -84,7 +84,7 @@
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <form method="GET" action="{{ route('sub-category.list') }}" class="">
             <input type="hidden" name="search" value="{{ request('search') }}">
-            <input type="hidden" name="search" value="{{ request('category_id') }}">
+            <input type="hidden" name="categoryId" value="{{ request('categoryId') }}">
             <label for="limit">Categories per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)

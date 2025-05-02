@@ -25,7 +25,7 @@
                         class="mt-1 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">Select business type</option>
                         @foreach (\App\Enums\BusinessType::options() as $key => $label)
-                            <option value="{{ $key }}" {{ old('business_type') == $key || session('client_registration_data.business.business_name') == $key ? 'selected' : '' }}>{{ $label }}</option>
+                            <option value="{{ $key }}" {{ old('business_type') == $key || session('client_registration_data.business.business_type') == $key ? 'selected' : '' }}>{{ $label }}</option>
                         @endforeach
                     </select>
                     <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">

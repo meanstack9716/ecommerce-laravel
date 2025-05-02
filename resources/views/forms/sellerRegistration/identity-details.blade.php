@@ -23,7 +23,7 @@
                 <input type="file" name="pan_front" id="pan_front"
                     value="{{ old('pan_front') }}"
                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-sm text-gray-500">Upload a clear photo of the front side of your PAN card</p>
+                <p class="mt-1 text-sm text-gray-500">Upload a clear photo, doc or pdf of the front side of your PAN card</p>
 
                 @error('pan_front')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
@@ -37,7 +37,7 @@
                 <input type="file" name="pan_back" id="pan_back"
                     value="{{ old('pan_back') }}"
                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-sm text-gray-500">Upload a clear photo of the back side of your PAN card.</p>
+                <p class="mt-1 text-sm text-gray-500">Upload a clear photo, doc or pdf of the back side of your PAN card.</p>
                 @error('pan_back')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                 @enderror
@@ -83,7 +83,7 @@
                 <input type="file" name="id_front" id="id_front"
                     value="{{ old('id_front') }}"
                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-sm text-gray-500">Upload a clear photo of the front side of your ID</p>
+                <p class="mt-1 text-sm text-gray-500">Upload a clear photo, doc or pdf of the front side of your ID</p>
                 @error('id_front')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                 @enderror
@@ -94,7 +94,7 @@
                 <input type="file" name="id_back" id="id_back"
                     value="{{ old('id_back') }}"
                     class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-sm text-gray-500">Upload a clear photo of the back side of your ID if required</p>
+                <p class="mt-1 text-sm text-gray-500">Upload a clear photo, doc or pdf of the back side of your ID if required</p>
             </div>
         </div>
     </div>

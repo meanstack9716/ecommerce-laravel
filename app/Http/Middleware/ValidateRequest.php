@@ -48,13 +48,20 @@ class ValidateRequest
         $validator = Validator::make($request->all(), $schema, $schemas['errorMessages']);
 
         if ($validator->fails()) {
-            $errors = collect($validator->errors())->map(function ($errorMessages, $field) {
-                return $errorMessages[0];
-            });
-            
-            return response()->json([
-                'errors' => $errors,
-            ], 422);
+            if ($request->expectsJson() || $request->is('api/*')) {
+                // API response
+                $errors = collect($validator->errors())->map(function ($errorMessages, $field) {
+                    return $errorMessages[0];
+                });
+                
+                return response()->json([
+                    'errors' => $errors,
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
         return $next($request);

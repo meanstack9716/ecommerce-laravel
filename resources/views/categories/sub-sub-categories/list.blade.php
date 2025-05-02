@@ -4,14 +4,14 @@
 <div class="p-4 sm:p-8 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
         <div class="py-5 xl:pt-0 border-b border-[#F1F1F1]">
-            <h1 class="text-[26px] font-bold tracking-wide">Product Types</h1>
+            <h1 class="text-[26px] font-bold tracking-wide">Sub Sub Categories</h1>
         </div>
 
-        <form method="GET" action="{{ route('product-type.list') }}" class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+        <form method="GET" action="{{ route('sub-sub-category.list') }}" class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 <div class="flex flex-col items-start gap-2 w-full">
-                    <p class="m-0 text-gray-600 font-medium">Search Product Type</p>
+                    <p class="m-0 text-gray-600 font-medium">Search Sub Sub Categories</p>
                     <div class="relative w-full">
                         <input
                             type="text"
@@ -56,21 +56,21 @@
         </form>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            @forelse ($productTypes as $type)
+            @forelse ($subSubCategories as $cat)
                 <div class="bg-gray-50 rounded-lg shadow-lg p-4">
-                    <img src="{{ asset('storage/' . $type->img_path) }}" alt="{{ $type->name }}" class="w-full h-48 object-contain rounded-t-lg">
+                    <img src="{{ asset('storage/' . $cat->img_path) }}" alt="{{ $cat->name }}" class="w-full h-48 object-contain rounded-t-lg">
                     <div class="p-4">
+                        <h2 class="text-xl font-semibold text-gray-800">{{ $cat->name }}</h2>
+                        <p class="text-gray-600 mt-2">{{ $cat->description }}</p>
                         <div class="flex items-center text-center gap-4">
-                            @if($type->subCategory)
-                                <img src="{{ asset('storage/' . $type->subCategory->img_path) }}" alt="{{ $type->subCategory->name }}" class="w-12 h-12 rounded-full">
+                            @if($cat->subCategory)
+                                <img src="{{ asset('storage/' . $cat->subCategory->img_path) }}" alt="{{ $cat->subCategory->name }}" class="w-12 h-12 object-cover rounded-full">
                             @endif                            
-                            <div class="text-left flex flex-col">
-                                <p class="text text-gray-900 font-semibold">{{ $type->category->name }}'s Category</p>
-                                <p class="text-sm text-neutral-600 font-medium">{{ $type->subCategory->name }}</p>
+                            <div class="text-left flex flex-col mt-2">
+                                <p class="text text-gray-900 font-semibold">{{ $cat->category->name }}'s Category</p>
+                                <p class="text-sm text-neutral-600 font-medium">{{ $cat->subCategory->name }}</p>
                             </div>
                         </div>
-                        <h2 class="text-xl font-semibold text-gray-800 mt-2">{{ $type->name }}</h2>
-                        <p class="text-gray-600 mt-2">{{ $type->description }}</p>
                     </div>
                     <div class="px-4 flex justify-between items-center text-sm">
                         <a href="" class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
@@ -80,17 +80,17 @@
             @empty
                 <div class="col-span-1 sm:col-span-2 lg:col-span-3 mt-6">
                     <div class="bg-gray-50 rounded-lg shadow-lg p-4 w-full max-w-xl h-40 mx-auto flex justify-center items-center text-center">
-                        <p class="text-lg font-medium">No Product Type Found</p>
+                        <p class="text-lg font-medium">No Sub Sub Category Found</p>
                     </div>
                 </div>
             @endforelse
         </div>
 
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <form method="GET" action="{{ route('product-type.list') }}" class="">
+            <form method="GET" action="{{ route('sub-sub-category.list') }}" class="">
             <input type="hidden" name="search" value="{{ request('search') }}">
-            <input type="hidden" name="search" value="{{ request('category_id') }}">
-            <label for="limit">Product Types per page:</label>
+            <input type="hidden" name="categoryId" value="{{ request('categoryId') }}">
+            <label for="limit">Sub Sub Categories per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)
                         <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
@@ -100,7 +100,7 @@
                 </select>
             </form>
             <div class="min-w-1/2">
-                {{ $productTypes->appends(['limit' => $limit])->links() }}
+                {{ $subSubCategories->appends(['limit' => $limit])->links() }}
             </div>
         </div>
     </div>

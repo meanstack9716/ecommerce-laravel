@@ -3,22 +3,31 @@
 namespace App\Models;
 
 use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class ProductType extends Model
+class Product extends Model
 {
     //
     protected $fillable = [
-        'name',
+        'title',
         'description',
-        'img_path',
+        'price',
+        'discount',
+        'sku',
+        'details',
+        'stock_quantity',
+        'material',
+        'brand',
         'category_id',
-        'sub_category_id'
+        'sub_category_id',
+        'sub_sub_category_id'
     ];
 
     protected $hidden = [
         'updated_at',
         'created_at',
     ];
+
 
     public function category()
     {
@@ -28,6 +37,11 @@ class ProductType extends Model
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class, 'sub_category_id', '_id');
+    }
+
+    public function subSubCategory()
+    {
+        return $this->belongsTo(SubSubCategory::class, 'sub_sub_category_id', '_id');
     }
     
 

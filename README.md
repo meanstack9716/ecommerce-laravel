@@ -24,17 +24,23 @@ Before you begin, ensure you have the following installed:
 
 ```bash
 composer install
-Configure environment
 ```
 
-3. **Database setup**
+3. **Ensure storage:link is created**
+Run this once if not already:
+
+```bash
+php artisan storage:link
+```
+
+4. **Database setup**
 
 ```bash
 php artisan migrate
 php artisan db:seed
 ```
 
-4. **Install JavaScript dependencies**
+5. **Install JavaScript dependencies**
 
 ```bash
 npm install

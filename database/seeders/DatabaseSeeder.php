@@ -14,30 +14,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $this->call([
-        //     RoleSeeder::class,
-        //     FaqSeeder::class
-        // ]);
+        $this->call([
+            RoleSeeder::class,
+            FaqSeeder::class,
+            CategorySeeder::class
+        ]);
 
-        // $users = [
-        //     [
-        //         'first_name' => 'Test', 
-        //         'last_name' => 'user', 
-        //         'email' => 'test@example.com', 
-        //     ],
-        //     [
-        //         'first_name' => 'Admin',
-        //         'email' => 'admin@admin.com',
-        //         'password' => Hash::make('admin@123'),
-        //         'is_admin' => true,
-        //     ],
-        // ];
+        $users = [
+            [
+                'first_name' => 'Admin',
+                'email' => 'admin@admin.com',
+                'password' => Hash::make('admin@123'),
+                'is_admin' => true,
+            ],
+        ];
 
-        // foreach ($users as $user) {
-        //     User::updateOrCreate(
-        //         ['email' => $user['email']],
-        //         $user
-        //     );
-        // }
+        foreach ($users as $user) {
+            User::updateOrCreate(
+                ['email' => $user['email']],
+                $user
+            );
+        }
     }
 }
