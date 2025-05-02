@@ -33,7 +33,6 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -58,6 +57,16 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
             'report' => false,
+        ],
+
+        'cloudinary' => [
+            'driver' => 'cloudinary',
+            'key' => env('CLOUDINARY_KEY'),
+            'secret' => env('CLOUDINARY_SECRET'),
+            'cloud' => env('CLOUDINARY_CLOUD_NAME'),
+            'url' => env('CLOUDINARY_URL'),
+            'secure' => (bool) env('CLOUDINARY_SECURE_URL', true),
+            'prefix' => env('CLOUDINARY_PREFIX'),
         ],
 
     ],
