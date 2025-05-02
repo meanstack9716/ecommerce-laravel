@@ -7,7 +7,6 @@ enum BusinessType: string
     case SOLE = 'Sole Proprietorship';
     case PARTNERSHIP = 'Partnership';
     case CORPORATION = 'Corporation';
-    case LLC = 'LLC';
     case OTHER = 'Other';
 
     /**
@@ -27,7 +26,6 @@ enum BusinessType: string
             self::SOLE->value => 'Sole Proprietorship',
             self::PARTNERSHIP->value => 'Partnership',
             self::CORPORATION->value => 'Corporation',
-            self::LLC->value => 'LLC',
             self::OTHER->value => 'Other',
         ];
     }

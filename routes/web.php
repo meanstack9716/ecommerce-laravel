@@ -13,6 +13,7 @@ Route::get('/', function () {
 require __DIR__ . '/web/auth.php';
 require __DIR__ . '/web/user.php';
 require __DIR__ . '/web/category.php';
+require __DIR__ . '/web/product.php';
 
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::view('/dashboard', 'dashboard.index')->name('dashboard');

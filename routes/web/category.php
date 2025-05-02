@@ -8,6 +8,9 @@ use App\Http\Middleware\ValidateForm;
 Route::prefix('category')->group(function () {
     Route::middleware(['auth:sanctum', 'web'])->group(function () {
 
+        Route::get('/get-subcategories', [CategoryController::class, 'getSubcategories'])->name('get.subcategories');
+        Route::get('/get-subSubCategory', [CategoryController::class, 'getSubSubcategories'])->name('get.subSubCategories');
+
         Route::middleware('is_admin')->group(function () {
 
             Route::get('/list', [CategoryController::class, 'getAllCategoriesList'])->name('category.list');
@@ -23,12 +26,11 @@ Route::prefix('category')->group(function () {
             ->middleware('validateForm:addSubCategorySchema')
             ->name('sub-category.add.submit');
             
-            Route::get('/get-subcategories', [CategoryController::class, 'getSubcategories'])->name('get.subcategories');
-            Route::get('/product-type/list', [CategoryController::class, 'getAllProductTypesList'])->name('product-type.list');
-            Route::get('/product-type/add', [CategoryController::class, 'showProductTypeForm'])->name('product-type.add');
-            Route::post('/product-type/add', [CategoryController::class, 'addNewProductType'])
-            ->middleware('validateForm:addProductTypeSchema')
-            ->name('product-type.add.submit');
+            Route::get('/sub-sub/list', [CategoryController::class, 'getAllSubSubCategoryList'])->name('sub-sub-category.list');
+            Route::get('/sub-sub/add', [CategoryController::class, 'showSubSubCategoryForm'])->name('sub-sub-category.add');
+            Route::post('/sub-sub/add', [CategoryController::class, 'addNewSubSubCategory'])
+            ->middleware('validateForm:addSubSubCategorySchema')
+            ->name('sub-sub-category.add.submit');
         });
     });
 });

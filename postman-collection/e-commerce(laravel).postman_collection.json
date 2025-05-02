@@ -267,6 +267,205 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Categories",
+			"item": [
+				{
+					"name": "Categories list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "women",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Category By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/categories/list/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"categories",
+								"list",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "681221b40d4159e5190a2942"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sub Categories list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sub-categories/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sub-categories",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "women",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "categoryId",
+									"value": "68106fb12b3bb45d350183f2",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sub Category by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sub-categories/list/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sub-categories",
+								"list",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "681462825e3e9c27c70c8ab2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sub Sub Category List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sub-sub-categories/list?categoryId=681221b40d4159e5190a2942",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sub-sub-categories",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "women",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "categoryId",
+									"value": "681221b40d4159e5190a2942"
+								},
+								{
+									"key": "subCategoryId",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sub Sub Category By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sub-sub-categories/list/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"sub-sub-categories",
+								"list",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "681462825e3e9c27c70c8ab3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

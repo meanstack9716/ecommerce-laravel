@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\SubCategory;
-use App\Models\ProductType;
+use App\Models\SubSubCategory;
 
 class CategoryController extends Controller
 {
@@ -52,7 +52,7 @@ class CategoryController extends Controller
 
     public function addNewSubCategory(Request $request)
     {
-        $img_path = $request->file('category_img')->store('sub_categories');
+        $img_path = $request->file('category_img')->store('sub_categories/'. $request->category_type);
 
         $category = SubCategory::create([
             'name' => $request->category_name,
@@ -96,7 +96,27 @@ class CategoryController extends Controller
         return response()->json($subcategories);
     }
 
-    public function showProductTypeForm(Request $request)
+    public function  getSubSubcategories(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+        $subCategoryId = $request->input('sub_category_id');
+
+        $query = SubSubCategory::query();
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($subCategoryId) {
+            $query->where('sub_category_id', $subCategoryId);
+        }
+
+        $sub = $query->get();
+    
+        return response()->json($sub);
+    }
+
+    public function showSubSubCategoryForm(Request $request)
     {
         $categories = Category::all();
         $subCategories = collect();
@@ -104,30 +124,30 @@ class CategoryController extends Controller
         if (old('category')) {
             $subCategories = SubCategory::where('category_id', old('category'))->get();
         }
-        return view('categories.product-type.form', compact('categories', 'subCategories'));
+        return view('categories.sub-sub-categories.form', compact('categories', 'subCategories'));
     }
 
-    public function addNewProductType(Request $request)
+    public function addNewSubSubCategory(Request $request)
     {
-        $img_path = $request->file('img')->store('product_type');
+        $img_path = $request->file('img')->store('sub_sub_categories/'. $request->sub_category);
 
-        $category = ProductType::create([
+        $category = SubSubCategory::create([
             'name' => $request->name,
             'description' => $request->description,
             'img_path' => $img_path,
             'category_id' => $request->category,
             'sub_category_id' => $request->sub_category
         ]);
-        return redirect()->route('product-type.list');
+        return redirect()->route('sub-sub-category.list');
     }
 
-    public function getAllProductTypesList(Request $request) {
+    public function getAllSubSubCategoryList(Request $request) {
 
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
         
-        $query = ProductType::query()->with(['subCategory']);
+        $query = SubSubCategory::query()->with(['subCategory']);
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -139,12 +159,125 @@ class CategoryController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-        $productTypes = $query->paginate($limit);
+        $subSubCategories = $query->paginate($limit);
         $categories = Category::all();
-        // return response()->json([
-        //     'message' => 'You email has been verified successfully',
-        //     'ddd' => $productTypes
-        // ]);
-        return view('categories.product-type.list', compact('productTypes','categories', 'limit'));
+        return view('categories.sub-sub-categories.list', compact('subSubCategories','categories', 'limit'));
+    }
+
+    public function fetchCategoryList(Request $request) {
+
+        $limit = $request->input('limit');
+        $page = $request->input('page', 1);
+        $searchTerm = $request->input('searchTerm');
+        $query = Category::query()->with(['subCategories', 'subCategories.subSubCategories']);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($limit) {
+            $categories = $query->paginate($limit, ['*'], 'page', $page);            
+            return response()->json([
+                'data' => $categories->items()
+            ]);
+        }
+
+        $categories = $query->get();
+        return response()->json([
+            'data' => $categories
+        ]);
+    }
+
+    public function fetchCategoryById(Request $request, $id) {
+        $category = Category::with(['subCategories', 'subCategories.subSubCategories'])->find($id);
+
+        return response()->json([
+            'data' => $category
+        ]);
+    }
+
+    public function fetchSubCategoryList(Request $request) {
+
+        $limit = $request->input('limit');
+        $page = $request->input('page', 1);
+        $searchTerm = $request->input('searchTerm');
+        $categoryId = $request->input('categoryId');
+        $query = SubCategory::query()->with(['category', 'subSubCategories']);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($limit) {
+            $categories = $query->paginate($limit, ['*'], 'page', $page);            
+            return response()->json([
+                'data' => $categories->items()
+            ]);
+        }
+
+        $categories = $query->get();
+        return response()->json([
+            'data' => $categories
+        ]);
+    }
+
+    public function fetchSubCategoryById(Request $request, $id) {
+        $subCategory = SubCategory::with(['category', 'subSubCategories'])->find($id);
+
+        return response()->json([
+            'data' => $subCategory
+        ]);
+    }
+
+    public function fetchSubSubCategoryList(Request $request) {
+
+        $limit = $request->input('limit');
+        $page = $request->input('page', 1);
+        $searchTerm = $request->input('searchTerm');
+        $categoryId = $request->input('categoryId');
+        $subCategoryId = $request->input('subCategoryId');
+        $query = SubSubCategory::query()->with(['category', 'subCategory']);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($subCategoryId) {
+            $query->where('sub_category_id', $subCategoryId);
+        }
+
+        if ($limit) {
+            $cat = $query->paginate($limit, ['*'], 'page', $page);            
+            return response()->json([
+                'data' => $cat->items()
+            ]);
+        }
+
+        $cat = $query->get();
+        return response()->json([
+            'data' => $cat
+        ]);
+    }
+
+    public function fetchSubSubCategoryById(Request $request, $id) {
+        $cat = SubSubCategory::with(['category', 'subCategory'])->find($id);
+
+        return response()->json([
+            'data' => $cat
+        ]);
     }
 }

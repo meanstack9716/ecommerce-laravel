@@ -89,12 +89,34 @@ class Schemas
                 'category_description' => 'required|string|min:3|max:255',
                 'category_img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
             ],
-            'addProductTypeSchema' => [
+            'addSubSubCategorySchema' => [
                 'category' => 'required|exists:categories,_id',
                 'sub_category' => 'required|exists:sub_categories,_id',
                 'name' => 'required|string|min:3|max:255',
                 'description' => 'required|string|min:3|max:255',
                 'img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
+            ],
+            'addNewProductCategorySchema' => [
+                'category' => 'required|exists:categories,_id',
+                'sub_category' => 'required|exists:sub_categories,_id',
+                'sub_sub_category' => 'required|exists:sub_sub_categories,_id',
+                // 'product_title' => 'required|min:3',
+                // 'product_description' => 'required|min:10',
+                // 'product_details' => 'required|min:10',
+                // 'product_price' => 'required|numeric|min:0',
+                // 'discount_per' => 'nullable|numeric|lt:100',
+                // 'product_sku' => 'required|unique:products',
+                // 'stock_quantity' => 'required|integer|min:0',
+
+
+                // 'is_featured' => 'boolean',
+                // 'is_active' => 'boolean',
+                // 'weight' => 'nullable|numeric|min:0',
+                // 'height' => 'nullable|numeric|min:0',
+                // 'width' => 'nullable|numeric|min:0',
+                // 'length' => 'nullable|numeric|min:0',
+                // // 'images' => 'required|array|min:1',
+                // 'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', 
             ],
 
             // custom error messages
