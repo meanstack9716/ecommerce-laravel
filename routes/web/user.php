@@ -4,7 +4,7 @@ use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\ValidateForm;
+use App\Http\Middleware\ValidateRequest;
 
 Route::prefix('users')->group(function () {
     Route::middleware(['auth:sanctum', 'web'])->group(function () {
@@ -25,17 +25,19 @@ Route::prefix('sellers')->group(function () {
 
                 Route::get('/personal-details', [UserController::class, 'showRegistrationForm'])->name('seller.register.personal');
                 Route::post('/personal-details', [UserController::class, 'storePersonalDetails'])
-                    ->middleware('validateForm:addClientPersonalSchema')
+                    ->middleware('validateRequest:addClientPersonalSchema')
                     ->name('seller.register.personal.submit');
 
                 Route::get('/business', [UserController::class, 'showRegistrationForm'])
                     ->name('seller.register.business');
                 Route::post('/business', [UserController::class, 'storeBusiness'])
-                    ->middleware('validateForm:addClientBusinessSchema')
+                    ->middleware('validateRequest:addClientBusinessSchema')
                     ->name('seller.register.business.submit');
 
                 Route::get('/identity', [UserController::class, 'showRegistrationForm'])->name('seller.register.identity');
-                Route::post('/identity', [UserController::class, 'storeIdentity'])->name('seller.register.identity.submit');
+                Route::post('/identity', [UserController::class, 'storeIdentity'])
+                    ->middleware('validateRequest:addClientIdentitySchema')
+                    ->name('seller.register.identity.submit');
 
                 Route::get('/complete', [UserController::class, 'showRegistrationForm'])->name('seller.register.complete');
                 Route::post('/complete', [UserController::class, 'completeRegistration'])->name('seller.register.complete.submit');

@@ -37,10 +37,8 @@ class Schemas
             'updateUserSchema' => [
                 'first_name' => 'sometimes|string|max:255|min:3',
                 'last_name' => 'sometimes|string|max:255|min:3',
-                'email' => 'sometimes|email',
                 'phone_number' => 'sometimes|string|regex:/^[+]\d{2}?\d{10}$/',
                 'isUniqueMobileExceptUsers' => true,
-                'isUniqueEmailExceptUsers' => true
             ],
             'imageSchema' => [
                 'image' => 'required|image|max:5120'
@@ -53,7 +51,7 @@ class Schemas
                 'address_line1' => 'required|string|min:3',
                 'address_city' => 'required|string',
                 'address_state' => 'required|string|min:3',
-                'address_code' => 'required|string|min:3',
+                'address_code' => 'required|string|regex:/^[1-9][0-9]{5}$/',
                 'address_country' => 'required|string|min:3',
             ],
             'addClientBusinessSchema' => [
@@ -61,22 +59,22 @@ class Schemas
                 'business_email' => 'required|email|unique:sellers,email',
                 'business_type' => ['required', Rule::in(BusinessType::values())],
                 'business_mobile' => 'required|string|regex:/^[+]\d{2}?\d{10}$/|unique:sellers,phone_number',
-                'gst_num' => 'required',
+                'gst_num' => 'required|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/',
                 'address_line1' => 'required|string|min:3',
                 'address_type' => ['required', Rule::in(AddressType::values())],
                 'address_city' => 'required|string',
                 'address_state' => 'required|string|min:3',
-                'address_code' => 'required|string|min:3',
+                'address_code' => 'required|string|regex:/^[1-9][0-9]{5}$/',
                 'address_country' => 'required|string|min:3',
             ],
             'addClientIdentitySchema' => [
                 'pan_number' => 'required|string|max:255',
-                'pan_front' => 'required|image|mimes:jpeg,png,jpg|max:5120',
-                'pan_back' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+                'pan_front' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
+                'pan_back' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
                 'id_type' => ['required', Rule::in(IdentificationType::values())],
                 'id_number' => 'required|string|max:255',
-                'id_front' => 'required|image|mimes:jpeg,png,jpg|max:5120',
-                'id_back' => 'nullable|image|mimes:jpeg,png,jpg|max:5120',
+                'id_front' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
+                'id_back' => 'sometimes|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
             ],
             'addNewCategorySchema' => [
                 'category_name' => 'required|string|min:3|max:255',
@@ -100,11 +98,14 @@ class Schemas
                 'category' => 'required|exists:categories,_id',
                 'sub_category' => 'required|exists:sub_categories,_id',
                 'sub_sub_category' => 'required|exists:sub_sub_categories,_id',
-                // 'product_title' => 'required|min:3',
-                // 'product_description' => 'required|min:10',
+            ],
+            'addNewProductDetailsSchema' => [
+                'product_title' => 'required|min:3',
+                'product_description' => 'required|min:10',
                 // 'product_details' => 'required|min:10',
-                // 'product_price' => 'required|numeric|min:0',
-                // 'discount_per' => 'nullable|numeric|lt:100',
+                'product_price' => 'required|numeric|min:0',
+                'discount_per' => 'nullable|numeric|lt:100',
+                'product_brand' => 'required|min:10'
                 // 'product_sku' => 'required|unique:products',
                 // 'stock_quantity' => 'required|integer|min:0',
 
@@ -124,11 +125,14 @@ class Schemas
                 'email.exists' => 'This email is not registered.',
                 'role_id.exists' => 'The selected role is invalid.',
                 'phone_number.regex' => 'The phone number format is invalid.',
+                'gst_num.regex' => 'GST number format is invalid',
+                'gst_num.unique' => 'GST number is not valid.',
                 'address_type.required' => 'The Address type is required.',
                 'address_line1.required' => 'The Street Line1 is required.',
                 'address_city.required' => 'The City is required.',
                 'address_state.required' => 'The State is required.',
                 'address_code.required' => 'The Postal Code is required.',
+                'address_code.regex' => 'The Postal Code format is not valid.',
                 'address_country.required' => 'The country Name is required.',
             ]
         ];

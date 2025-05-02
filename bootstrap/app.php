@@ -4,7 +4,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\ValidateRequest;
-use App\Http\Middleware\ValidateForm;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsAdminOrClient;
 
@@ -18,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'validateRequest' => ValidateRequest::class,
-            'validateForm' => ValidateForm::class,
             'is_admin' => IsAdmin::class,
             'is_admin_or_client' => IsAdminOrClient::class,
         ]);

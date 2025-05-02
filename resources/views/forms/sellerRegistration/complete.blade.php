@@ -56,7 +56,7 @@
             <h4 class="font-medium text-gray-900">Identity Proof</h4>
             <div class="mt-2 grid grid-cols-1 gap-y-2 gap-x-4 sm:grid-cols-2">
                 @foreach(session('client_registration_data.identity') as $key => $value)
-                    @if(!in_array($key, ['id_front', 'id_back']))
+                    @if(!in_array($key, ['id_front', 'id_back', 'pan_front', 'pan_back']))
                         <div>
                             <span class="text-sm font-medium text-gray-500 capitalize">{{ str_replace('_', ' ', $key) }}:</span>
                             <span class="text-sm text-gray-900 ml-2">{{ $value }}</span>
