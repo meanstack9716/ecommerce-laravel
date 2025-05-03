@@ -172,6 +172,39 @@
             </ul>
         </div>
 
+        <div class="group">
+            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('brands*') ? 'text-blue-500 bg-blue-100' : '' }}" 
+                onclick="toggleMenu(this)"
+            >
+                <div class="flex items-center text-center gap-3">
+                    <span class="material-symbols-outlined">
+                        gallery_thumbnail
+                    </span>
+                    <span class="font-medium tracking-wide">Brands</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
+            </div>
+
+            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
+                <li>
+                    <a href="{{ route('products.brand.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            list_alt
+                        </span>
+                        <span class="font-medium">Brands List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('products.brand.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            add_circle
+                        </span>
+                        <span class="font-medium">Add New Brand</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <!-- Order -->
         <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-3 transition-all duration-300 rounded-lg {{ Request::is('*orders*') ? 'text-blue-500 bg-blue-100' : '' }}">
             <span class="material-symbols-outlined">
