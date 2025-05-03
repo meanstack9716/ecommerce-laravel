@@ -14,7 +14,7 @@
                         'step1' => 'Product Category',
                         'step2' => 'Product Details',
                         'step3' => 'Product Variants',
-                        'step4' => 'Product Images'
+                        'step4' => 'Product Gallery'
                     ];
                     $currentStep = request()->route()->getName();
                     $currentStepName = explode('.', $currentStep)[2] ?? '';
@@ -24,8 +24,8 @@
                     <div class="bg-indigo-600 h-1 transition-all ml-4 duration-300" style="width: 
                         @if(str_contains($currentStep, 'step1')) 0%
                         @elseif(str_contains($currentStep, 'step2')) 33%
-                        @elseif(str_contains($currentStep, 'step3')) 68%
-                        @else 100% @endif">
+                        @elseif(str_contains($currentStep, 'step3')) 65%
+                        @else 97% @endif">
                     </div>
                 </div>
         
@@ -71,9 +71,10 @@
                 @include('forms.products.product-step1')
             @elseif(str_contains($currentStep, 'step2'))
                 @include('forms.products.product-details')
-            @elseif(str_contains($currentStep, 'identity'))
-                @include('forms.sellerRegistration.identity-details')
+            @elseif(str_contains($currentStep, 'step3'))
+                @include('forms.products.product-variant')
             @else
+                @include('forms.products.product-gallery')
             @endif
         </div>
     </div>

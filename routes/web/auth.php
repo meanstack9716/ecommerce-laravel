@@ -6,14 +6,12 @@ use App\Http\Middleware\ValidateRequest;
 
 Route::middleware(['guest'])->group(function () {
     Route::view('/login', 'auth.login')->name('login');
-    Route::view('/signup', 'auth.signup')->name('signup');
     Route::view('/forgot-password', 'auth.forgot-password')->name('forgot-password');
     Route::get('/verify-reset-code', [PanelAuthController::class, 'showVerifyCodeForm'])->name('password.verify-code');
     Route::get('/reset-password', [PanelAuthController::class, 'showResetPasswordForm'])->name('password.reset');
 });
 
 Route::post('/login', [PanelAuthController::class, 'signinPanelUser'])->middleware('validateRequest:loginSchema')->name('login.submit');
-Route::post('/signup', [PanelAuthController::class, 'registerPanelUser'])->middleware('validateRequest:registerSchema')->name('signup.submit');
 Route::post('/forgot-password', [PanelAuthController::class, 'sendEmailCodeForUser'])->middleware('validateRequest:isRegisteredEmailSchema')->name('password.email');
 Route::post('/resend-verification-code', [PanelAuthController::class, 'resendVerificationCode'])->name('password.resend-code');
 Route::post('/verify-reset-code', [PanelAuthController::class, 'verifyEmailCode'])->middleware('validateRequest:verifyEmailSchema')->name('password.submit-code');

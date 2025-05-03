@@ -16,9 +16,19 @@ Route::prefix('products')->group(function () {
                 ->name('products.add.step1.submit');
 
             Route::get('/add/step2', [ProductController::class, 'showAddProductForm'])->name('products.add.step2');
-            Route::post('/add/step2', [ProductController::class, 'storeProductCategoryDetails'])
-                ->middleware('validateRequest:addNewProductCategorySchema')
+            Route::post('/add/step2', [ProductController::class, 'storeProductBasicDetails'])
+                ->middleware('validateRequest:addNewProductDetailsSchema')
                 ->name('products.add.step2.submit');
+
+            Route::get('/add/step3', [ProductController::class, 'showAddProductForm'])->name('products.add.step3');
+            Route::post('/add/step3', [ProductController::class, 'storeProductVariantDetails'])
+                ->middleware('validateRequest:addProductVariantsSchema')
+                ->name('products.add.step3.submit');
+
+            Route::get('/add/step4', [ProductController::class, 'showAddProductForm'])->name('products.add.step4');
+            Route::post('/add/step4', [ProductController::class, 'completeProductRegistration'])
+                ->middleware('validateRequest:addProductGallerySchema')
+                ->name('products.add.step4.submit');
         });
     });
 });

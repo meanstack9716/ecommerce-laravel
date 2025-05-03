@@ -49,16 +49,6 @@
                                 class="group cursor-pointer relative w-full flex justify-center py-2 px-4 3xl:py-3.5 border border-transparent text-sm 3xl:text-xl font-medium rounded-md text-white bg-[#334b8c] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334b8c]">
                                 Sign in 
                             </button>
-                            <div class="flex items-center justify-center mt-2">
-                                <div class="text-sm">
-                                    <p class="font-medium text-neutral-600 3xl:text-lg">
-                                        Don't have an account. 
-                                        <a href="{{ route('signup') }}" class="font-medium text-blue-600 underline">
-                                            Create a new account. 
-                                        </a>
-                                    </p>
-                                </div>
-                            </div>
                         </div>
                     </form>
                     <div class="grid grid-cols-4 pt-8 pb-4 items-center w-4/5 mx-auto gap-2">

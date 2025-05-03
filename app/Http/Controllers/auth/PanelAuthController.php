@@ -18,14 +18,6 @@ use Illuminate\Support\Facades\Validator;
 class PanelAuthController extends Controller
 {
 
-    public function registerPanelUser(Request $request) {
-        $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-        return redirect('/login');
-    }
-
     public function signinPanelUser(Request $request) 
     {    
         $user = User::where('email', $request->email)->first();

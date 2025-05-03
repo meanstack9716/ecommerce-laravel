@@ -1,5 +1,4 @@
 @php
-    $currentStep = old('step', 1);
     $detailFields = [
         [
             'name' => 'product_title',
@@ -69,34 +68,34 @@
         
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             @foreach ($detailFields as $field)
-                            <div class="sm:col-span-{{ $field['col'] }}">
-                                @if($field['type'] === 'text')
-                                    <x-textfield 
-                                        name="{{ $field['name'] }}" 
-                                        label="{{ $field['label'] }}" 
-                                        value="{{ old($field['name'], $field['default'] ?? '') }}"
-                                        id="{{ $field['name'] }}"
-                                        :required="$field['required'] ?? false"
-                                        placeholder="{{ $field['placeholder'] }}"
-                                    />
-                                @endif
-                            </div>
-                        @endforeach
+                <div class="sm:col-span-{{ $field['col'] }}">
+                    @if($field['type'] === 'text')
+                        <x-textfield 
+                            name="{{ $field['name'] }}" 
+                            label="{{ $field['label'] }}" 
+                            value="{{ old($field['name'], session('product_data.basic.' . $field['name']), $field['default'] ?? '') }}"
+                            id="{{ $field['name'] }}"
+                            :required="$field['required'] ?? false"
+                            placeholder="{{ $field['placeholder'] }}"
+                        />
+                    @endif
+                </div>
+            @endforeach
 
-                        <div class="sm:col-span-6">
-                            <x-quill-editor 
-                                name="product_details"
-                                id="product_details"
-                                :required="true"
-                                value="{{ old('product_details') }}"
-                                label="Product Details"
-                                editorId="product-editor"
-                                height="150px"
-                            />
-                            @error('product_description')
-                                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                            @enderror
-                        </div>
+            <div class="sm:col-span-6">
+                <x-quill-editor 
+                    name="product_details"
+                    id="product_details"
+                    :required="true"
+                    value="{{ old('product_details', session('product_data.basic.product_details')) }}"
+                    label="Product Details"
+                    editorId="product-editor"
+                    height="150px"
+                />
+                @error('product_description')
+                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                @enderror
+            </div>
         </div>
     </div>
 
