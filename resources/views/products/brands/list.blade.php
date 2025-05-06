@@ -4,14 +4,14 @@
 <div class="p-4 sm:p-8 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
         <div class="py-5 xl:pt-0 border-b border-[#F1F1F1]">
-            <h1 class="text-[26px] font-bold tracking-wide">Categories List</h1>
+            <h1 class="text-[26px] font-bold tracking-wide">Brands List</h1>
         </div>
 
-        <form method="GET" action="{{ route('category.list') }}" class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+        <form method="GET" action="{{ route('products.brand.list') }}" class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <div class="flex xl:items-center flex-col xl:flex-row gap-y-3 gap-x-8">
                 <div class="flex items-center text-center gap-2">
-                    <p class="m-0 text-gray-600 font-medium">Search Category</p>
+                    <p class="m-0 text-gray-600 font-medium">Search Brands</p>
                     <div class="relative">
                         <input
                             type="text"
@@ -31,7 +31,7 @@
                     Apply Filters
                 </button>
                 @if(request('search'))
-                    <a href="{{ route('category.list', ['limit' => request('limit', 10)]) }}"
+                    <a href="{{ route('products.brand.list', ['limit' => request('limit', 10)]) }}"
                         class="text-sm font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
                         Clear Filter
                     </a>
@@ -50,22 +50,22 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    @forelse ($categories as $category)
+                    @forelse ($brands as $brand)
                         <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
                             <td class="px-6 py-3 text-sm text-center text-gray-800">
                                 <div class="relative w-full flex justify-center">
-                                    <img src="{{ asset('storage/' . $category->img_path) }}" alt="{{ $category->name }}"
-                                        class="w-16 h-16 object-cover rounded-md" />
+                                    <img src="{{ asset('storage/' . $brand->img_path) }}" alt="{{ $brand->name }}"
+                                        class="h-16 max-w-full object-contain rounded-md" />
                                 </div>
                             </td>
-                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->name }}</td>
-                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->description }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->name }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->description }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium"></td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">
-                                No category found.
+                                No users found.
                             </td>
                         </tr>
                     @endforelse
@@ -74,9 +74,9 @@
         </div>
 
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <form method="GET" action="{{ route('category.list') }}" class="">
-            <input type="hidden" name="search" value="{{ request('search') }}">
-            <label for="limit">Categories per page:</label>
+            <form method="GET" action="{{ route('products.brand.list') }}" class="">
+                <input type="hidden" name="search" value="{{ request('search') }}">
+                <label for="limit">Brands per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)
                         <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
@@ -86,7 +86,7 @@
                 </select>
             </form>
             <div class="min-w-1/2">
-                {{ $categories->appends(['limit' => $limit])->links() }}
+                {{ $brands->appends(['limit' => $limit])->links() }}
             </div>
         </div>
     </div>

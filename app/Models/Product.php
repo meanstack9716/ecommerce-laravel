@@ -13,10 +13,12 @@ class Product extends Model
         'description',
         'details',
         'price',
-        'discount',
+        'final_price',
+        'user_id',
+        'discount_percent',
         'sku',
         'stock_quantity',
-        'brand',
+        'brand_id',
         'thumbnail_path',
         'category_id',
         'sub_category_id',
@@ -27,6 +29,7 @@ class Product extends Model
         'updated_at',
         'created_at',
         'category_id',
+        'brand_id',
         'thumbnail_path',
         'sub_category_id',
         'sub_sub_category_id'
@@ -34,16 +37,7 @@ class Product extends Model
 
     protected $appends = [
         'thumbnail_url',
-        'sale_price'
     ];
-
-    public function getSalePriceAttribute()
-    {
-        if ($this->discount) {
-            return $this->price - min($this->discount, 100) * $this->price / 100;
-        }
-        return $this->price;
-    }
 
     public function getThumbnailUrlAttribute()
     {
@@ -53,6 +47,30 @@ class Product extends Model
         return null;
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Calculate and store final_price when creating or updating
+        static::saving(function ($product) {
+            $product->calculateAndStoreFinalPrice();
+        });
+    }
+
+    public function calculateAndStoreFinalPrice()
+    {
+        $price = (float)$this->price;
+        $discount = $this->discount_percent ? min((float)$this->discount_percent, 100) : 0;
+        
+        $this->final_price = $discount > 0 
+            ? $price - ($price * $discount / 100)
+            : $price;
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', '_id');
+    }
 
     public function category()
     {
@@ -62,6 +80,11 @@ class Product extends Model
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class, 'sub_category_id', '_id');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo(ProductBrand::class, 'brand_id', '_id');
     }
 
     public function subSubCategory()

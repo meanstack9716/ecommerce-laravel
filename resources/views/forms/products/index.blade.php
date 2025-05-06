@@ -20,8 +20,8 @@
                     $currentStepName = explode('.', $currentStep)[2] ?? '';
                 @endphp
         
-                <div class="absolute top-4 left-0 right-0 h-1 bg-gray-200 z-10 mx-12">
-                    <div class="bg-indigo-600 h-1 transition-all ml-4 duration-300" style="width: 
+                <div class="absolute top-4 left-0 right-0 h-1 bg-gray-200 z-10 lg:mx-12">
+                    <div class="bg-indigo-600 h-1 transition-all lg:ml-4 duration-300" style="width: 
                         @if(str_contains($currentStep, 'step1')) 0%
                         @elseif(str_contains($currentStep, 'step2')) 33%
                         @elseif(str_contains($currentStep, 'step3')) 65%
@@ -54,7 +54,7 @@
                         </div>
                 
                         <!-- Step label -->
-                        <span class="font-medium mt-2 
+                        <span class="font-medium mt-2 hidden lg:block
                             {{ $isActive ? 'text-indigo-600' : '' }}
                             {{ $isCompleted ? 'text-green-500' : '' }}
                             {{ !$isActive && !$isCompleted ? 'text-gray-500' : '' }}">

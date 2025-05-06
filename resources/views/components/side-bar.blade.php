@@ -162,11 +162,52 @@
 
             <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
                 <li>
+                    <a href="{{ route('products.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('products/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            table
+                        </span>
+                        <span class="font-medium">Products List</span>
+                    </a>
+                </li>
+                <li>
                     <a href="{{ route('products.add.step1') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('products/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
                         <span class="material-symbols-outlined">
                             add_circle
                         </span>
                         <span class="font-medium">Add New Product</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="group">
+            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('brands*') ? 'text-blue-500 bg-blue-100' : '' }}" 
+                onclick="toggleMenu(this)"
+            >
+                <div class="flex items-center text-center gap-3">
+                    <span class="material-symbols-outlined">
+                        gallery_thumbnail
+                    </span>
+                    <span class="font-medium tracking-wide">Brands</span>
+                </div>
+                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
+            </div>
+
+            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
+                <li>
+                    <a href="{{ route('products.brand.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            list_alt
+                        </span>
+                        <span class="font-medium">Brands List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('products.brand.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <span class="material-symbols-outlined">
+                            add_circle
+                        </span>
+                        <span class="font-medium">Add New Brand</span>
                     </a>
                 </li>
             </ul>
@@ -181,10 +222,9 @@
         </a>
     </div>
 
-    <div class="flex flex-col gap-2 px-3">
+    <!-- <div class="flex flex-col gap-2 px-3">
         <p class="text-gray-400 font-semibold">Settings</p>
 
-        <!-- User -->
         <div class="group">
             <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('*faq*') ? 'text-blue-500 bg-blue-100' : '' }}" 
                 onclick="toggleMenu(this)"
@@ -218,7 +258,6 @@
             </ul>
         </div>
 
-        <!-- Categories -->
         <div class="group">
             <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-1.5 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('terms*') ? 'text-blue-500 bg-blue-100' : '' }}" 
                 onclick="toggleMenu(this)"
@@ -251,7 +290,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div> -->
 
     <div class="flex flex-col gap-2 px-3">
     </div>

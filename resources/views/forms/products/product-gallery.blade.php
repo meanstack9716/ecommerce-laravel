@@ -4,31 +4,53 @@
         <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Gallery</h3>
         <div class="pb-4">
             <x-file-upload 
-                id="thumbnail-images"
+                id="thumbnail-image"
                 name="thumbnail"
                 label="Upload Thumbnail Image for products"
                 required
-                helpText="Image (PNG, JPG, JPEG) upto 5MB"
+                helpText="Image (PNG, JPG, JPEG) up to 5MB"
+                accept="image/png,image/jpeg,image/jpg"
             />
             @error('thumbnail')
-                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
             @enderror
         </div>
-        <div>
-            <x-file-upload 
-                id="product-images"
-                name="images[]"
-                label="Upload Images for products"
-                multiple
-                helpText="Images (PNG, JPG, JPEG) upto 5MB"
-            />
-            @error('images')
-                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-            @enderror
-            @error('images.*')
-                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-            @enderror
-        </div>
+
+        @forelse ($selectedColors as $color)
+            <div>
+                <x-file-upload 
+                    id="product-images-{{ $color }}"
+                    name="images[{{ $color }}][]"
+                    label="Upload Images for {{ $color }} color"
+                    multiple
+                    helpText="Multiple images (PNG, JPG, JPEG) up to 5MB each"
+                    accept="image/png,image/jpeg,image/jpg"
+                />
+                @error('images.'.$color)
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                @error('images.'.$color.'.*')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        @empty
+            <div>
+                <x-file-upload 
+                    id="product-images-default"
+                    name="images[default][]"
+                    label="Upload Product Images"
+                    multiple
+                    helpText="Multiple images (PNG, JPG, JPEG) up to 5MB each"
+                    accept="image/png,image/jpeg,image/jpg"
+                />
+                @error('images.default')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                @error('images.default.*')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </div>
+        @endforelse
     </div>
 
     <div class="mt-8 flex justify-between">

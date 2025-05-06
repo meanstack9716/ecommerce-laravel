@@ -106,24 +106,23 @@ class Schemas
                 'product_price' => 'required|numeric|min:0',
                 'discount_per' => 'nullable|numeric|lt:100|min:0',
                 'product_brand' => 'required|min:3',
+                'new_brand' => 'required_if:product_brand,another|nullable|string',
                 'product_sku' => 'required',
                 'stock_quantity' => 'required|integer|min:0',
             ],
             'addProductVariantsSchema' => [
                 'size_type' => 'required',
-                // 'sizes' => 'required|array|min:1',
-                // 'sizes.*.name' => 'required|string',
-                // 'sizes.*.custom_size' => 'required_if:sizes.*.name,custom|nullable|string',
-                // 'sizes.*.colors' => 'required|array',
-                // 'sizes.*.colors.standard.*.quantity' => 'numeric',
-                // 'sizes.*.colors.standard.*.enabled' => 'sometimes|in:0,1',
-                // 'sizes.*.colors.custom.*.hex' => 'required|string',
-                // 'sizes.*.colors.custom.*.quantity' => 'numeric',
             ],
             'addProductGallerySchema' => [
-                'images' => 'required|array',
-                'images.*' => 'image|max:5120',
-                'thumbnail' => 'required|image|max:5120'
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+                // 'images' => 'required|array|min:1',
+                // 'images.*' => 'required|array|min:1',
+                // 'images.*.*' => 'image|mimes:jpeg,png,jpg|max:5120',
+            ],
+            'addNewProductBrandSchema' => [
+                'name' => 'required|string|min:3|max:255|unique:product_brands,name',
+                'description' => 'required|string|min:3|max:255',
+                'image' => 'required|image|max:5120'
             ],
 
             // custom error messages

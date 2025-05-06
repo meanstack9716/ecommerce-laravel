@@ -14,6 +14,9 @@
     @if($label ?? null)
         <label for="{{ $id }}" class="font-medium 3xl:text-xl 3xl:font-semibold">
             {{ $label }}
+            @if($required)
+                <span class="text-red-600">*</span>
+            @endif
         </label>
     @endif
         
@@ -35,39 +38,37 @@
                 <input type="file" name="{{ $name }}" id="{{ $id }}" @if($multiple) multiple @endif
                     class="upload_file_input hidden" onchange="handleImageUpload(this)">
                 <p class="pl-1">or drag and drop</p>
-                </div>
-                @if($helpText)
-                    <p class="text-xs text-gray-500">{{ $helpText }}</p>
-                @endif
             </div>
-        </div>
-
-        <!-- Image preview container -->
-        <div id="{{ $id }}-preview" class="mt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            <!-- Existing files preview -->
-            @if($existingFiles)
-                @foreach($existingFiles as $index => $file)
-                    <div class="relative group">
-                        <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                            <img src="{{ is_string($file) ? $file : $file->temporaryUrl() }}" 
-                                alt="Preview {{ $index }}" 
-                                class="w-full h-full object-cover transition-opacity group-hover:opacity-75">
-                        </div>
-                        <div class="mt-1 flex justify-between text-xs text-gray-500 truncate">
-                            <span>{{ is_string($file) ? basename($file) : $file->getClientOriginalName() }}</span>
-                            @if(!is_string($file))
-                                <span>{{ formatFileSize($file->getSize()) }}</span>
-                            @endif
-                        </div>
-                        <button type="button" class="absolute -top-2 -right-2 ml-2 cursor-pointer" onclick="removeImage(this, '{{ $id }}', {{ $index }}, true)">
-                            <span class="material-symbols-outlined text-red-600 bg-red-100 rounded-full">
-                                cancel
-                            </span>
-                        </button>
-                    </div>
-                @endforeach
+            @if($helpText)
+                <p class="text-xs text-gray-500">{{ $helpText }}</p>
             @endif
         </div>
+    </div>
+
+    <div id="{{ $id }}-preview" class="pt-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <!-- Existing files preview -->
+        @if($existingFiles)
+            @foreach($existingFiles as $index => $file)
+                <div class="relative group mt-4">
+                    <div class="aspect-square overflow-hidden rounded-lg bg-gray-100">
+                        <img src="{{ is_string($file) ? $file : $file->temporaryUrl() }}" 
+                            alt="Preview {{ $index }}" 
+                            class="w-full h-full object-cover transition-opacity group-hover:opacity-75">
+                    </div>
+                    <div class="mt-1 flex justify-between text-xs text-gray-500 truncate">
+                        <span>{{ is_string($file) ? basename($file) : $file->getClientOriginalName() }}</span>
+                        @if(!is_string($file))
+                            <span>{{ formatFileSize($file->getSize()) }}</span>
+                        @endif
+                    </div>
+                    <button type="button" class="absolute -top-2 -right-2 ml-2 cursor-pointer" onclick="removeImage(this, '{{ $id }}', {{ $index }}, true)">
+                        <span class="material-symbols-outlined text-red-600 bg-red-100 rounded-full">
+                            cancel
+                        </span>
+                    </button>
+                </div>
+            @endforeach
+        @endif
     </div>
 </div>
 
