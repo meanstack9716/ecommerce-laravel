@@ -8,7 +8,7 @@ use App\Models\ProductBrand;
 
 class ProductBrandController extends Controller
 {
-    public function showAddProductBrandForm(Request $request)
+    public function showAddProductBrandForm()
     {
         return view('products.brands.form');
     }
