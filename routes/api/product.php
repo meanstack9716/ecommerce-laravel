@@ -5,4 +5,5 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/products/list', [ProductController::class, 'fetchProductsList']);
+Route::get('/products/{id}', [ProductController::class, 'fetchProductDetailsById']);
 

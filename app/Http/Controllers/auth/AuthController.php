@@ -88,7 +88,7 @@ class AuthController extends Controller
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'You Password has been reset succesfully.',
+            'message' => 'You have successfully logged in.',
             'user' => $user->fresh(),
             'token' => "Bearer $token"
         ]);

@@ -37,9 +37,9 @@ class ProductController extends Controller
             return str_contains($referer, $r);
         });
 
-        // if (!$isComingFromLaterStep) {
-        //     $request->session()->forget($this->productSessionKey);
-        // }
+        if (!$isComingFromLaterStep) {
+            $request->session()->forget($this->productSessionKey);
+        }
 
         if (str_contains($route, 'step2')) {
             if (empty($productData['category'])) {
@@ -58,9 +58,9 @@ class ProductController extends Controller
         }
 
         if (str_contains($route, 'step4')) {
-            // if (empty($productData['sizes'])) {
-            //     return redirect()->route('products.add.step3');
-            // }
+            if (empty($productData['sizes'])) {
+                return redirect()->route('products.add.step3');
+            }
         }
     
         $categoryId = old('category') ?? ($productData['category']['category_id'] ?? null);
@@ -395,6 +395,22 @@ class ProductController extends Controller
         $products = $query->get();
         return response()->json([
             'data' => $products,
+        ]);
+    }
+
+    public function fetchProductDetailsById(Request $request, $id) {
+        $product = Product::with([
+            'category', 
+            'subCategory', 
+            'subSubCategory', 
+            'brand', 
+            'sizes', 
+            'sizes.variants', 
+            'gallery'
+        ])->find($id);
+
+        return response()->json([
+            'data' => $product
         ]);
     }
 }
