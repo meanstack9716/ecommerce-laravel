@@ -1,300 +1,201 @@
+@php
+    $sidebarRoutes = [
+        [
+            'label' => 'Main Home',
+            'items' => [
+                [
+                    'title' => 'Dashboard',
+                    'icon' => 'dashboard',
+                    'route' => route('dashboard'),
+                    'active' => Request::is('*dashboard*'),
+                ],
+            ],
+        ],
+        [
+            'label' => 'All Pages',
+            'items' => [
+                [
+                    'title' => 'User',
+                    'icon' => 'person',
+                    'submenu' => true,
+                    'active' => Request::is('users*'),
+                    'items' => [
+                        [
+                            'title' => 'All user',
+                            'icon' => 'groups',
+                            'route' => route('user.list'),
+                            'active' => Request::is('users/list*'),
+                        ],
+                        [
+                            'title' => 'Add New User',
+                            'icon' => 'person_add',
+                            'route' => '#',
+                            'active' => Request::is('*users/register*'),
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Sellers',
+                    'icon' => 'supervisor_account',
+                    'submenu' => true,
+                    'active' => Request::is('sellers*'),
+                    'items' => [
+                        [
+                            'title' => 'List All sellers',
+                            'icon' => 'groups',
+                            'route' => route('seller.list'),
+                            'active' => Request::is('sellers/list*'),
+                        ],
+                        [
+                            'title' => 'Add New Seller',
+                            'icon' => 'person_add',
+                            'route' => route('seller.register.personal'),
+                            'active' => Request::is('*sellers/register*'),
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Categories',
+                    'icon' => 'stacks',
+                    'submenu' => true,
+                    'active' => Request::is('category*'),
+                    'items' => [
+                        [
+                            'title' => 'Categories List',
+                            'icon' => 'category',
+                            'route' => route('category.list'),
+                            'active' => Request::is('category/list*'),
+                        ],
+                        [
+                            'title' => 'Add New Category',
+                            'icon' => 'add_circle',
+                            'route' => route('category.add'),
+                            'active' => Request::is('*category/add*'),
+                        ],
+                        [
+                            'title' => 'Sub Categories List',
+                            'icon' => 'inventory',
+                            'route' => route('sub-category.list'),
+                            'active' => Request::is('category/sub/list*'),
+                        ],
+                        [
+                            'title' => 'Add Sub-Category',
+                            'icon' => 'add_box',
+                            'route' => route('sub-category.add'),
+                            'active' => Request::is('category/sub/add*'),
+                        ],
+                        [
+                            'title' => 'List Sub Sub-Category',
+                            'icon' => 'format_list_bulleted',
+                            'route' => route('sub-sub-category.list'),
+                            'active' => Request::is('category/sub-sub/list*'),
+                        ],
+                        [
+                            'title' => 'Add Sub Sub-Category',
+                            'icon' => 'add_circle',
+                            'route' => route('sub-sub-category.add'),
+                            'active' => Request::is('category/sub-sub/add*'),
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Products',
+                    'icon' => 'store',
+                    'submenu' => true,
+                    'active' => Request::is('products*'),
+                    'items' => [
+                        [
+                            'title' => 'Add New Product',
+                            'icon' => 'add_circle',
+                            'route' => route('products.add.step1'),
+                            'active' => Request::is('products/add*'),
+                        ],
+                        [
+                            'title' => 'Products List',
+                            'icon' => 'table',
+                            'route' => route('products.list'),
+                            'active' => Request::is('products/list*'),
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Brands',
+                    'icon' => 'gallery_thumbnail',
+                    'submenu' => true,
+                    'active' => Request::is('brands*'),
+                    'items' => [
+                        [
+                            'title' => 'Brands List',
+                            'icon' => 'list_alt',
+                            'route' => route('products.brand.list'),
+                            'active' => Request::is('brands/list*'),
+                        ],
+                        [
+                            'title' => 'Add New Brand',
+                            'icon' => 'add_circle',
+                            'route' => route('products.brand.add'),
+                            'active' => Request::is('brands/add*'),
+                        ],
+                    ],
+                ],
+                [
+                    'title' => 'Orders',
+                    'icon' => 'receipt_long',
+                    'route' => '#',
+                    'active' => Request::is('*orders*'),
+                ],
+            ],
+        ],
+    ];
+@endphp
+
 <div class="h-[calc(100vh-72px)] 3xl:h-[calc(100vh-80px)] bg-white shadow-md overflow-y-auto py-8 px-3 space-y-5" id="sidebar-wrap">
-    <div class="flex flex-col gap-2 px-3">
-        <p class="text-gray-400 font-semibold">Main Home</p>
+    @foreach ($sidebarRoutes as $section)
+        <div class="flex flex-col gap-2 px-3">
+            <p class="text-gray-400 font-semibold">{{ $section['label'] }}</p>
 
-        <!-- Dashborad -->
-        <a href="{{ route('dashboard') }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-3 transition-all duration-300 rounded-lg {{ Request::is('*dashboard*') ? 'text-blue-500 bg-blue-100' : '' }}">
-            <span class="material-symbols-outlined">
-                dashboard
-            </span>
-            <span class="font-medium">Dashboard</span>
-        </a>
-    </div>
+            @foreach ($section['items'] as $item)
+                @if (!empty($item['submenu']))
+                    <div class="group">
+                        <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 
+                            {{ $item['active'] ? 'text-blue-500 bg-blue-100' : '' }}" 
+                            onclick="toggleMenu(this)"
+                        >
+                            <div class="flex items-center text-center gap-3">
+                                <span class="material-symbols-outlined">
+                                    {{ $item['icon'] }}
+                                </span>
+                                <span class="font-medium tracking-wide">{{ $item['title'] }}</span>
+                            </div>
+                            <span class="material-symbols-outlined mr-2 rotate-90">
+                                chevron_right
+                            </span>
+                        </div>
 
-    <div class="flex flex-col gap-2 px-3">
-        <p class="text-gray-400 font-semibold">All Pages</p>
-
-        <!-- User -->
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('users*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        person
-                    </span>
-                    <span class="font-medium tracking-wide">User</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('user.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('users/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                        <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
+                            @foreach ($item['items'] as $sub)
+                                <li>
+                                    <a href="{{ $sub['route'] }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ $sub['active'] ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
+                                        <span class="material-symbols-outlined">
+                                            {{ $sub['icon'] }}
+                                        </span>
+                                        <span class="font-medium">{{ $sub['title'] }}</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
+                    <a href="{{ $item['route'] }}" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-3 transition-all duration-300 rounded-lg {{ $item['active'] ? 'text-blue-500 bg-blue-100' : '' }}">
                         <span class="material-symbols-outlined">
-                            groups
+                            {{ $item['icon'] }}
                         </span>
-                        <span class="font-medium">All user</span>
+                        <span class="font-medium">{{ $item['title'] }}</span>
                     </a>
-                </li>
-                <li>
-                    <a href="" class="flex items-center text-center gap-3 text-sm hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*users/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            person_add
-                        </span>
-                        <span class="font-medium">Add New User</span>
-                    </a>
-                </li>
-            </ul>
+                @endif
+            @endforeach
         </div>
-
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('sellers*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        supervisor_account
-                    </span>
-                    <span class="font-medium tracking-wide">Sellers</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('seller.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('sellers/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            groups
-                        </span>
-                        <span class="font-medium">List All sellers</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('seller.register.personal') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*sellers/register*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            person_add
-                        </span>
-                        <span class="font-medium">Add New Seller</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Categories -->
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('category*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        stacks
-                    </span>
-                    <span class="font-medium tracking-wide">Categories</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('category.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            category
-                        </span>
-                        <span class="font-medium">Categories List</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('category.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_circle
-                        </span>
-                        <span class="font-medium">Add New Category</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('sub-category.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            inventory
-                        </span>
-                        <span class="font-medium">Sub Categories List</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('sub-category.add') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_box
-                        </span>
-                        <span class="font-medium">Add Sub-Category</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('sub-sub-category.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub-sub/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            format_list_bulleted
-                        </span>
-                        <span class="font-medium">List Sub-Sub Category</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('sub-sub-category.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('category/sub-sub/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_circle
-                        </span>
-                        <span class="font-medium">Add Sub-Sub Category</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('products*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        store
-                    </span>
-                    <span class="font-medium tracking-wide">Products</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('products.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('products/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            table
-                        </span>
-                        <span class="font-medium">Products List</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('products.add.step1') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('products/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_circle
-                        </span>
-                        <span class="font-medium">Add New Product</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('brands*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        gallery_thumbnail
-                    </span>
-                    <span class="font-medium tracking-wide">Brands</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('products.brand.list') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            list_alt
-                        </span>
-                        <span class="font-medium">Brands List</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('products.brand.add') }}" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('brands/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_circle
-                        </span>
-                        <span class="font-medium">Add New Brand</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Order -->
-        <a href="" class="flex items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-3 transition-all duration-300 rounded-lg {{ Request::is('*orders*') ? 'text-blue-500 bg-blue-100' : '' }}">
-            <span class="material-symbols-outlined">
-                receipt_long
-            </span>
-            <span class="font-medium">Orders</span>
-        </a>
-    </div>
-
-    <!-- <div class="flex flex-col gap-2 px-3">
-        <p class="text-gray-400 font-semibold">Settings</p>
-
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('*faq*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        help
-                    </span>
-                    <span class="font-medium tracking-wide">FAQs</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="{{ route('user.list') }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            list_alt
-                        </span>
-                        <span class="font-medium">List All FAQs</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('*faq/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            add_circle
-                        </span>
-                        <span class="font-medium">Add New FAQ</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <div class="group">
-            <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-1.5 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 {{ Request::is('terms*') ? 'text-blue-500 bg-blue-100' : '' }}" 
-                onclick="toggleMenu(this)"
-            >
-                <div class="flex items-center text-center gap-3">
-                    <span class="material-symbols-outlined">
-                        contract
-                    </span>
-                    <span class="font-medium tracking-wide">Terms & Conditions</span>
-                </div>
-                <i class="fa-solid fa-chevron-down text-sm mr-2"></i>
-            </div>
-
-            <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
-                <li>
-                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/list*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            list_alt
-                        </span>
-                        <span class="font-medium">Terms list List</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="" class="flex items-center text-sm text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ Request::is('terms/add*') ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">
-                        <span class="material-symbols-outlined">
-                            contract_edit
-                        </span>
-                        <span class="font-medium">Add New Terms</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div> -->
-
-    <div class="flex flex-col gap-2 px-3">
-    </div>
-
+    @endforeach
 </div>
 
 

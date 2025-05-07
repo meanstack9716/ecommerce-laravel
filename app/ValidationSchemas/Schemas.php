@@ -124,6 +124,11 @@ class Schemas
                 'description' => 'required|string|min:3|max:255',
                 'image' => 'required|image|max:5120'
             ],
+            'addNewProductBrandSchema' => [
+                'name' => 'required|string|min:3|max:255|unique:product_brands,name',
+                'description' => 'required|string|min:3|max:255',
+                'image' => 'required|image|max:5120'
+            ],
 
             // custom error messages
             'errorMessages' => [

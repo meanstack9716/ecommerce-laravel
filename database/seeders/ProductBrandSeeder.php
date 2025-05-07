@@ -232,6 +232,3 @@ class ProductBrandSeeder extends Seeder
           
     }
 }
-
-
-
