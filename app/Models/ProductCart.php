@@ -11,8 +11,8 @@ class ProductCart extends Model
     protected $fillable = [
         'product_id',
         'user_id',
-        'size',
-        'color',
+        'selected_size',
+        'selected_color',
         'quantity',
     ];
 

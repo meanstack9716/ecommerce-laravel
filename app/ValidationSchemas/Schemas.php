@@ -132,8 +132,8 @@ class Schemas
             'addProductCartSchema' => [
                 'product_id' => 'required|exists:products,id',
                 'quantity' => 'required|numeric|min:1',
-                'size' => 'required',
-                'color' => 'required'
+                'selected_size' => 'required',
+                'selected_color' => 'required'
             ],
             'removeProductCartSchema' => [
                 'item_ids' => 'array|required|min:1',

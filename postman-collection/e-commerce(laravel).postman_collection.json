@@ -605,7 +605,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"size\" : \"XL\",\r\n    \"color\" : \"#FFFFFF\",\r\n    \"quantity\" : \"2\"\r\n}",
+							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"selected_size\" : \"XL\",\r\n    \"selected_color\" : \"#FFFFFF\",\r\n    \"quantity\" : \"2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
