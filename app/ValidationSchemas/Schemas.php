@@ -129,6 +129,20 @@ class Schemas
                 'description' => 'required|string|min:3|max:255',
                 'image' => 'required|image|max:5120'
             ],
+            'addProductCartSchema' => [
+                'product_id' => 'required|exists:products,id',
+                'quantity' => 'required|numeric|min:1',
+                'size' => 'required',
+                'color' => 'required'
+            ],
+            'removeProductCartSchema' => [
+                'item_ids' => 'array|required|min:1',
+                'item_ids.*' => 'exists:product_carts,id'
+            ],
+            'updateProductCartSchema' => [
+                'id' => 'required|exists:product_carts,id',
+                'quantity' => 'nullable|numeric|min:1',
+            ],
 
             // custom error messages
             'errorMessages' => [
