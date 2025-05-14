@@ -63,6 +63,11 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', '_id');
     }
 
+    public function cartItems()
+    {
+        return $this->hasMany(ProductSize::class, 'user_id', '_id');
+    }
+
     protected static function boot()
     {
         parent::boot();
