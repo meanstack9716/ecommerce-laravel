@@ -110,6 +110,12 @@
                             'route' => route('products.add.step1'),
                             'active' => Request::is('products/add*'),
                         ],
+                        [
+                            'title' => 'Products List',
+                            'icon' => 'table',
+                            'route' => route('products.list'),
+                            'active' => Request::is('products/list*'),
+                        ],
                     ],
                 ],
                 [
@@ -137,25 +143,6 @@
                     'icon' => 'receipt_long',
                     'route' => '#',
                     'active' => Request::is('*orders*'),
-                ],
-            ],
-        ],
-        [
-            'label' => 'Settings',
-            'items' => [
-                [
-                    'title' => 'FAQs',
-                    'icon' => 'help',
-                    'submenu' => true,
-                    'active' => Request::is('*faq*'),
-                    'items' => [
-                        [
-                            'title' => 'List All FAQs',
-                            'icon' => 'list_alt',
-                            'route' => '',
-                            'active' => Request::is('*faq/list*'),
-                        ],
-                    ],
                 ],
             ],
         ],

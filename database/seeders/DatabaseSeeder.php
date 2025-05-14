@@ -27,13 +27,19 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('admin@123'),
                 'is_admin' => true,
+                ''
             ],
         ];
 
         foreach ($users as $user) {
-            User::updateOrCreate(
+            $adminUser = User::updateOrCreate(
                 ['email' => $user['email']],
-                $user
+                [
+                    'first_name' => $user->first_name,
+                    'email' => $user->email,
+                    'password' => $user->password,
+                    'is_admin' => true
+                ]
             );
         }
     }

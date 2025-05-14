@@ -15,6 +15,20 @@ use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
+    private function sendOtpToEmail($email)
+    {
+        VerificationCode::where('email', $email)->delete();
+
+        $code = rand(100000, 999999);
+
+        $verificationCode = VerificationCode::create([
+            'email' => $email,
+            'code' => $code,
+            'is_used' => false
+        ]);
+
+        Mail::to($email)->send(new EmailVerification($verificationCode));
+    }
 
     public function registerUser(Request $request) 
     {
@@ -23,12 +37,10 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $this->sendOtpToEmail($request->email);
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user->fresh(),
-            'token' => "Bearer $token"
         ]);
     }
 
@@ -41,11 +53,43 @@ class AuthController extends Controller
             return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $this->sendOtpToEmail($request->email);
 
         return response()->json([
             'message' => 'User signed in successfully',
-            'user' => $user,
+            // 'user' => $user,
+            // 'token' => "Bearer $token"
+        ]);
+    }
+
+    public function authenticateUser(Request $request)
+    {
+        $email = $request->email;
+        $code = $request->code;
+        $expiryMinutes = Constants::EMAIL_VERIFICATION_CODE_EXPIRY_MINUTES;
+
+        $user = User::where('email', $email)->first();
+
+        $verificationCode = VerificationCode::where('email', $email)
+            ->where('code', (int) $code)
+            ->where('is_used', false)
+            ->first();
+
+        if (!$verificationCode) {
+            return response()->json(['message' => 'Invalid or expired verification code.'], 401);
+        }
+
+        if ($verificationCode->created_at->addMinutes($expiryMinutes)->lt(now())) {
+            $verificationCode->delete();
+            return response()->json(['message' => 'Invalid or expired verification code.'], 401);
+        }
+
+        $verificationCode->delete();
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'You have successfully logged in.',
+            'user' => $user->fresh(),
             'token' => "Bearer $token"
         ]);
     }
@@ -61,18 +105,7 @@ class AuthController extends Controller
 
     public function sendEmailCode(Request $request)
     {
-        $email = $request->email;
-        VerificationCode::where('email', $email)->delete();
-
-        $code = rand(100000, 999999);
-
-        $verificationCode = VerificationCode::create([
-            'email' => $email,
-            'code' => $code,
-            'is_used' => false
-        ]);
-
-        Mail::to($email)->send(new EmailVerification($verificationCode));
+        $this->sendOtpToEmail($request->email);
 
         return response()->json([
             'message' => 'Verification code sent successfully.',

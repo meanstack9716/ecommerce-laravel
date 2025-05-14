@@ -39,26 +39,38 @@
             </div>
         </form>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 gap-8">
-            @forelse ($brands as $brand)
-                <div class="bg-gray-50 rounded-lg shadow-lg p-4">
-                    <img src="{{ asset('storage/' . $brand->img_path) }}" alt="{{ $brand->name }}" class="w-full h-48 object-contain rounded-t-lg">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-800">{{ $brand->name }}</h2>
-                        <p class="text-gray-600 mt-2">{{ $brand->description }}</p>
-                    </div>
-                    <div class="px-4 flex justify-between items-center text-sm">
-                        <a href="" class="text-blue-600 hover:text-blue-800 font-medium">Edit</a>
-                        <a href="" class="text-red-600 hover:text-red-800 font-medium">Delete</a>
-                    </div>
-                </div>
-            @empty
-                <div class="col-span-1 sm:col-span-2 lg:col-span-3 mt-6">
-                    <div class="bg-gray-50 rounded-lg shadow-lg p-4 w-full max-w-xl h-40 mx-auto flex justify-center items-center text-center">
-                        <p class="text-lg font-medium">No Brand Found</p>
-                    </div>
-                </div>
-            @endforelse
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
+            <table class="min-w-full table-auto">
+                <thead class="bg-indigo-100 text-gray-700">
+                    <tr>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Brand Image</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Brand Name</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Brand description</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse ($brands as $brand)
+                        <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
+                            <td class="px-6 py-3 text-sm text-center text-gray-800">
+                                <div class="relative w-full flex justify-center">
+                                    <img src="{{ asset('storage/' . $brand->img_path) }}" alt="{{ $brand->name }}"
+                                        class="h-16 max-w-full object-contain rounded-md" />
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->name }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->description }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium"></td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">
+                                No users found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
 
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">

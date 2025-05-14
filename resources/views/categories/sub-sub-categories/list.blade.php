@@ -54,8 +54,46 @@
                 @endif
             </div>
         </form>
+        
+        <div class="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
+            <table class="min-w-full table-auto">
+                <thead class="bg-indigo-100 text-gray-700">
+                    <tr>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Image</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Name</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Description</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Category Name</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Sub Category Name</th>
+                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200">
+                    @forelse ($subSubCategories as $category)
+                        <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
+                            <td class="px-6 py-3 text-sm text-center text-gray-800">
+                                <div class="relative w-full flex justify-center">
+                                    <img src="{{ asset('storage/' . $category->img_path) }}" alt="{{ $category->name }}"
+                                        class="w-16 h-16 object-cover rounded-md" />
+                                </div>
+                            </td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->name }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->description }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->category->name }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->subCategory->name }}</td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium"></td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-4 text-center text-sm text-gray-500">
+                                No category found.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 3xl:grid-cols-4 gap-8">
             @forelse ($subSubCategories as $cat)
                 <div class="bg-gray-50 rounded-lg shadow-lg p-4">
                     <img src="{{ asset('storage/' . $cat->img_path) }}" alt="{{ $cat->name }}" class="w-full h-48 object-contain rounded-t-lg">

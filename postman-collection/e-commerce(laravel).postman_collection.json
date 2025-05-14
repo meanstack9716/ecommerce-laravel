@@ -46,6 +46,24 @@
 					"response": []
 				},
 				{
+					"name": "Authenticate User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"testuser1@gmail.com\",\r\n    \"code\" : \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/auth/verify-user"
+					},
+					"response": []
+				},
+				{
 					"name": "Logout user",
 					"request": {
 						"method": "POST",
@@ -459,6 +477,105 @@
 								{
 									"key": "id",
 									"value": "681462825e3e9c27c70c8ab3"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Products list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "searchTerm",
+									"value": "saree",
+									"disabled": true
+								},
+								{
+									"key": "minPrice",
+									"value": "2000",
+									"disabled": true
+								},
+								{
+									"key": "maxPrice",
+									"value": "4000",
+									"disabled": true
+								},
+								{
+									"key": "brandIds",
+									"value": "brandId1, brandId2, brandId3",
+									"disabled": true
+								},
+								{
+									"key": "categoryIds",
+									"value": "id1, id2, id3",
+									"disabled": true
+								},
+								{
+									"key": "subCategoryIds",
+									"value": "id1, id2, id3",
+									"disabled": true
+								},
+								{
+									"key": "subSubCategoryIds",
+									"value": "id1, id2, id3",
+									"disabled": true
+								},
+								{
+									"key": "sizes",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Product Details by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6818f30dcff1e58e6f08e762"
 								}
 							]
 						}

@@ -1,27 +1,28 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Support\Facades\Storage;
 
 use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class ProductBrand extends Model
+class ProductGallery extends Model
 {
     //
     protected $fillable = [
-        'name',
-        'description',
-        'img_path'
+        'product_id',
+        'img_path',
+        'color'
     ];
 
     protected $hidden = [
         'updated_at',
         'created_at',
-        'img_path'
+        'img_path',
+        'product_id'
     ];
 
     protected $appends = [
-        'img_url'
+        'img_url',
     ];
 
     public function getImgUrlAttribute()
@@ -32,9 +33,9 @@ class ProductBrand extends Model
         return null;
     }
 
-    public function products()
+    public function product()
     {
-        return $this->hasMany(Product::class, 'brand_id', '_id');
+        return $this->belongsTo(Product::class, 'product_id', '_id');
     }
 
     public $timestamps = true;

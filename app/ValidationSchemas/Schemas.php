@@ -102,22 +102,27 @@ class Schemas
             'addNewProductDetailsSchema' => [
                 'product_title' => 'required|min:3',
                 'product_description' => 'required|min:10',
-                // 'product_details' => 'required|min:10',
+                'product_details' => 'required|min:10',
                 'product_price' => 'required|numeric|min:0',
-                'discount_per' => 'nullable|numeric|lt:100',
-                'product_brand' => 'required|min:10'
-                // 'product_sku' => 'required|unique:products',
-                // 'stock_quantity' => 'required|integer|min:0',
-
-
-                // 'is_featured' => 'boolean',
-                // 'is_active' => 'boolean',
-                // 'weight' => 'nullable|numeric|min:0',
-                // 'height' => 'nullable|numeric|min:0',
-                // 'width' => 'nullable|numeric|min:0',
-                // 'length' => 'nullable|numeric|min:0',
-                // // 'images' => 'required|array|min:1',
-                // 'images.*' => 'image|mimes:jpeg,png,jpg|max:2048', 
+                'discount_per' => 'nullable|numeric|lt:100|min:0',
+                'product_brand' => 'required|min:3',
+                'new_brand' => 'required_if:product_brand,another|nullable|string',
+                'product_sku' => 'required',
+                'stock_quantity' => 'required|integer|min:0',
+            ],
+            'addProductVariantsSchema' => [
+                'size_type' => 'required',
+            ],
+            'addProductGallerySchema' => [
+                'thumbnail' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+                // 'images' => 'required|array|min:1',
+                // 'images.*' => 'required|array|min:1',
+                // 'images.*.*' => 'image|mimes:jpeg,png,jpg|max:5120',
+            ],
+            'addNewProductBrandSchema' => [
+                'name' => 'required|string|min:3|max:255|unique:product_brands,name',
+                'description' => 'required|string|min:3|max:255',
+                'image' => 'required|image|max:5120'
             ],
             'addNewProductBrandSchema' => [
                 'name' => 'required|string|min:3|max:255|unique:product_brands,name',
@@ -139,6 +144,12 @@ class Schemas
                 'address_code.required' => 'The Postal Code is required.',
                 'address_code.regex' => 'The Postal Code format is not valid.',
                 'address_country.required' => 'The country Name is required.',
+                'sizes.required' => 'At least one size is required.',
+                'sizes.*.name.required' => 'Each size must have a name.',
+                'sizes.*.custom_size.required_if' => 'Custom size value is required when size is custom.',
+                'sizes.*.colors.required' => 'Each size must have at least one set of colors.',
+                'sizes.*.colors.custom.*.hex.required' => 'Custom color hex value is required.',
+                'images.*.image' => 'Only image type files are valid.'
             ]
         ];
     }

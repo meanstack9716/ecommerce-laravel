@@ -37,8 +37,8 @@
 @endif
 
 <div class="pt-1.5">
-    <input type="hidden" name="{{ $name }}" id="{{ $id }}"  value="{{ old($name, $value) }}">
-    <div id="{{ $editorId }}" > {!! old($name, $value) !!}</div>
+    <input type="hidden" name="{{ $name }}" id="{{ $id }}"  value="{!! old($name, $value) !!}">
+    <div id="{{ $editorId }}" ></div>
 </div>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
