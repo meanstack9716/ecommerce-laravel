@@ -14,7 +14,7 @@ class Product extends Model
         'details',
         'price',
         'final_price',
-        'user_id',
+        'seller_id',
         'discount_percent',
         'sku',
         'stock_quantity',
@@ -29,6 +29,7 @@ class Product extends Model
         'updated_at',
         'created_at',
         'category_id',
+        'seller_id',
         'brand_id',
         'thumbnail_path',
         'sub_category_id',
@@ -67,9 +68,10 @@ class Product extends Model
             : $price;
     }
 
-    public function user()
+    public function seller()
     {
-        return $this->belongsTo(User::class, 'user_id', '_id');
+        return $this->belongsTo(Seller::class, 'seller_id', '_id')
+            ->select(['business_name', 'business_type', 'business_email', 'business_mobile']);
     }
 
     public function category()
@@ -102,7 +104,7 @@ class Product extends Model
         return $this->hasMany(ProductSize::class, 'product_id', '_id'); // One product can have many sizes
     }
     
-    protected $with = ['category', 'subCategory', 'subSubCategory'];
+    protected $with = ['category', 'subCategory', 'subSubCategory', 'seller'];
 
     public $timestamps = true;
 

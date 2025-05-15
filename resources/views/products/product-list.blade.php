@@ -97,8 +97,8 @@
                         <td class="px-4 py-2 border text-center border-gray-200">{{ $product->sku }}</td>
 
                         <td class="px-4 py-2 border text-center border-gray-200">
-                            <a href="{{ route('products.details.show', $product->id) }}"
-                                class="text-blue-600 hover:underline text-sm">View Details</a>
+                            <a href="{{ route('product.edit.form', $product->id) }}"
+                                class="text-blue-600 hover:underline text-sm">Edit Details</a>
                         </td>
                     </tr>
                 @empty

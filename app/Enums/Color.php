@@ -40,4 +40,9 @@ enum Color: string
     {
         return self::hexCodes()[$color] ?? null;
     }
+
+    public static function allHexCodes(): array
+    {
+        return array_map(fn($color) => self::getHexCode($color->value), self::cases());
+    }
 }

@@ -12,11 +12,55 @@ use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\ProductGallery;
 use App\Models\ProductBrand;
+use App\Models\Seller;
 use App\Enums\Sizes;
 
 class ProductController extends Controller
 {
     private $productSessionKey = 'product_data';
+
+    private function getSizeDetails($data)
+    {
+        $sizes = [];
+        $colors = [];
+        foreach ($data as $sizeKey => $sizeData) {
+            $newSize = [
+                'id' => $sizeKey,
+                'value' => $sizeData['name'] == 'custom' ? $sizeData['custom_size'] : $sizeData['name'],
+                'colors' => []
+            ];
+            $standardColors = $sizeData['colors']['standard'] ?? [];    
+            foreach ($standardColors as $colorName => $colorDetails) {
+                if (!empty($colorDetails['enabled']) && $colorDetails['enabled'] == '1') {
+                    $newColor = [
+                        'id' => $colorName,
+                        'value' => $colorName,
+                        'name' => $colorDetails['name'],
+                        'quantity' => $colorDetails['quantity'] ?? 0
+                    ];
+                    $newSize['colors'][] = $newColor;
+                    $colors[] = $colorDetails['name'];
+                }
+            }
+
+            $customColors = $sizeData['colors']['custom'] ?? [];    
+            foreach ($customColors as $colorName => $colorDetails) {
+                $newColor = [
+                    'id' => $colorName,
+                    'value' => $colorDetails['hex'],
+                    'name' => $colorDetails['name'],
+                    'quantity' => $colorDetails['quantity'] ?? 0
+                ];
+                $newSize['colors'][] = $newColor;
+                $colors[] = $colorDetails['name'];
+            }
+            $sizes[] = $newSize;
+        }
+        return [
+            'sizes' => $sizes,
+            'colors' =>  array_values(array_unique($colors))
+        ];
+    }
 
     public function showAddProductForm(Request $request)
     {
@@ -107,50 +151,17 @@ class ProductController extends Controller
 
     public function storeProductVariantDetails(Request $request)
     {
-        $sizes = [];
-        $colors = [];
-        foreach ($request->sizes as $sizeKey => $sizeData) {
-            $newSize = [
-                'id' => $sizeKey,
-                'value' => $sizeData['name'] == 'custom' ? $sizeData['custom_size'] : $sizeData['name'],
-                'colors' => []
-            ];
-            $standardColors = $sizeData['colors']['standard'] ?? [];    
-            foreach ($standardColors as $colorName => $colorDetails) {
-                if (!empty($colorDetails['enabled']) && $colorDetails['enabled'] == '1') {
-                    $newColor = [
-                        'id' => $colorName,
-                        'value' => $colorName,
-                        'name' => $colorDetails['name'],
-                        'quantity' => $colorDetails['quantity']
-                    ];
-                    $newSize['colors'][] = $newColor;
-                    $colors[] = $colorDetails['name'];
-                }
-            }
+        $sizeDetails = $this->getSizeDetails($request->sizes);
 
-            $customColors = $sizeData['colors']['custom'] ?? [];    
-            foreach ($customColors as $colorName => $colorDetails) {
-                $newColor = [
-                    'id' => $colorName,
-                    'value' => $colorDetails['hex'],
-                    'name' => $colorDetails['name'],
-                    'quantity' => $colorDetails['quantity']
-                ];
-                $newSize['colors'][] = $newColor;
-                $colors[] = $colorDetails['name'];
-            }
-            $sizes[] = $newSize;
-        }
-
-        $request->session()->put($this->productSessionKey.'.sizes', $sizes);
+        $request->session()->put($this->productSessionKey.'.sizes', $sizeDetails['sizes']);
         $request->session()->put($this->productSessionKey.'.size_type', $request->size_type);
-        $request->session()->put($this->productSessionKey.'.colors', array_values(array_unique($colors)));
+        $request->session()->put($this->productSessionKey.'.colors', $sizeDetails['colors']);
         return redirect()->route('products.add.step4');
     }
 
     public function completeProductRegistration(Request $request)
     {
+        $seller = Seller::where('user_id', $request->user()->id)->first();
         $productData = $request->session()->get($this->productSessionKey);
 
         if(empty($productData['basic']) || empty($productData['category']) || empty($productData['sizes'])) {
@@ -169,7 +180,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create([
-            'user_id' => $request->user()->id,
+            'seller_id' => $seller->id,
             'title' => $productData['basic']['product_title'],
             'description' => $productData['basic']['product_description'],
             'details' => $productData['basic']['product_details'],
@@ -254,6 +265,84 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         return view('products.details', compact('product'));
+    }
+
+    public function getEditProductForm($id)
+    {
+        $product = Product::findOrFail($id);    
+        return view('products.edit-product', compact('product'));
+    }
+
+    public function updateProductDetails(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);    
+        $sizeDetails = $this->getSizeDetails($request->sizes);
+
+        $product->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'details' => $request->details,
+            'price' => (float)$request->price,
+            'discount_percent' => (float)$request->discount_percent,
+            'sku' => $request->sku,
+            'stock_quantity' => $request->stock_quantity,
+        ]);
+
+        $existingSizeIds = $product->sizes()->pluck('id')->toArray();
+        $updatedSizeIds = [];
+
+        foreach ($sizeDetails['sizes'] as $sizeData) {
+            $size = ProductSize::updateOrCreate(
+                [
+                    'product_id' => $product->id,
+                    'value' => $sizeData['value'],
+                    'size_type' => $request->size_type
+                ],
+                [
+                    'product_id' => $product->id,
+                    'value' => $sizeData['value'],
+                    'size_type' => $request->size_type
+                ]
+            );
+    
+            $updatedSizeIds[] = $size->id;
+    
+            // Get all existing variant IDs for this size
+            $existingVariantIds = $size->variants()->pluck('id')->toArray();
+            $updatedVariantIds = [];
+    
+            // Process colors/variants
+            foreach ($sizeData['colors'] ?? [] as $color) {
+                $variant = ProductVariant::updateOrCreate(
+                    [
+                        'size_id' => $size->id,
+                        'value' => $color['value']
+                    ],
+                    [
+                        'name' => $color['name'],
+                        'stock_quantity' => $color['quantity'] ?? 0
+                    ]
+                );
+        
+                $updatedVariantIds[] = $variant->id;
+            }
+    
+            if (!empty($existingVariantIds)) {
+                $variantsToDelete = array_diff($existingVariantIds, $updatedVariantIds);
+                if (!empty($variantsToDelete)) {
+                    ProductVariant::whereIn('id', $variantsToDelete)->delete();
+                }
+            }
+        }
+
+        if (!empty($existingSizeIds)) {
+            $sizesToDelete = array_diff($existingSizeIds, $updatedSizeIds);
+            if (!empty($sizesToDelete)) {
+                ProductSize::whereIn('id', $sizesToDelete)->delete();
+            }
+        }
+
+        return redirect()->route('products.list');
     }
 
     public function fetchProductsList(Request $request) {

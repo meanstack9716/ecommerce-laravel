@@ -209,6 +209,7 @@ class UserController extends Controller
 
         $identity = IdentityProof::create([
             'user_id' => $user->id,
+            'seller_id' => $seller->id,
             'pan_number' => $registrationData['identity']['pan_number'],
             'pan_front_path' => $registrationData['identity']['pan_front'],
             'pan_back_path' => $registrationData['identity']['pan_back'],

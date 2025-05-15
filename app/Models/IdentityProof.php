@@ -11,6 +11,7 @@ class IdentityProof extends Model
     //
     protected $fillable = [
         'user_id',
+        'seller_id',
         'pan_number',
         'pan_front_path',
         'pan_back_path',
@@ -30,6 +31,11 @@ class IdentityProof extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class, 'seller_id', 'id');
     }
 
     protected static function boot()

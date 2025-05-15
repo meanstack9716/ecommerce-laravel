@@ -33,10 +33,20 @@ class Seller extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function identityProof()
+    {
+        return $this->hasOne(IdentityProof::class);
+    }
     
     public function admin()
     {
         return $this->belongsTo(User::class, 'processed_by');
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'seller_id', '_id');
     }
 
     protected static function boot()
@@ -44,7 +54,9 @@ class Seller extends Model
         parent::boot();
 
         static::creating(function ($seller) {     
-            $seller->status = Constants::STATUS_PENDING;
+            if (empty($seller->status)) {
+                $seller->status = Constants::STATUS_PENDING;
+            }
         });
     }
 
