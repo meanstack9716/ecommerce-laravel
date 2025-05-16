@@ -14,8 +14,6 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
             Route::patch('/{orderId}/update-status', [OrderController::class, 'updateOrderStatus'])->name('orders.update-status');
             Route::get('/{orderId}/details', [OrderController::class, 'getOrderDetails'])->name('orders.details.show');
 
-            // Route::get('/list/{id}', [ProductController::class, 'getProductDetailView'])->name('products.details.show');
-
         });
     });
 });
