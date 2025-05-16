@@ -605,7 +605,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"selected_size\" : \"XL\",\r\n    \"selected_color\" : \"#FFFFFF\",\r\n    \"quantity\" : \"2\"\r\n}",
+							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"selected_size\" : \"M\",\r\n    \"selected_color\" : \"#FFFFFF\",\r\n    \"quantity\" : \"2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -634,7 +634,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"size\" : \"m\",\r\n    \"color\" : \"#000000\",\r\n    \"quantity\" : \"2\"\r\n}",
+							"raw": "{\r\n    \"id\" : \"68259d2a2c431722ff0435d3\",\r\n    \"size\" : \"M\",\r\n    \"color\"  : \"#123456\",\r\n    \"quantity\" : 402\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -732,6 +732,229 @@
 							}
 						},
 						"url": "{{base_url}}/cart/remove-all"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Addresses",
+			"item": [
+				{
+					"name": "Available Address Types",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "{{base_url}}/address/types-list"
+					},
+					"response": []
+				},
+				{
+					"name": "Add new Address",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"contact_name\" : \"\",\r\n    \"contact_mobile\" : \"\",\r\n    \"line1\": \"Street 1\",\r\n    \"line2\": \"House No32\",\r\n    \"type\": \"Home\",\r\n    \"city\": \"\",\r\n    \"state\": \"\",\r\n    \"postal_code\": \"\",\r\n    \"country\": \"\",\r\n    \"is_primary\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/address/add"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"contact_name\" : \"\",\r\n    \"contact_mobile\" : \"\",\r\n    \"address_id\" : \"6800cfce25c1bbc35f047e9b\",\r\n    \"line1\": \"Street 1\",\r\n    \"line2\": \"House No32\",\r\n    \"type\": \"Home\",\r\n    \"city\": \"\",\r\n    \"state\": \"\",\r\n    \"postal_code\": \"\",\r\n    \"country\": \"\",    \r\n    \"is_primary\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/address/update"
+					},
+					"response": []
+				},
+				{
+					"name": "User Addresses List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": "{{base_url}}/address/list"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Address",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/address/remove/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"address",
+								"remove",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Place Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cart_items_ids\" : [],\r\n    \"shipping_address_id\" : \"\",\r\n    \"payment_method\" : \"\",\r\n    \"order_note\" : \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/orders/new"
+					},
+					"response": []
+				},
+				{
+					"name": "List All Orders",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/orders/list"
 					},
 					"response": []
 				}

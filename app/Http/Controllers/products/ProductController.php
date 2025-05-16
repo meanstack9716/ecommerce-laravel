@@ -186,6 +186,7 @@ class ProductController extends Controller
             'details' => $productData['basic']['product_details'],
             'price' => (float)$productData['basic']['product_price'],
             'discount_percent' => (float)$productData['basic']['discount_per'],
+            'delivery_days' => mt_rand(1, 9),
             'sku' => $productData['basic']['product_sku'],
             'stock_quantity' => $productData['basic']['stock_quantity'],
             'brand_id' => $brandId,
@@ -240,6 +241,7 @@ class ProductController extends Controller
 
     public function getAllProductsList(Request $request) {
 
+        $user = $request->user();
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
@@ -250,6 +252,10 @@ class ProductController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%");
             });
+        }
+
+        if (!$user->is_admin) {
+            $query->where('seller_id', $user->sellerDetails->id);
         }
 
         if ($categoryId) {

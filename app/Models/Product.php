@@ -18,6 +18,7 @@ class Product extends Model
         'discount_percent',
         'sku',
         'stock_quantity',
+        'delivery_days',
         'brand_id',
         'thumbnail_path',
         'category_id',

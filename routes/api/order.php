@@ -1,0 +1,14 @@
+<?php
+
+use App\Http\Controllers\Orders\OrderController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\ValidateRequest;
+
+Route::prefix('orders')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+
+        Route::post('/new', [OrderController::class, 'createNewOrder'])->middleware('validateRequest:createNewOrderSchema');
+        Route::get('/list', [OrderController::class, 'fetchAllOrderItems']);
+    });
+});
