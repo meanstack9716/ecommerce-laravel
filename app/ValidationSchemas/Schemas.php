@@ -143,6 +143,31 @@ class Schemas
                 'id' => 'required|exists:product_carts,id',
                 'quantity' => 'nullable|numeric|min:1',
             ],
+            'addNewAddressSchema' => [
+                'contact_name' => 'required|string|min:3',
+                'contact_mobile' => 'required|string|regex:/^[+]\d{2}?\d{10}$/',
+                'line1' => 'required|string|min:3',
+                'type' => ['required', Rule::in(AddressType::values())],
+                'city' => 'required|string',
+                'state' => 'required|string|min:2',
+                'postal_code' => 'required|string|regex:/^[1-9][0-9]{5}$/',
+                'country' => 'required|string|min:3',
+            ],
+            'updateAddressSchema' => [
+                'address_id' => 'required|exists:addresses,id',
+                'line1' => 'nullable|string|min:3',
+                'type' => ['nullable', Rule::in(AddressType::values())],
+                'city' => 'nullable|string',
+                'state' => 'nullable|string|min:2',
+                'postal_code' => 'nullable|string|regex:/^[1-9][0-9]{5}$/',
+                'country' => 'nullable|string|min:3',
+            ],
+            'createNewOrderSchema' => [
+                'shipping_address_id' => 'required|exists:addresses,id',
+                'payment_method' => 'required',
+                'cart_items_ids' => 'required|array|min:1',
+                'cart_items_ids.*' => 'required|exists:product_carts,id'
+            ],
 
             // custom error messages
             'errorMessages' => [

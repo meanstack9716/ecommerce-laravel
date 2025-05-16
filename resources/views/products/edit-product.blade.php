@@ -66,7 +66,7 @@
             <form action="{{ route('product.edit.submit', $product->id) }}" method="POST" class="mb-0" enctype="multipart/form-data" id="product-submit-form">
                 @csrf
                 <div class="space-y-6">
-                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Description</h3>
+                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Description {{ $user->email }}</h3>
         
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         @foreach ($detailFields as $field)

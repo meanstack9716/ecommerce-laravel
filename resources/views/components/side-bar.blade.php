@@ -141,7 +141,7 @@
                 [
                     'title' => 'Orders',
                     'icon' => 'receipt_long',
-                    'route' => '#',
+                    'route' =>  route('orders.list'),
                     'active' => Request::is('*orders*'),
                 ],
             ],

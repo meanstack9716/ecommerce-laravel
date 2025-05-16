@@ -68,15 +68,17 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            Seller::create([
-                'user_id' => $adminUser['id'],
-                'business_name' => $user['business_details']['business_name'],
-                'business_type' => $user['business_details']['business_type'],
-                'business_email' => $user['business_details']['business_email'],
-                'business_mobile' => $user['business_details']['business_mobile'],
-                'gst_num' => $user['business_details']['gst_num'],
-                'status' => $user['business_details']['status'],
-            ]);
+            Seller::updateOrCreate(
+                ['user_id' => $adminUser['id']],
+                [
+                    'business_name' => $user['business_details']['business_name'],
+                    'business_type' => $user['business_details']['business_type'],
+                    'business_email' => $user['business_details']['business_email'],
+                    'business_mobile' => $user['business_details']['business_mobile'],
+                    'gst_num' => $user['business_details']['gst_num'],
+                    'status' => $user['business_details']['status'],
+                ]
+            );
 
             Address::create([
                 'user_id' => $adminUser['id'],

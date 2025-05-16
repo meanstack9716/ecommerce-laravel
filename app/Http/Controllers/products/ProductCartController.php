@@ -60,7 +60,7 @@ class ProductCartController extends Controller
                 'selected_size' => $productSize->value,
                 'selected_color' => $request->selected_color,
                 'selected_color_name' => $productVariant->name,
-                'quantity' => $request->quantity
+                'quantity' => (float)$request->quantity
             ]);
         }
 
