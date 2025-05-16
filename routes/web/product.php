@@ -17,25 +17,28 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
 
             Route::get('/add/step1', [ProductController::class, 'showAddProductForm'])->name('products.add.step1');
             Route::post('/add/step1', [ProductController::class, 'storeProductCategoryDetails'])
-                ->middleware('validateRequest:addNewProductCategorySchema')
-                ->name('products.add.step1.submit');
-
+            ->middleware('validateRequest:addNewProductCategorySchema')
+            ->name('products.add.step1.submit');
+            
             Route::get('/add/step2', [ProductController::class, 'showAddProductForm'])->name('products.add.step2');
             Route::post('/add/step2', [ProductController::class, 'storeProductBasicDetails'])
-                ->middleware('validateRequest:addNewProductDetailsSchema')
-                ->name('products.add.step2.submit');
-
+            ->middleware('validateRequest:addNewProductDetailsSchema')
+            ->name('products.add.step2.submit');
+            
             Route::get('/add/step3', [ProductController::class, 'showAddProductForm'])->name('products.add.step3');
             Route::post('/add/step3', [ProductController::class, 'storeProductVariantDetails'])
-                ->middleware('validateRequest:addProductVariantsSchema')
-                ->name('products.add.step3.submit');
-
+            ->middleware('validateRequest:addProductVariantsSchema')
+            ->name('products.add.step3.submit');
+            
             Route::get('/add/step4', [ProductController::class, 'showAddProductForm'])->name('products.add.step4');
             Route::post('/add/step4', [ProductController::class, 'completeProductRegistration'])
-                ->middleware('validateRequest:addProductGallerySchema')
-                ->name('products.add.step4.submit');
-        });
+            ->middleware('validateRequest:addProductGallerySchema')
+            ->name('products.add.step4.submit');
 
+            Route::get('/edit/{id}', [ProductController::class, 'getEditProductForm'])->name('product.edit.form');
+            Route::post('/edit/{id}', [ProductController::class, 'updateProductDetails'])->name('product.edit.submit');
+        });
+        
 
         Route::prefix('brands')->group(function () {
 

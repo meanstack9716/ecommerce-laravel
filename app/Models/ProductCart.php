@@ -13,6 +13,7 @@ class ProductCart extends Model
         'user_id',
         'selected_size',
         'selected_color',
+        'selected_color_name',
         'quantity',
     ];
 

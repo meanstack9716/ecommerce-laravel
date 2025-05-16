@@ -35,23 +35,37 @@ class ProductCartController extends Controller
             ]], 422);
         }
 
-        if($productVariant->stock_quantity < $request->quantity) {
+        $existingCartItem = ProductCart::where('user_id', $request->user()->id)
+            ->where('product_id', $request->product_id)
+            ->where('selected_size', $productSize->value)
+            ->where('selected_color', $request->selected_color)
+            ->first();
+
+        $newQuantity = $existingCartItem ? $existingCartItem->quantity + $request->quantity : $request->quantity;
+
+        if($productVariant->stock_quantity < $newQuantity) {
             return response()->json(['errors' => [
                 'quantity' => 'The requested quantity is not available in stock'
             ]], 422);
         }
 
-        ProductCart::create([
-            'user_id' => $request->user()->id,
-            'product_id' => $request->product_id,
-            'selected_size' => $productSize->value,
-            'selected_color' => $request->selected_color,
-            'quantity' => $request->quantity
-        ]);
+        if ($existingCartItem) {
+            $existingCartItem->update([
+                'quantity' => $newQuantity
+            ]);
+        } else {
+            ProductCart::create([
+                'user_id' => $request->user()->id,
+                'product_id' => $request->product_id,
+                'selected_size' => $productSize->value,
+                'selected_color' => $request->selected_color,
+                'selected_color_name' => $productVariant->name,
+                'quantity' => $request->quantity
+            ]);
+        }
 
         return response()->json([
-            'message' => 'Product Successfully added to cart.',
-            'product' => $productVariant
+            'message' => 'Product Successfully added to cart.'
         ]);
     }
 
@@ -62,6 +76,7 @@ class ProductCartController extends Controller
         $cartItems = ProductCart::with([
             'product.sizes',
             'product.sizes.variants',
+            'product.gallery',
         ])->where('user_id', $userId)
         ->get();
 
@@ -135,6 +150,7 @@ class ProductCartController extends Controller
                     // Only update color if it was explicitly provided
                     if ($request->has('color')) {
                         $updateData['selected_color'] = $request->color;
+                        $updateData['selected_color_name'] = $productVariant->name;
                     }
                 }
             }
@@ -154,14 +170,15 @@ class ProductCartController extends Controller
                 $errors['color'] = 'The color selected is not available for this size';
             } else {
                 $updateData['selected_color'] = $request->color;
+                $updateData['selected_color_name'] = $productVariant->name;
             }
         }
 
         // Check if quantity is being updated
         if ($request->has('quantity')) {
             // Determine which product variant to check stock against
-            $sizeToCheck = $request->has('size') ? $request->size : $cartItem->size;
-            $colorToCheck = $request->has('color') ? $request->color : $cartItem->color;
+            $sizeToCheck = $request->has('size') ? $request->size : $cartItem->selected_size;
+            $colorToCheck = $request->has('color') ? $request->color : $cartItem->selected_color;
         
             $productSize = ProductSize::where('product_id', $cartItem->product_id)
                 ->where('value', 'like', $sizeToCheck)
@@ -188,7 +205,7 @@ class ProductCartController extends Controller
 
         return response()->json([
             'message' => 'Cart item updated successfully',
-            'data' => $cartItem
+            'data' => $cartItem->fresh()
         ]);
     }
 
