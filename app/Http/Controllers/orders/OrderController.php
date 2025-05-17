@@ -163,7 +163,7 @@ class OrderController extends Controller
             $query->where('status', $status);
         }
 
-        if($request->has('sellerId')) {
+        if($sellerId) {
             $query->where('seller_id', $sellerId);
         }
 

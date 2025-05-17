@@ -1,7 +1,7 @@
 <form action="{{ route('seller.register.personal.submit') }}" method="POST" class="mb-0">
     @csrf
     <div class="space-y-6">
-        <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Personal Information</h3>
+        <h3 class="text-xl font-medium text-gray-900">Personal Information</h3>
         
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             <div class="sm:col-span-3">
@@ -57,8 +57,27 @@
             </div>
         </div>
 
-        <h3 class="text-xl mt-4 font-medium text-gray-900 border-b pb-2 border-gray-300">Address Details</h3>
+        <h3 class="text-xl mt-4 font-medium text-gray-900">Address Details</h3>
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+
+            <div class="sm:col-span-6">
+                <label for="address_type" class="font-medium 3xl:text-xl 3xl:font-semibold">Address Type
+                    <span class="text-red-600">*</span>
+                </label>
+                <input type="hidden" name="address_type" id="address_type" value="{{ old('address_type', session('client_registration_data.businessAddress.type')) }}">
+                <div class="mt-3 flex flex-wrap items-center gap-4 text-center address-type-options">
+                    @foreach (\App\Enums\AddressType::options() as $key => $label)
+                        <div class="min-w-20 cursor-pointer py-2 border
+                            {{ old('address_type') == $key || session('client_registration_data.businessAddress.type') == $key ? 'bg-blue-500 text-white border-blue-500' : 'border-neutral-500 text-neutral-500' }} px-6 rounded-3xl font-semibold"
+                            data-value="{{ $key }}">
+                            {{ $label }}
+                        </div>
+                    @endforeach
+                </div>
+                @error('address_type')
+                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div class="sm:col-span-3">
                 <label for="address_line1" class="font-medium 3xl:text-xl 3xl:font-semibold">Street Line 1

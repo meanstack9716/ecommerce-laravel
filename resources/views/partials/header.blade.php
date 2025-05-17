@@ -4,9 +4,9 @@
             <div class="lg:hidden cursor-pointer" id="sidebar-toggle">
                 <i class="fa-solid fa-bars text-xl text-neutral-200" id="menu-icon"></i>
             </div>
-            <div class="hidden lg:block cursor-pointer" id="menu-toggle">
+            <!-- <div class="hidden lg:block cursor-pointer" id="menu-toggle">
                 <i class="fa-solid fa-bars text-xl text-neutral-200" id="menu-icon"></i>
-            </div>
+            </div> -->
             <img src="{{ asset('images/logo.png') }}" alt="company-name" class="h-10  pointer-events-none hidden lg:block">
             <img src="{{ asset('images/favicon-white.png') }}" alt="Logo" class=" pointer-events-none h-12 lg:hidden">
         </div>

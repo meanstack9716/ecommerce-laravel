@@ -1,7 +1,7 @@
 <form action="{{ route('products.add.step4.submit') }}" method="POST" class="mb-0" enctype="multipart/form-data" id="product-gallery-form">
     @csrf
     <div class="space-y-6">
-        <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Gallery</h3>
+        <h3 class="text-xl font-medium text-gray-900">Product Gallery</h3>
         <div class="pb-4">
             <x-file-upload 
                 id="thumbnail-image"

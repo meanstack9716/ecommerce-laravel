@@ -8,7 +8,7 @@
     </div> -->
 
     <div class="space-y-6">
-        <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Variants</h3>
+        <h3 class="text-xl font-medium text-gray-900">Product Variants</h3>
 
         <div class="flex justify-between items-center mb-6">
             <div class="">

@@ -89,6 +89,7 @@ class UserController extends Controller
         ];
 
         $userAddress = [
+            'type' => $request->address_type,
             'line1' => $request->address_line1,
             'line2' => $request->address_line2,
             'city' => $request->address_city,
@@ -188,6 +189,7 @@ class UserController extends Controller
 
         $userAddress = Address::create([
             'user_id' => $user->id,
+            'type' => $registrationData['userAddress']['type'],
             'line1' => $registrationData['userAddress']['line1'],
             'line2' => $registrationData['userAddress']['line2'],
             'city' => $registrationData['userAddress']['city'],
@@ -226,9 +228,26 @@ class UserController extends Controller
     public function fetchSellerList(Request $request)
     {
         $limit = $request->input('limit', 10);
+        $search = $request->input('search');
 
-        $query = Seller::query()
-            ->with(['userDetails']);
+        $query = Seller::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+
+            $q->where('business_name', 'like', "%{$search}%")
+                ->orWhere('business_email', 'like', "%{$search}%")
+                ->orWhere('business_mobile', 'like', "%{$search}%")
+
+                ->orWhereHas('userDetails', function ($userQuery) use ($search) {
+                    $userQuery->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone_number', 'like', "%{$search}%");
+                });
+            });
+        }
+
         $sellers = $query->paginate($limit);
         return view('sellers.list', compact('sellers', 'limit'));
     }

@@ -56,7 +56,7 @@
 @endphp
 
 @section('content')
-<div class="p-4 sm:p-8">
+<div class="p-4 sm:p-6">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6 mt-5">
         <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Edit Product</h1>
@@ -66,7 +66,7 @@
             <form action="{{ route('product.edit.submit', $product->id) }}" method="POST" class="mb-0" enctype="multipart/form-data" id="product-submit-form">
                 @csrf
                 <div class="space-y-6">
-                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Description</h3>
+                    <h3 class="text-xl font-medium text-gray-900">Product Description</h3>
         
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         @foreach ($detailFields as $field)
@@ -104,7 +104,7 @@
                         </div>
                     </div>
 
-                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Size and Variants</h3>
+                    <h3 class="text-xl font-medium text-gray-900">Product Size and Variants</h3>
                     <div class="flex justify-between items-center mb-6">
                         <div class="">
                             <label class="font-medium 3xl:text-xl 3xl:font-semibold">Size Type

@@ -37,7 +37,7 @@ class Schemas
             'updateUserSchema' => [
                 'first_name' => 'sometimes|string|max:255|min:3',
                 'last_name' => 'sometimes|string|max:255|min:3',
-                'phone_number' => 'sometimes|string|regex:/^[+]\d{2}?\d{10}$/',
+                'phone_number' => 'sometimes|string|regex:/^[0-9]{10}$/',
                 'isUniqueMobileExceptUsers' => true,
             ],
             'imageSchema' => [
@@ -47,7 +47,8 @@ class Schemas
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
-                'phone_number' => 'required|string|regex:/^[+]\d{2}?\d{10}$/|unique:users,phone_number',
+                'phone_number' => 'required|string|regex:/^[0-9]{10}$/|unique:users,phone_number',
+                'address_type' => ['required', Rule::in(AddressType::values())],
                 'address_line1' => 'required|string|min:3',
                 'address_city' => 'required|string',
                 'address_state' => 'required|string|min:3',
@@ -58,7 +59,7 @@ class Schemas
                 'business_name' => 'required|string|min:4',
                 'business_email' => 'required|email|unique:sellers,email',
                 'business_type' => ['required', Rule::in(BusinessType::values())],
-                'business_mobile' => 'required|string|regex:/^[+]\d{2}?\d{10}$/|unique:sellers,phone_number',
+                'business_mobile' => 'required|string|regex:/^[0-9]{10}$/|unique:sellers,phone_number',
                 'gst_num' => 'required|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/',
                 'address_line1' => 'required|string|min:3',
                 'address_type' => ['required', Rule::in(AddressType::values())],
@@ -149,7 +150,7 @@ class Schemas
             ],
             'addNewAddressSchema' => [
                 'contact_name' => 'required|string|min:3',
-                'contact_mobile' => 'required|string|regex:/^[+]\d{2}?\d{10}$/',
+                'contact_mobile' => 'required|string|regex:/^[0-9]{10}$/',
                 'line1' => 'required|string|min:3',
                 'type' => ['required', Rule::in(AddressType::values())],
                 'city' => 'required|string',

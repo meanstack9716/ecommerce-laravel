@@ -1,8 +1,8 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="p-4 sm:p-8">
-    <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6 mt-5">
+<div class="p-4 sm:p-6">
+    <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
         <div class="text-center mb-8">
             <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">Add New Category</h1>
             <p class="mt-2 text-sm text-gray-600">Fill in the details below to create a new category.</p>

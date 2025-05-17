@@ -44,8 +44,7 @@
                 </button>
             </div>
         </form>
-        <div class="grid grid-cols-4 pt-8 pb-2 items-center w-3/5 mx-auto gap-2">
-            <img src="{{ asset('images/favicon.png') }}" alt="Logo" class=" pointer-events-none mx-auto">   
+        <div  class="grid grid-cols-3 pt-8 pb-4 items-center w-2/3 mx-auto gap-2">
             <img src="{{ asset('images/logo-blue.png') }}" alt="company-name" class="col-span-3 pointer-events-none mx-auto">   
         </div>
     </div>

@@ -4,13 +4,13 @@
 <?php
     use App\Constants\Constants;
 ?>
-<div class="p-4 sm:p-8 w-full">
-    <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
-        <div class="py-5 xl:pt-0 border-b border-[#F1F1F1]">
+<div class="p-4 sm:p-6 w-full">
+    <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-4">
+        <div class="py-5 xl:py-0">
             <h1 class="text-[26px] font-bold tracking-wide">All Sellers</h1>
         </div>
 
-        <form method="GET" action="{{ route('seller.list') }}" class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+        <form method="GET" action="{{ route('seller.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <div class="flex xl:items-center flex-col xl:flex-row gap-y-3 gap-x-8">
                 <div class="flex flex-col items-start gap-2">
@@ -29,13 +29,13 @@
                     </div>
                 </div>
             </div>
-            <div class="flex items-center gap-5">
-                <button type="submit" class="bg-[#334a8b] text-white px-4 py-2 3xl:px-6 rounded-lg text-sm 3xl:text-lg hover:bg-blue-800 font-medium">
+            <div class="flex items-end gap-5">
+                <button type="submit" class="bg-[#334a8b] text-white px-4 py-2 3xl:px-6 rounded-lg border border-[#334a8b] 3xl:text-lg hover:bg-blue-800 font-medium">
                     Apply Filters
                 </button>
                 @if(request('search'))
-                    <a href="{{ route('user.list', ['limit' => request('limit', 10)]) }}"
-                        class="text-sm font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
+                    <a href="{{ route('seller.list', ['limit' => request('limit', 10)]) }}"
+                        class="font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
                         Clear Filter
                     </a>
                 @endif
@@ -124,8 +124,8 @@
                     @endforeach
                 </select>
             </form>
-            <div class="min-w-1/2">
-                {{ $sellers->appends(['limit' => $limit])->links() }}
+            <div class="">
+                {{ $sellers->appends(['limit' => $limit])->links('pagination.simple') }}
             </div>
         </div>
     </div>

@@ -3,7 +3,15 @@
 use App\Http\Controllers\Products\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\ValidateRequest;
 
-Route::get('/products/list', [ProductController::class, 'fetchProductsList']);
-Route::get('/products/{id}', [ProductController::class, 'fetchProductDetailsById']);
 
+Route::prefix('products')->group(function () {
+
+    Route::get('/list', [ProductController::class, 'fetchProductsList']);
+    Route::get('/{id}', [ProductController::class, 'fetchProductDetailsById']);
+    Route::middleware(['auth:sanctum'])->group(function () {
+
+        Route::post('/review', [ProductController::class, 'createNewOrder'])->middleware('validateRequest:postNewReviewSchema');
+    });
+});
