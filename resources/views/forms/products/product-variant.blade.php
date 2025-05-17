@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="size-select cursor-pointer mt-2 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Select size</option>
                             ${sizeOptions.map(size => `
-                                <option value="${size}">${size}</option>
+                                <option class="disabled:text-neutral-200" value="${size}">${size}</option>
                             `).join('')}
                             <option value="custom">Custom Size</option>
                         </select>
@@ -175,6 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sizeContainer.appendChild(sizeBlock);
         setupSizeBlockEvents(sizeBlock);
         updateRemoveButtons();
+        updateDisabledSizeOptions();
     }
 
     function setupSizeBlockEvents(sizeBlock) {
@@ -186,11 +187,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         sizeSelect.addEventListener('change', function() {
             customSizeInput.classList.toggle('hidden', this.value !== 'custom');
+            updateDisabledSizeOptions();
         });
 
         removeBtn.addEventListener('click', function() {
             sizeBlock.remove();
             updateRemoveButtons();
+            updateDisabledSizeOptions();
         });
 
         addCustomColorBtn.addEventListener('click', function() {
@@ -201,6 +204,26 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.addEventListener('change', function() {
                 const quantityInput = this.closest('div').nextElementSibling;
                 quantityInput.classList.toggle('hidden', !this.checked);
+            });
+        });
+    }
+
+    function updateDisabledSizeOptions() {
+        const allSizeSelects = document.querySelectorAll('.size-select');
+        const selectedSizes = new Set();
+
+        allSizeSelects.forEach(select => {
+            if (select.value && select.value !== 'custom') {
+                selectedSizes.add(select.value);
+            }
+        });
+
+        allSizeSelects.forEach(select => {
+            const currentValue = select.value;
+            Array.from(select.options).forEach(option => {
+                if (option.value && option.value !== 'custom') {
+                    option.disabled = selectedSizes.has(option.value) && option.value !== currentValue;
+                }
             });
         });
     }

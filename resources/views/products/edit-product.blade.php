@@ -66,7 +66,7 @@
             <form action="{{ route('product.edit.submit', $product->id) }}" method="POST" class="mb-0" enctype="multipart/form-data" id="product-submit-form">
                 @csrf
                 <div class="space-y-6">
-                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Description {{ $user->email }}</h3>
+                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Description</h3>
         
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         @foreach ($detailFields as $field)
@@ -136,25 +136,6 @@
                             + Add Another Size
                         </button>
                     </div>
-<!-- 
-                    <h3 class="text-xl font-medium text-gray-900 border-b pb-2 border-gray-300">Product Gallery</h3>
-                    <div class="pb-4">
-                        <x-file-upload 
-                            id="thumbnail-image"
-                            name="thumbnail"
-                            label="Update Thumbnail Image"
-                            helpText="Image (PNG, JPG, JPEG) up to 5MB. Leave empty to keep current thumbnail."
-                            accept="image/png,image/jpeg,image/jpg"
-                        />
-                        <p id="thumbnail-error" class="mt-2 text-sm text-red-600 hidden"></p>
-                        
-                        @if($product->thumbnail_path)
-                            <div class="mt-4">
-                                <p class="text-sm font-medium text-gray-700">Current Thumbnail:</p>
-                                <img src="{{ asset('storage/'.$product->thumbnail_path) }}" class="h-20 w-20 object-cover rounded-md mt-2">
-                            </div>
-                        @endif
-                    </div> -->
                 </div>
                 <div class="mt-8 flex justify-center">
                     <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
