@@ -13,5 +13,6 @@ Route::prefix('cart')->group(function () {
         Route::delete('/remove', [ProductCartController::class, 'removeCartItems'])->middleware('validateRequest:removeProductCartSchema');
         Route::delete('/remove-all', [ProductCartController::class, 'removeAllCartItems']);
         Route::put('/update', [ProductCartController::class, 'updateCartProduct'])->middleware('validateRequest:updateProductCartSchema');
+        Route::post('/to-wishlist', [ProductCartController::class, 'moveItemToWishlist'])->middleware('validateRequest:removeProductCartSchema');
     });
 });

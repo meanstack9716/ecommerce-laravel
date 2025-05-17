@@ -139,6 +139,10 @@ class Schemas
                 'item_ids' => 'array|required|min:1',
                 'item_ids.*' => 'exists:product_carts,id'
             ],
+            'removeWishlistSchema' => [
+                'item_ids' => 'array|required|min:1',
+                'item_ids.*' => 'exists:wishlists,id'
+            ],
             'updateProductCartSchema' => [
                 'id' => 'required|exists:product_carts,id',
                 'quantity' => 'nullable|numeric|min:1',

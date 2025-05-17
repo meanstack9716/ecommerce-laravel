@@ -19,6 +19,8 @@ class Address extends Model
         'state',
         'postal_code',
         'country',
+        'longitude',
+        'latitude'
     ];
 
     protected $hidden = [

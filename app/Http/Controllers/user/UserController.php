@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Address;
 use App\Enums\AddressType;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -31,16 +32,13 @@ class UserController extends Controller
     {
         $user = $request->user();
         if ($user->profile_id) {
-            Cloudinary::uploadApi()->destroy($user->profile_id);
+            Storage::delete($user->profile_path);
         }
-        $uploadedFile = $request->file('image');
+
+        $img_path = $request->file('image')->store('profile-pic');
     
-        $result = $result = Cloudinary::uploadApi()->upload($uploadedFile->getRealPath(), [
-            'folder' => 'profile-pictures'
-        ]);
         $user->update([
-            'profile_pic' => $result['secure_url'],
-            'profile_id' => $result['public_id']
+            'profile_path' => $img_path,
         ]);
         
         return response()->json([
@@ -53,10 +51,9 @@ class UserController extends Controller
     {
         $user = $request->user();
         if ($user->profile_id) {
-            Cloudinary::uploadApi()->destroy($user->profile_id);
+            Storage::delete($user->profile_path);
             $user->update([
-                'profile_pic' => null,
-                'profile_id' => null
+                'profile_path' => null,
             ]);
         }
         return response()->json([

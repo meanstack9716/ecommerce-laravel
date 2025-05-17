@@ -59,7 +59,7 @@
             <div class="relative">
                 <div id="profile-toggle" class="flex items-center gap-2 cursor-pointer relative">
                     <img 
-                        src="{{ $user->profile_pic ?? asset('images/user.jpeg') }}" 
+                        src="{{ $user->profile_path ? asset('storage/' . $user->profile_path) : asset('images/user.jpeg') }}"
                         alt="User Avatar" 
                         class="h-10 w-10 3xl:h-12 3xl:w-12 rounded-full object-cover"
                     />
