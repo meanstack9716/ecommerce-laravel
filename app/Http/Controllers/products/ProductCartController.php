@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\ProductCart;
+use App\Models\Wishlist;
 
 class ProductCartController extends Controller
 {
@@ -108,6 +109,54 @@ class ProductCartController extends Controller
         return response()->json([
             'success' => true,
             'message' => "{$deletedCount} item(s) removed from your cart.",
+        ]);
+    }
+
+    public function moveItemToWishlist(Request $request)
+    {
+        $userId = $request->user()->id;
+        $itemIds = $request->input('item_ids', []);
+
+        $cartItems = ProductCart::whereIn('id', $itemIds)
+            ->where('user_id', $userId)
+            ->get();
+        
+        if ($cartItems->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No matching cart items found for the user.',
+            ], 404);
+        }
+        
+        foreach ($cartItems as $cartItem) {
+
+            $existingWishlistItem = Wishlist::where('user_id', $userId)
+                ->where('product_id', $cartItem->product_id)
+                ->where('selected_color', $cartItem->selected_color)
+                ->where('selected_size', $cartItem->selected_size)
+                ->first();
+
+            if ($existingWishlistItem) {
+                $skippedItems[] = $cartItem->id;
+                $cartItem->delete();
+                continue;
+            }
+
+            Wishlist::create([
+                'user_id' => $userId,
+                'product_id' => $cartItem->product_id,
+                'selected_color' => $cartItem->selected_color,
+                'selected_color_name' => $cartItem->selected_color_name,
+                'selected_size' => $cartItem->selected_size,
+                'quantity' => $cartItem->quantity,
+            ]);
+                        
+            $cartItem->delete();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Items moved to wishlist.",
         ]);
     }
 

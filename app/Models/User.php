@@ -19,8 +19,7 @@ class User extends Authenticatable
         'email',
         'password',
         'gender',
-        'profile_pic',
-        'profile_id',
+        'profile_path',
         'is_admin',
         'role_id'
     ];
@@ -31,8 +30,20 @@ class User extends Authenticatable
         'updated_at',
         'created_at',
         'role_id',
-        'profile_id'
+        'profile_path'
     ];
+
+    protected $appends = [
+        'profile_url'
+    ];
+
+    public function getProfileUrlAttribute()
+    {
+        if ($this->profile_path) {
+            return Storage::url($this->profile_path);
+        }
+        return null;
+    }
     
     protected function casts(): array
     {
@@ -63,24 +74,24 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', '_id');
     }
 
-    // public function cartItems()
-    // {
-    //     return $this->hasMany(ProductCart::class, 'user_id', '_id');
-    // }
+    public function cartItems()
+    {
+        return $this->hasMany(ProductCart::class, 'user_id', '_id');
+    }
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-    //     static::creating(function ($user) {
-    //         // Get the default 'user' role from the roles collection
-    //         $defaultRole = Role::where('name', Constants::USER_ROLE)->first();
+        static::creating(function ($user) {
+            // Get the default 'user' role from the roles collection
+            $defaultRole = Role::where('name', Constants::USER_ROLE)->first();
             
-    //         if ($defaultRole) {
-    //             $user->role_id = $defaultRole->_id;
-    //         }
-    //     });
-    // }
+            if ($defaultRole) {
+                $user->role_id = $defaultRole->_id;
+            }
+        });
+    }
 
     /**
      * Always append the role relationship when serializing

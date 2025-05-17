@@ -41,7 +41,7 @@
                                     <div class="relative overflow-hidden rounded-lg bg-gray-100" style="padding-bottom: 125%;">
                                         @foreach($item->product->gallery as $image)
                                             @if($image->color == $item->selected_color_name)
-                                                <img src="{{ $image->img_url }}" 
+                                                <img src="{{ asset('storage/' . $image->img_path) }}"
                                                     alt="{{ $item->product->title }} - {{ $image->color }}"
                                                     class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-100">
                                             @endif
