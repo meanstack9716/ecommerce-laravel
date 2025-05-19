@@ -1109,6 +1109,35 @@
 					"response": []
 				},
 				{
+					"name": "Review a product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_id\" : \"68199c47c7bec7c9d1038132\",\r\n    \"rating\" : \"4\",\r\n    \"review\" : \"Vey comfortable\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/products/review"
+					},
+					"response": []
+				},
+				{
 					"name": "List All Orders",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true

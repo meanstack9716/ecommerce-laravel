@@ -10,6 +10,7 @@ use App\Models\Address;
 use App\Models\Product;
 use App\Models\ProductSize;
 use App\Models\ProductCart;
+use App\Models\ProductReview;
 use App\Models\ProductVariant;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -184,5 +185,55 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($orderId);        
         return view('order.details', compact('order'));
+    }
+
+    public function createProductReview(Request $request)
+    {
+        $user = $request->user();
+        $productId = $request->product_id;
+
+        $hasPurchased = Order::where('user_id', $user->id)
+            ->whereHas('items', function($q) use ($productId) {
+                $q->where('product_id', $productId);
+            })->exists();
+
+
+        if (!$hasPurchased) {
+            return response()->json([
+                'errors' => [
+                    'product' => 'You can only review products you have purchased'
+                ]
+            ], 403);
+        }
+
+        $existingReview = ProductReview::where('user_id', $user->id)
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($existingReview) {
+            return response()->json([
+                'errors' => [
+                    'product' => 'You have already reviewed this product'
+                ]
+            ], 403);
+        }
+
+        $order = Order::where('user_id', $user->id)
+            ->whereHas('items', function($q) use ($productId) {
+                $q->where('product_id', $productId);
+            })->latest()->first();
+
+        $review = ProductReview::create([
+            'user_id' => $user->id,
+            'product_id' => $productId,
+            'order_id' => $order->id,
+            'rating' => $request->rating,
+            'review' => $request->review,
+        ]);
+
+        return response()->json([
+            'message' => 'Review submitted successfully',
+            'review' => $review
+        ], 201);
     }
 }

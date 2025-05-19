@@ -173,6 +173,10 @@ class Schemas
                 'cart_items_ids' => 'required|array|min:1',
                 'cart_items_ids.*' => 'required|exists:product_carts,id'
             ],
+            'postNewReviewSchema' => [
+                'product_id' => 'required|exists:products,id',
+                'rating' => 'required|numeric|min:1|max:5',
+            ],
 
             // custom error messages
             'errorMessages' => [

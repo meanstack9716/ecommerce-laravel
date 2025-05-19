@@ -104,6 +104,11 @@ class Product extends Model
     {
         return $this->hasMany(ProductSize::class, 'product_id', '_id'); // One product can have many sizes
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(ProductReview::class, 'product_id', '_id');
+    }
     
     protected $with = ['category', 'subCategory', 'subSubCategory', 'seller'];
 
