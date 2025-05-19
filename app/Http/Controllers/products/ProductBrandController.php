@@ -25,6 +25,34 @@ class ProductBrandController extends Controller
         return redirect()->route('products.brand.list');
     }
 
+    public function editBrandDetails(Request $request, $brandId)
+    {
+        $brand = ProductBrand::findOrFail($brandId);        
+        return view('products.brands.form', compact('brand'));
+    }
+
+    public function updateBrand(Request $request, $brandId)
+    {
+        $brand = ProductBrand::findOrFail($brandId);
+
+        $brand->name = $request->name;
+        $brand->description = $request->description;
+
+        if ($request->hasFile('img')) {
+            if ($brand->img_path) {
+                Storage::delete('public/' . $brand->img_path);
+            }
+            $img_path = $request->file('img')->store('brands');
+        
+            $brand->img_path = $img_path;
+        }
+
+        $brand->save();
+
+        return redirect()->route('products.brand.list')
+            ->with('success', 'Category updated successfully!');
+    }
+
     public function getAllProductBrandList(Request $request) {
 
         $limit = $request->input('limit', 10);

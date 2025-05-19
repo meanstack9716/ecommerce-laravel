@@ -82,11 +82,22 @@ class Schemas
                 'category_description' => 'required|string|min:3|max:255',
                 'category_img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
             ],
+            'updateCategorySchema' => [
+                'category_name' => 'required|string|min:3|max:255',
+                'category_description' => 'required|string|min:3|max:255',
+                'category_img' => 'nullable|image|mimes:jpeg,png,jpg|max:5120'
+            ],
             'addSubCategorySchema' => [
                 'category_type' => 'required|exists:categories,_id',
                 'category_name' => 'required|string|min:3|max:255',
                 'category_description' => 'required|string|min:3|max:255',
                 'category_img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
+            ],
+            'updateSubCategorySchema' => [
+                'category_type' => 'required|exists:categories,_id',
+                'category_name' => 'required|string|min:3|max:255',
+                'category_description' => 'required|string|min:3|max:255',
+                'category_img' => 'nullable|image|mimes:jpeg,png,jpg|max:5120'
             ],
             'addSubSubCategorySchema' => [
                 'category' => 'required|exists:categories,_id',
@@ -94,6 +105,13 @@ class Schemas
                 'name' => 'required|string|min:3|max:255',
                 'description' => 'required|string|min:3|max:255',
                 'img' => 'required|image|mimes:jpeg,png,jpg|max:5120'
+            ],
+            'updateSubSubCategorySchema' => [
+                'category' => 'required|exists:categories,_id',
+                'sub_category' => 'required|exists:sub_categories,_id',
+                'name' => 'required|string|min:3|max:255',
+                'description' => 'required|string|min:3|max:255',
+                'img' => 'nullable|image|mimes:jpeg,png,jpg|max:5120'
             ],
             'addNewProductCategorySchema' => [
                 'category' => 'required|exists:categories,_id',
@@ -123,12 +141,12 @@ class Schemas
             'addNewProductBrandSchema' => [
                 'name' => 'required|string|min:3|max:255|unique:product_brands,name',
                 'description' => 'required|string|min:3|max:255',
-                'image' => 'required|image|max:5120'
+                'img' => 'required|image|max:5120'
             ],
-            'addNewProductBrandSchema' => [
-                'name' => 'required|string|min:3|max:255|unique:product_brands,name',
+            'updateProductBrandSchema' => [
+                'name' => 'required|string|min:3|max:255',
                 'description' => 'required|string|min:3|max:255',
-                'image' => 'required|image|max:5120'
+                'img' => 'nullable|image|max:5120'
             ],
             'addProductCartSchema' => [
                 'product_id' => 'required|exists:products,id',

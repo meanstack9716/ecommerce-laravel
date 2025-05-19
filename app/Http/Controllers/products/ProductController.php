@@ -434,14 +434,33 @@ class ProductController extends Controller
 
         // Search term filter
         if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('title', 'like', "%{$searchTerm}%")
-                  ->orWhere('description', 'like', "%{$searchTerm}%");
-            });
+            $term = trim($searchTerm);
+            $likeTerm = "%$term%";
 
-            $query->whereHas('sizes', function($q) use ($searchTerm) {
-                $q->where('value', 'like', "%{$searchTerm}%");
-            });
+            $categorySearchIds = Category::where('name', 'like', $searchTerm)
+                ->pluck('id')
+                ->toArray();
+
+            $subCategorySearchIds = SubCategory::where('name', 'like', $likeTerm)
+                ->pluck('id')
+                ->toArray();
+
+            $subSubCategorySearchIds = SubSubCategory::where('name', 'like', $likeTerm)
+                ->pluck('id')
+                ->toArray();
+
+            $brandSearchIds = ProductBrand::where('name', 'like', $likeTerm)
+                ->pluck('id')
+                ->toArray();
+
+            $query->where(function ($q) use ($likeTerm, $categorySearchIds, $subCategorySearchIds, $subSubCategorySearchIds, $brandSearchIds) {
+                $q->where('title', 'like', $likeTerm)
+                    ->orWhere('description', 'like', $likeTerm)
+                    ->orWhereIn('category_id', $categorySearchIds)
+                    ->orWhereIn('sub_category_id', $subCategorySearchIds)
+                    ->orWhereIn('brand_id', $brandSearchIds)
+                    ->orWhereIn('sub_sub_category_id', $subSubCategorySearchIds);
+                });
         }
 
         // Price range filters

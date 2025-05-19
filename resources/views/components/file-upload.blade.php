@@ -20,7 +20,7 @@
         </label>
     @endif
         
-    <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer"
+    <div class="mt-1 flex justify-center px-6 pt-5 pb-2 border-2 border-gray-300 border-dashed rounded-md cursor-pointer"
         id="{{ $id }}-dropzone">
         <div class="space-y-1 text-center">
             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"

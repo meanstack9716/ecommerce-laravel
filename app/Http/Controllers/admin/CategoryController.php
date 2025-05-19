@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
@@ -12,7 +13,7 @@ class CategoryController extends Controller
 {
     public function showAddCategoryForm(Request $request)
     {
-        return view('categories.add-new-category');
+        return view('categories.category-form');
     }
 
     public function addNewCategory(Request $request)
@@ -42,6 +43,34 @@ class CategoryController extends Controller
 
         $categories = $query->paginate($limit);
         return view('categories.list', compact('categories', 'limit'));
+    }
+
+    public function editCategoryDetails(Request $request, $categoryId)
+    {
+        $category = Category::findOrFail($categoryId);        
+        return view('categories.category-form', compact('category'));
+    }
+
+    public function updateCategory(Request $request, $categoryId)
+    {
+        $category = Category::findOrFail($categoryId);
+
+        $category->name = $request->category_name;
+        $category->description = $request->category_description;
+
+        if ($request->hasFile('category_img')) {
+            if ($category->img_path) {
+                Storage::delete('public/' . $category->img_path);
+            }
+            $img_path = $request->file('category_img')->store('categories');
+        
+            $category->img_path = $img_path;
+        }
+
+        $category->save();
+
+        return redirect()->route('category.list')
+            ->with('success', 'Category updated successfully!');
     }
 
     public function showSubCategoryForm(Request $request)
@@ -81,11 +110,40 @@ class CategoryController extends Controller
             $query->where('category_id', $categoryId);
         }
 
-
         $subCategories = $query->paginate($limit);
         $categories = Category::all();
         return view('categories.sub-categories.list', compact('categories', 'limit', 'subCategories'));
 
+    }
+
+    public function editSubCategoryDetails(Request $request, $categoryId)
+    {
+        $subCategory = SubCategory::findOrFail($categoryId);
+        $categories = Category::all();      
+        return view('categories.sub-categories.form', compact('subCategory', 'categories'));
+    }
+
+    public function updateSubCategory(Request $request, $categoryId)
+    {
+        $subCategory = SubCategory::findOrFail($categoryId);
+
+        $subCategory->name = $request->category_name;
+        $subCategory->description = $request->category_description;
+        $subCategory->category_id = $request->category_type;
+
+        if ($request->hasFile('category_img')) {
+            if ($subCategory->img_path) {
+                Storage::delete('public/' . $subCategory->img_path);
+            }
+            $img_path = $request->file('category_img')->store('sub_categories/'. $request->category_type);
+        
+            $subCategory->img_path = $img_path;
+        }
+
+        $subCategory->save();
+
+        return redirect()->route('sub-category.list')
+            ->with('success', 'Sub Category updated successfully!');
     }
 
     public function getSubcategories(Request $request)
@@ -139,6 +197,44 @@ class CategoryController extends Controller
             'sub_category_id' => $request->sub_category
         ]);
         return redirect()->route('sub-sub-category.list');
+    }
+
+    public function editSubSubCategoryDetails(Request $request, $categoryId)
+    {
+        $subSubCategory = SubSubCategory::findOrFail($categoryId);
+        $categories = Category::all();
+        $subCategories = collect();
+    
+        if (old('category')) {
+            $subCategories = SubCategory::where('category_id', old('category'))->get();
+        } else {
+            $subCategories = SubCategory::where('category_id', $subSubCategory->category_id)->get();
+        }
+        return view('categories.sub-sub-categories.form', compact('subSubCategory', 'categories', 'subCategories'));
+    }
+
+    public function updateSubSubCategory(Request $request, $categoryId)
+    {
+        $subSubCategory = SubSubCategory::findOrFail($categoryId);
+
+        $subSubCategory->name = $request->name;
+        $subSubCategory->description = $request->description;
+        $subSubCategory->category_id = $request->category;
+        $subSubCategory->sub_category_id = $request->sub_category;
+
+        if ($request->hasFile('img')) {
+            if ($subSubCategory->img_path) {
+                Storage::delete('public/' . $subSubCategory->img_path);
+            }
+            $img_path = $request->file('img')->store('sub_sub_categories/'. $request->sub_category);
+        
+            $subSubCategory->img_path = $img_path;
+        }
+
+        $subSubCategory->save();
+
+        return redirect()->route('sub-sub-category.list')
+            ->with('success', 'Sub Sub Category updated successfully!');
     }
 
     public function getAllSubSubCategoryList(Request $request) {

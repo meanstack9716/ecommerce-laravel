@@ -48,6 +48,11 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
                 ->name('products.brand.add.submit');
 
             Route::get('/list', [ProductBrandController::class, 'getAllProductBrandList'])->name('products.brand.list');
+
+            Route::get('/{brandId}/edit', [ProductBrandController::class, 'editBrandDetails'])->name('products.brand.edit');
+            Route::put('/{brandId}', [ProductBrandController::class, 'updateBrand'])
+            ->middleware('validateRequest:updateProductBrandSchema')
+            ->name('products.brand.update');
         });
     });
 });

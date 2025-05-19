@@ -60,7 +60,14 @@
                             </td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->name }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 text-sm text-gray-800">{{ $brand->description }}</td>
-                            <td class="px-4 py-2 border text-center border-gray-200 font-medium"></td>
+                            <td class="px-4 py-2 border text-center border-gray-200 font-medium">
+                                <div>
+                                    <a href="{{ route('products.brand.edit', $brand->id) }}"
+                                        class="text-sm font-medium  px-4 py-2 text-blue-600">
+                                        Edit
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr>
