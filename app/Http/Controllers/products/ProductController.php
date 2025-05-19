@@ -375,7 +375,8 @@ class ProductController extends Controller
             'brand', 
             'sizes', 
             'sizes.variants', 
-            'gallery'
+            'gallery',
+            'reviews'
         ]);
 
         // Multiple Brands Selection
@@ -501,7 +502,8 @@ class ProductController extends Controller
             'brand', 
             'sizes', 
             'sizes.variants', 
-            'gallery'
+            'gallery',
+            'reviews'
         ])->find($id);
 
         return response()->json([
