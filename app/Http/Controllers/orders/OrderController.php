@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Seller;
 use App\Constants\Constants;
+use App\Enums\OrderStatus;
 
 class OrderController extends Controller
 {
@@ -137,14 +138,62 @@ class OrderController extends Controller
     }
 
     public function fetchAllOrderItems(Request $request) {
-        $orderItems = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.gallery'])
+        $limit = $request->input('limit');
+        $page = $request->input('page', 1);
+        $status = $request->input('status');
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+
+        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.gallery'])
             ->where('user_id', $request->user()->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->orderBy('created_at', 'desc');
+        
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($fromDate) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+    
+        if ($toDate) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+
+        if ($limit) {
+            $orders = $query->paginate($limit, ['*'], 'page', $page);            
+            return response()->json([
+                'data' => $orders->items(),
+            ]);
+        }
+    
+        $orders = $query->get();
+        return response()->json([
+            'data' => $orders,
+        ]);
+    }
+
+    public function fetchOrderStatusesList()
+    {
+        return response()->json([
+            'data' => OrderStatus::values()
+        ]);
+    }
+
+    public function fetchOrderDetailsById(Request $request, $orderId) {
+        $order = Order::with([
+            'items', 
+            'items.product', 
+            'items.product.sizes',
+            'items.product.brand',
+            'items.product.sizes.variants', 
+            'items.product.gallery',
+            'items.product.reviews'
+        ])->find($orderId);
 
         return response()->json([
-            'data' => $orderItems
-        ], 201);
+            'data' => $order
+        ]);
     }
 
     public function getAllOrdersList(Request $request) {
