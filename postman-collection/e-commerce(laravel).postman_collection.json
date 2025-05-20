@@ -1165,7 +1165,111 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/orders/list"
+						"url": {
+							"raw": "{{base_url}}/orders/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Pending",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2025-05-15",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/:orderId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "6825f4f98acb84132309318c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Oder Statuses List",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/orders/status-types"
 					},
 					"response": []
 				}
