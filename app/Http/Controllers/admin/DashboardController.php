@@ -86,6 +86,29 @@ class DashboardController extends Controller
         return [$startDate, $endDate];
     }
 
+    private function filterSellerAndPeriod($user, $sellerId, $startDate, $endDate)
+    {
+        $query = Order::whereBetween('created_at', [$startDate, $endDate]);
+
+        if ($user->is_admin) {
+            if ($sellerId) {
+                $seller = Seller::find($sellerId);
+                if (!$seller) {
+                    throw new \Exception('Seller profile not found');
+                }
+                $query->where('seller_id', $seller->id);
+            }
+        } else {
+            $seller = Seller::where('user_id', $user->id)->first();
+            if (!$seller) {
+                throw new \Exception('Seller profile not found');
+            }
+            $query->where('seller_id', $seller->id);
+        }
+
+        return $query;
+    }
+
     public function recentOrders(Request $request)
     {
         try {
@@ -98,28 +121,9 @@ class DashboardController extends Controller
             $limit = (int) $request->query('limit', 5);
             $page = (int) $request->query('page', 1);
             $period = $request->query('period', 'this_month');
-
             [$startDate, $endDate] = $this->getPeriodDates($period);
 
-            
-            $query = Order::whereBetween('created_at', [$startDate, $endDate]);
-            
-            if ($user->is_admin) {
-                if ($sellerId) {
-                    $seller = Seller::find($sellerId);
-                    if (!$seller) {
-                        return response()->json(['status' => 'error', 'message' => 'Seller not found'], 404);
-                    }
-                    $query->where('seller_id', $seller->id);
-                }
-            } else {
-                $seller = Seller::where('user_id', $user->id)->first();
-                if (!$seller) {
-                    return response()->json(['status' => 'error', 'message' => 'Seller profile not found'], 404);
-                }
-                $query->where('seller_id', $seller->id);
-            }
-            
+            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
             $totalOrders = $query->count();
             $orders = $query->with(['user', 'items.product'])
                 ->orderByDesc('created_at')
@@ -188,28 +192,9 @@ class DashboardController extends Controller
                 $prevStartDate = $startDate->copy()->subYear()->startOfYear();
                 $prevEndDate = $prevStartDate->copy()->endOfYear();
             }
-            
-            $query = Order::whereBetween('created_at', [$startDate, $endDate]);
 
-            $prevQuery = Order::whereBetween('created_at', [$prevStartDate, $prevEndDate]);
-
-            if ($user->is_admin) {
-                if ($sellerId) {
-                    $seller = Seller::find($sellerId);
-                    if (!$seller) {
-                        return response()->json(['status' => 'error', 'message' => 'Seller not found'], 404);
-                    }
-                    $query->where('seller_id', $seller->id);
-                    $prevQuery->where('seller_id', $seller->id);
-                }
-            } else {
-                $seller = Seller::where('user_id', $user->id)->first();
-                if (!$seller) {
-                    return response()->json(['status' => 'error', 'message' => 'Seller profile not found'], 404);
-                }
-                $query->where('seller_id', $seller->id);
-                $prevQuery->where('seller_id', $seller->id);
-            }
+            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
+            $prevQuery = $this->filterSellerAndPeriod($user, $sellerId, $prevStartDate, $prevEndDate);
 
             $orders = $query->get();
             $prevOrders = $prevQuery->get();
@@ -226,12 +211,6 @@ class DashboardController extends Controller
             $prevAvgOrderValue = $prevOrderCount > 0 ? ($prevTotalSales / $prevOrderCount) : 0;
             $avgOrderChange = $prevAvgOrderValue > 0 ? (($avgOrderValue - $prevAvgOrderValue) / $prevAvgOrderValue * 100) : ($avgOrderValue > 0 ? 100 : 0);
 
-            $totalVisitors = 1000; // Placeholder
-            $prevTotalVisitors = 1000; // Placeholder
-            $conversionRate = $totalVisitors > 0 ? ($orderCount / $totalVisitors * 100) : 0;
-            $prevConversionRate = $prevTotalVisitors > 0 ? ($prevOrderCount / $prevTotalVisitors * 100) : 0;
-            $conversionRateChange = $prevConversionRate > 0 ? (($conversionRate - $prevConversionRate) / $prevConversionRate * 100) : ($conversionRate > 0 ? 100 : 0);
-
             return response()->json([
                 'status' => 'success',
                 'data' => [
@@ -241,8 +220,6 @@ class DashboardController extends Controller
                     'order_count_change' => floatval($orderChange),
                     'avg_order_value' => floatval($avgOrderValue),
                     'avg_order_change' => floatval($avgOrderChange),
-                    'conversion_rate' => floatval($conversionRate),
-                    'conversion_rate_change' => floatval($conversionRateChange)
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -313,22 +290,7 @@ class DashboardController extends Controller
 
     private function getSalesForPeriod($user, $sellerId, $startDate, $endDate)
     {
-        $query = Order::whereBetween('created_at', [$startDate, $endDate]);
-
-        if ($user->is_admin) {
-            if ($sellerId) {
-                $seller = Seller::find($sellerId);
-                if ($seller) {
-                    $query->where('seller_id', $seller->id);
-                }
-            }
-        } else {
-            $seller = Seller::where('user_id', $user->id)->first();
-            if ($seller) {
-                $query->where('seller_id', $seller->id);
-            }
-        }
-
+        $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
         return floatval($query->sum('total_amount') ?: 0);
     }
 
@@ -345,23 +307,7 @@ class DashboardController extends Controller
 
             [$startDate, $endDate] = $this->getPeriodDates($period);
 
-            $query = Order::whereBetween('created_at', [$startDate, $endDate]);
-
-            if ($user->is_admin) {
-                if ($sellerId) {
-                    $seller = Seller::find($sellerId);
-                    if (!$seller) {
-                        return response()->json(['status' => 'error', 'message' => 'Seller not found'], 404);
-                    }
-                    $query->where('seller_id', $seller->id);
-                }
-            } else {
-                $seller = Seller::where('user_id', $user->id)->first();
-                if (!$seller) {
-                    return response()->json(['status' => 'error', 'message' => 'Seller profile not found'], 404);
-                }
-                $query->where('seller_id', $seller->id);
-            }
+            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
 
             $orders = $query->with('items.product')->get();
             $productSales = [];

@@ -61,7 +61,7 @@
         </div>
 
         <!-- Overview Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
             <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
                 <div class="flex items-center justify-between">
                     <div>
@@ -107,7 +107,7 @@
                 <p class="mt-2 text-xs text-gray-500 flex items-center" id="avg-order-change"></p>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
+            <!-- <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-500 truncate">Conversion Rate</p>
@@ -120,7 +120,7 @@
                     </div>
                 </div>
                 <p class="mt-2 text-xs text-gray-500 flex items-center" id="conversion-rate-change"></p>
-            </div>
+            </div> -->
         </div>
         
         <!-- Charts Section -->
@@ -447,8 +447,8 @@
                 document.getElementById('order-count-change').innerHTML = formatChange(data.order_count_change, true);
                 document.getElementById('avg-order-value').textContent = `₹${data.avg_order_value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
                 document.getElementById('avg-order-change').innerHTML = formatChange(data.avg_order_change, true);
-                document.getElementById('conversion-rate').textContent = `${data.conversion_rate.toFixed(1)}%`;
-                document.getElementById('conversion-rate-change').innerHTML = formatChange(data.conversion_rate_change, true);
+                // document.getElementById('conversion-rate').textContent = `${data.conversion_rate.toFixed(1)}%`;
+                // document.getElementById('conversion-rate-change').innerHTML = formatChange(data.conversion_rate_change, true);
             } catch (error) {
                 console.error('Error loading overview:', error);
             }
