@@ -86,7 +86,7 @@ class UserController extends Controller
         Address::create([
             'user_id' => $userId,
             "contact_name" => $request->contact_name,
-            "contact_mobile" => $request->contact_mobile,
+            "contact_number" => $request->contact_number,
             'type' => $request->type,
             'line1' => $request->line1,
             'line2' => $request->line2,
@@ -144,7 +144,7 @@ class UserController extends Controller
         $fields = collect([
             'type' => $request->input('type'),
             'contact_name' => $request->input('contact_name'),
-            'contact_mobile' => $request->input('contact_mobile'),
+            'contact_number' => $request->input('contact_number'),
             'line1' => $request->input('line1'),
             'line2' => $request->input('line2'),
             'city' => $request->input('city'),

@@ -107,7 +107,7 @@
                             <span class="text-gray-500 ml-1 font-normal" >{{ $order->contact_name ?? $order->user->first_name}}</span>
                         </p>
                         <p class="font-medium mt-1 text-sm">Number:
-                            <span class="text-gray-500 ml-1 font-normal" >{{ $order->contact_mobile ?? $order->user->phone_number}}</span>
+                            <span class="text-gray-500 ml-1 font-normal" >{{ $order->contact_number ?? $order->user->phone_number}}</span>
                         </p>
                     </div>
                     <div class="p-6 border-b border-gray-200">

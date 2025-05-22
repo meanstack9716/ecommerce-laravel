@@ -12,7 +12,7 @@ class Order extends Model
         'order_number',
         'total_amount',
         'contact_name',
-        'contact_mobile',
+        'contact_number',
         'status',
         'shipping_address',
         'shipping_address_type',
