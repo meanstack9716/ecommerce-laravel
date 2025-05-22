@@ -109,6 +109,12 @@ class Product extends Model
     {
         return $this->hasMany(ProductReview::class, 'product_id', '_id');
     }
+
+    public function galleryForColor($color)
+    {
+        return $this->hasMany(ProductGallery::class, 'product_id', '_id')
+            ->where('color', $color);
+    }
     
     protected $with = ['category', 'subCategory', 'subSubCategory', 'seller'];
 

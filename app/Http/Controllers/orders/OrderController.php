@@ -144,7 +144,7 @@ class OrderController extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.gallery'])
+        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews' ])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc');
         
@@ -168,6 +168,16 @@ class OrderController extends Controller
         }
     
         $orders = $query->get();
+
+        $orders->each(function ($order) {
+            $order->items->each(function ($item) {
+                if ($item->product && $item->selected_color_name) {
+                    $item->product->setRelation('gallery', $item->product->galleryForColor($item->selected_color_name)->get());
+                } else {
+                    $item->product->setRelation('gallery', collect([]));
+                }
+            });
+        });
         return response()->json([
             'data' => $orders,
         ]);
@@ -180,20 +190,36 @@ class OrderController extends Controller
         ]);
     }
 
-    public function fetchOrderDetailsById(Request $request, $orderId) {
+    public function fetchOrderDetailsById(Request $request, $orderId)
+    {
         $order = Order::with([
-            'items', 
-            'items.product', 
+            'items',
+            'items.product',
             'items.product.sizes',
             'items.product.brand',
-            'items.product.sizes.variants', 
-            'items.product.gallery',
+            'items.product.sizes.variants',
             'items.product.reviews'
         ])->find($orderId);
 
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order not found'
+            ], 404);
+        }
+
+        $order->items->each(function ($item) {
+            if ($item->product && $item->selected_color_name) {
+                $item->product->setRelation('gallery', $item->product->galleryForColor($item->selected_color_name)->get());
+            } else {
+                $item->product->setRelation('gallery', collect([]));
+            }
+        });
+
         return response()->json([
+            'status' => 'success',
             'data' => $order
-        ]);
+        ], 200);
     }
 
     public function getAllOrdersList(Request $request) {
