@@ -53,12 +53,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
         }
 
-        $this->sendOtpToEmail($request->email);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
             'message' => 'User signed in successfully',
-            // 'user' => $user,
-            // 'token' => "Bearer $token"
+            'user' => $user,
+            'token' => "Bearer $token"
         ]);
     }
 
