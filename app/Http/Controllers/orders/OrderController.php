@@ -242,6 +242,7 @@ class OrderController extends Controller
         $productId = $request->product_id;
 
         $hasPurchased = Order::where('user_id', $user->id)
+            ->where('status', Constants::STATUS_DELIVERED)  
             ->whereHas('items', function($q) use ($productId) {
                 $q->where('product_id', $productId);
             })->exists();
