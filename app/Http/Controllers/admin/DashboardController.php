@@ -307,7 +307,7 @@ class DashboardController extends Controller
                             $productSales[$productId] ?? ['name' => $item->product->title, 'amount' => 0],
                             ['amount' => ($productSales[$productId]['amount'] ?? 0) + $amount]
                         );
-                        $totalSales += $amount;
+                        // $totalSales += $amount;
                     }
                 }
             }
