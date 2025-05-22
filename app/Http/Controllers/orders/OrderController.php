@@ -203,7 +203,7 @@ class OrderController extends Controller
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
 
-        $query = Order::query()->with(['items', 'items.product']);
+        $query = Order::query()->with(['items', 'items.product'])->orderBy('created_at', 'desc');
 
         if (!$user->is_admin) {
             $query->where('seller_id', $user->sellerDetails->id);

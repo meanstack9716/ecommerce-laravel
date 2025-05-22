@@ -113,10 +113,6 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user) {
-                return response()->json(['status' => 'error', 'message' => 'User not logged in'], 401);
-            }
-
             $sellerId = $request->query('seller_id');
             $limit = (int) $request->query('limit', 5);
             $page = (int) $request->query('page', 1);
@@ -169,10 +165,6 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user) {
-                return response()->json(['status' => 'error', 'message' => 'User not logged in'], 401);
-            }
-
             
             $sellerId = $request->query('seller_id');
             $period = $request->query('period', 'this_month');
@@ -231,10 +223,6 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user) {
-                return response()->json(['status' => 'error', 'message' => 'User not logged in'], 401);
-            }
-
             $sellerId = $request->query('seller_id');
             $period = $request->query('period', 'monthly');
             $filterPeriod = $request->query('filter_period', 'this_month');
@@ -298,10 +286,6 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            if (!$user) {
-                return response()->json(['status' => 'error', 'message' => 'User not logged in'], 401);
-            }
-
             $sellerId = $request->query('seller_id');
             $period = $request->query('period', 'this_month');
 
@@ -311,7 +295,8 @@ class DashboardController extends Controller
 
             $orders = $query->with('items.product')->get();
             $productSales = [];
-            $totalSales = 0;
+            // $totalSales = 0;
+             $totalSales = $query->sum('total_amount') ?: 0;
 
             foreach ($orders as $order) {
                 foreach ($order->items as $item) {

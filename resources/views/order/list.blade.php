@@ -90,7 +90,7 @@
                             </td>
                             <td class="px-4 py-4 border text-center border-gray-200">
                                 <span class="px-4 py-1 text-sm font-semibold rounded-full 
-                                    {{ $order->payment_method == 'COD' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600' }}">
+                                    {{ $order->payment_method == 'COD' || $order->payment_method == 'Cash On Delivery' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600' }}">
                                     {{ $order->payment_method }}
                                 </span>
                                 <div class="text-sm mt-1 {{ $order->payment_status == 'Paid' ? 'text-green-600' : 'text-yellow-600' }}">
