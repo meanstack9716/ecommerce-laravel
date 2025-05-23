@@ -172,9 +172,9 @@ class OrderController extends Controller
         $orders->each(function ($order) {
             $order->items->each(function ($item) {
                 if ($item->product && $item->selected_color_name) {
-                    $item->product->setRelation('gallery', $item->product->galleryForColor($item->selected_color_name)->get());
+                    $item->gallery = $item->product->galleryForColor($item->selected_color_name)->get();
                 } else {
-                    $item->product->setRelation('gallery', collect([]));
+                    $item->gallery = collect([]);
                 }
             });
         });
@@ -210,9 +210,9 @@ class OrderController extends Controller
 
         $order->items->each(function ($item) {
             if ($item->product && $item->selected_color_name) {
-                $item->product->setRelation('gallery', $item->product->galleryForColor($item->selected_color_name)->get());
+                $item->gallery = $item->product->galleryForColor($item->selected_color_name)->get();
             } else {
-                $item->product->setRelation('gallery', collect([]));
+                $item->gallery = collect([]);
             }
         });
 

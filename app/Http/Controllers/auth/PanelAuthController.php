@@ -26,6 +26,11 @@ class PanelAuthController extends Controller
                 ->with('error', 'The provided credentials are incorrect.')
                 ->withInput();
         }
+        if (!$user->is_admin && $user->role->name != Constants::SELLER_ROLE ) {
+            redirect()->back()
+                ->with('error', 'Access denied. Only admin or seller can login.')
+                ->withInput();
+        }
         Auth::guard('web')->login($user);
         return redirect('/dashboard');
     }
