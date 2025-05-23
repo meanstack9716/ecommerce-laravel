@@ -16,6 +16,7 @@ require __DIR__ . '/web/user.php';
 require __DIR__ . '/web/category.php';
 require __DIR__ . '/web/product.php';
 require __DIR__ . '/web/order.php';
+require __DIR__ . '/web/promoCode.php';
 
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'viewDashboard'])->name('dashboard');

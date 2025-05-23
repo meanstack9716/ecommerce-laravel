@@ -12,5 +12,7 @@ Route::prefix('orders')->group(function () {
         Route::post('/new', [OrderController::class, 'createNewOrder'])->middleware('validateRequest:createNewOrderSchema');
         Route::get('/list', [OrderController::class, 'fetchAllOrderItems']);
         Route::get('/{orderId}', [OrderController::class, 'fetchOrderDetailsById']);
+
+        Route::post('/validate-promo-code', [OrderController::class, 'validatePromoCode'])->middleware('validateRequest:validPromocodeSchema');;
     });
 });
