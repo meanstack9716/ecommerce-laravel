@@ -24,7 +24,7 @@
                 </div>
                 <div 
                     id="notification-dropdown" 
-                    class="opacity-0 scale-95 transition-all duration-200 ease-out absolute right-0 mt-3 w-68 sm:w-80 bg-white rounded-lg shadow-lg z-50 p-4 space-y-5"
+                    class="opacity-0 scale-95 hidden transition-all duration-200 ease-out absolute right-0 mt-3 w-68 sm:w-80 bg-white rounded-lg shadow-lg z-50 p-4 space-y-5"
                 >
                     <div class="pb-3 border-b border-slate-200 font-bold text-xl text-gray-800">
                         Notifications
@@ -78,7 +78,7 @@
                 </div>
                 <div 
                     id="profile-dropdown" 
-                    class="opacity-0 scale-95 transition-all duration-200 ease-out absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg z-50 p-4 space-y-4"
+                    class="opacity-0 hidden scale-95 transition-all duration-200 ease-out absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg z-50 p-4 space-y-4"
                 >
                     <a class="text-gray-800 font-medium flex items-center gap-2 hover:text-sky-600 cursor-pointer group">
                         <i class="fa-regular fa-user text-gray-400 group-hover:text-sky-600"></i>
@@ -118,17 +118,17 @@
 
         const toggleDropdown = (dropdown) => {
             if (dropdown.classList.contains('opacity-0')) {
-                dropdown.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+                dropdown.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
                 dropdown.classList.add('opacity-100', 'scale-100');
             } else {
-                dropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                dropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
                 dropdown.classList.remove('opacity-100', 'scale-100');
             }
         };
 
         profileToggle.addEventListener('click', function (e) {
             e.stopPropagation();
-            notificationDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            notificationDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
             notificationDropdown?.classList.remove('opacity-100', 'scale-100');
             toggleDropdown(profileDropdown);
         });
@@ -139,7 +139,7 @@
 
         notificationToggle?.addEventListener('click', function (e) {
             e.stopPropagation();
-            profileDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            profileDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
             profileDropdown?.classList.remove('opacity-100', 'scale-100');
             toggleDropdown(notificationDropdown);
         });
@@ -149,10 +149,10 @@
         });
 
         document.addEventListener('click', function () {
-            profileDropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            profileDropdown.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
             profileDropdown.classList.remove('opacity-100', 'scale-100');
 
-            notificationDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            notificationDropdown?.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
             notificationDropdown?.classList.remove('opacity-100', 'scale-100');
         });
 

@@ -45,7 +45,7 @@
    <script>
         window.sanctumToken = '{{ session('sanctum_token') }}';
     </script>
-    <script>
+    <!-- <script>
         const toggleSideBarBtn = document.getElementById('menu-toggle');
         const sidebar = document.getElementById('sidebar');
         const main = document.getElementById('main');
@@ -57,6 +57,6 @@
             main.classList.toggle('3xl:pl-80');
             main.classList.toggle('lg:pl-0');
         });
-    </script>
+    </script> -->
 </body>
 </html>
