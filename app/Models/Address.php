@@ -12,7 +12,7 @@ class Address extends Model
         'user_id',
         'type',
         'contact_name',
-        'contact_mobile',
+        'contact_number',
         'line1',
         'line2',
         'city',

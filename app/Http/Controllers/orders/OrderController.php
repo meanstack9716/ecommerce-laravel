@@ -61,7 +61,7 @@ class OrderController extends Controller
                     'shipping_address' => $shippingAddressString,
                     'shipping_address_type' => $shippingAddress->type,
                     'contact_name' => $shippingAddress->contact_name ?? $request->user()->first_name,
-                    'contact_mobile' => $shippingAddress->contact_mobile ?? $request->user()->phone_number,
+                    'contact_number' => $shippingAddress->contact_number ?? $request->user()->phone_number,
                     'payment_method' => $request->payment_method,
                     'payment_status' => Constants::STATUS_PENDING,
                     'order_note' => $request->order_note
@@ -229,7 +229,7 @@ class OrderController extends Controller
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
 
-        $query = Order::query()->with(['items', 'items.product']);
+        $query = Order::query()->with(['items', 'items.product'])->orderBy('created_at', 'desc');
 
         if (!$user->is_admin) {
             $query->where('seller_id', $user->sellerDetails->id);

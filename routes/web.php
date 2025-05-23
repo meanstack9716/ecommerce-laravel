@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\FileController;
+use App\Http\Controllers\Admin\DashboardController;
 
 Route::get('/', function () {
     return auth()->check() 
@@ -17,6 +18,6 @@ require __DIR__ . '/web/product.php';
 require __DIR__ . '/web/order.php';
 
 Route::middleware(['auth:sanctum', 'web'])->group(function () {
-    Route::view('/dashboard', 'dashboard.index')->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'viewDashboard'])->name('dashboard');
 });
 

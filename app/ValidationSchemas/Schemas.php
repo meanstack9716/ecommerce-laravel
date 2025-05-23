@@ -168,7 +168,7 @@ class Schemas
             ],
             'addNewAddressSchema' => [
                 'contact_name' => 'required|string|min:3',
-                'contact_mobile' => 'required|string|regex:/^[0-9]{10}$/',
+                'contact_number' => 'required|string|regex:/^[0-9]{10}$/',
                 'line1' => 'required|string|min:3',
                 'type' => ['required', Rule::in(AddressType::values())],
                 'city' => 'required|string',
