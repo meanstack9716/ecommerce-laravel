@@ -12,6 +12,7 @@ use App\Models\ProductSize;
 use App\Models\ProductCart;
 use App\Models\ProductReview;
 use App\Models\ProductVariant;
+use App\Models\PromoCode;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Seller;
@@ -20,6 +21,147 @@ use App\Enums\OrderStatus;
 
 class OrderController extends Controller
 {
+    private function checkValidPromoCode(Promocode $promocode, $cartItems, $userId) {
+
+        // Check if the promo code is valid (active, not expired, within max uses)
+        if (!$promocode->isValid()) {
+            return [
+                'error' => 'Promo code is not valid or has expired.',
+                'isValid' => false
+            ];
+        }
+
+        // Check first-order restriction
+        if ($promocode->only_first_order) {
+            $userOrders = Order::where('user_id', $userId)->count();
+            if ($userOrders > 0) {
+                return [
+                    'error' => 'Promo code is only for first order.',
+                    'isValid' => false
+                ];
+            }
+        }
+
+        // Calculate total order amount and specific products' amount
+        $totalAmount = 0;
+        $specificProductsAmount = 0;
+        $cartProductIds = [];
+
+        foreach ($cartItems as $cartItem) {
+            $product = Product::find($cartItem->product_id);
+            if (!$product) {
+                return [
+                    'error' => 'Product not found: ' . $cartItem->product_id,
+                    'isValid' => false
+                ];
+            }
+            $itemTotal = $product->final_price * $cartItem->quantity;
+            $totalAmount += $itemTotal;
+            $cartProductIds[] = $cartItem->product_id;
+            if ($promocode->applicable_to === 'specific' && !empty($promocode->applicable_products) && in_array($cartItem->product_id, $promocode->applicable_products)) {
+                $specificProductsAmount += $itemTotal;
+            }
+        }
+
+        // Check minimum order amount for the entire cart
+        if ($promocode->min_order_amount && $totalAmount < $promocode->min_order_amount) {
+            return [
+                'error' => 'Order amount does not meet the minimum requirement of ' . $promocode->min_order_amount,
+                'isValid' => false
+            ];
+        }
+
+        // Check applicability to products
+        if ($promocode->applicable_to === 'specific' && !empty($promocode->applicable_products)) {
+            $applicableProductIds = $promocode->applicable_products;
+            $matchingProducts = array_intersect($cartProductIds, $applicableProductIds);
+
+            if (empty($matchingProducts)) {
+                return [
+                    'error' => 'Promo code is not applicable to any products in your cart',
+                    'isValid' => false
+                ];
+            }
+
+            // Check minimum order amount for specific products
+            if ($promocode->min_order_amount && $specificProductsAmount < $promocode->min_order_amount) {
+                return [
+                    'error' => 'Order amount does not meet the minimum requirement of ' . $promocode->min_order_amount . ' for applicable products',
+                    'isValid' => false
+                ];
+            }
+        }
+
+        // Check user-specific usage limit
+        if ($promocode->uses_per_user) {
+            $userOrderCount = Order::where('user_id', $userId)
+                ->where('promocode_id', $promocode->id)
+                ->count();
+
+            if ($userOrderCount >= $promocode->uses_per_user) {
+                return [
+                    'error' => 'You have already used this promo code the maximum number of times',
+                    'isValid' => false
+                ];
+            }
+        }
+
+        // Calculate discount
+        $discountAmount = 0;
+        $discountBaseAmount = $promocode->applicable_to === 'specific' ? $specificProductsAmount : $totalAmount;
+        if ($promocode->discount_type === 'percentage') {
+            $discountAmount = ($promocode->discount_value / 100) * $discountBaseAmount;
+            if ($promocode->max_discount_amount && $discountAmount > $promocode->max_discount_amount) {
+                $discountAmount = $promocode->max_discount_amount;
+            }
+        } else {
+            $discountAmount = $promocode->discount_value;
+        }
+
+        return [
+            'isValid' => true,
+            'discount_amount' => $discountAmount,
+            'total_amount' => $totalAmount,
+            'specific_products_amount' => $specificProductsAmount,
+        ];
+
+    }
+
+    public function validatePromoCode(Request $request) {
+        $userId = $request->user()->id;
+
+        $cartItems = ProductCart::where('user_id', $userId)
+            ->whereIn('id', $request->cart_items_ids)
+            ->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json(['errors' => ['cart' => 'Your cart is empty']], 422);
+        }
+
+        $promocode = PromoCode::where('code', $request->promo_code)->first();
+
+        if (!$promocode) {
+            return response()->json(['errors' => ['promo_code' => 'Invalid promo code']], 422);
+        }
+
+        try {
+            $result = $this->checkValidPromoCode($promocode, $cartItems, $userId);
+            if ($result['isValid']) {
+                return response()->json([
+                    'message' => 'Promo code is valid and can be applied',
+                    'promo_code' => $promocode->code,
+                    'discount_amount' => $result['discount_amount'],
+                    'total_amount' => $result['total_amount'],
+                    'discounted_amount' => $result['total_amount'] - $result['discount_amount'],
+                ], 200);
+            } else {
+                return response()->json(['errors' => ['promo_code' => $result['error']]], 422);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['errors' => ['promo_code' => $e->getMessage()]], 422);
+        }
+    }
+
     public function createNewOrder(Request $request) {
         
         $userId = $request->user()->id;
@@ -133,7 +275,7 @@ class OrderController extends Controller
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['errors' => ['server' => 'Failed to create order']], 500);
+            return response()->json(['errors' => ['server' => 'Failed to create order: ' . $e->getMessage()]], 500);
         }
     }
 

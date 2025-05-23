@@ -144,6 +144,26 @@
                     'route' =>  route('orders.list'),
                     'active' => Request::is('*orders*'),
                 ],
+                [
+                    'title' => 'Promo codes',
+                    'icon' => 'redeem',
+                    'submenu' => true,
+                    'active' => Request::is('promo-code*'),
+                    'items' => [
+                        [
+                            'title' => 'Add New Promo code',
+                            'icon' => 'add_circle',
+                            'route' => route('promo-code.add'),
+                            'active' => Request::is('*promo-code/add*'),
+                        ],
+                        [
+                            'title' => 'Promo codes list',
+                            'icon' => 'list_alt',
+                            'route' => route('promo-code.list'),
+                            'active' => Request::is('*promo-code/list*'),
+                        ],
+                    ],
+                ],
             ],
         ],
     ];
@@ -172,7 +192,7 @@
                             </span>
                         </div>
 
-                        <ul class="px-2 hidden group-[.open]:block space-y-2 my-3">
+                        <ul class="pl-4 hidden group-[.open]:block space-y-2 my-3">
                             @foreach ($item['items'] as $sub)
                                 <li>
                                     <a href="{{ $sub['route'] }}" class="flex text-sm items-center text-center gap-3 hover:text-blue-500 hover:bg-blue-100 py-2 px-2 transition-all duration-300 rounded-lg {{ $sub['active'] ? 'text-blue-500 bg-blue-100' : 'text-gray-600' }}">

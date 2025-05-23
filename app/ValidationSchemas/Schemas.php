@@ -196,6 +196,43 @@ class Schemas
                 'rating' => 'required|numeric|min:1|max:5',
                 'review' =>'required|string|min:100',
             ],
+            'addPromoCodeSchema' => [
+                'code' => 'required|string|min:4|max:50|unique:promo_codes,code',
+                'discount_type' => 'required',
+                'discount_value' => 'required|numeric|min:0',
+                'max_discount_amount' => 'nullable|numeric|min:0',
+                'min_order_amount' => 'nullable|numeric|min:0',
+                'start_date' => 'required|date',
+                'expiry_date' => 'nullable|date|after:start_date',
+                'max_uses' => 'nullable|integer|min:1',
+                'uses_per_user' => 'required|integer|min:1',
+                'description' => 'required|string|max:1000',
+                'applicable_to' => 'required|in:all,specific',
+                'products' => 'required_if:applicable_to,specific|array',
+                'products.*' => 'exists:products,id',
+                'is_active' => 'boolean',
+            ],
+            'updatePromoCodeSchema' => [
+                'code' => 'required|string|min:4|max:50',
+                'discount_type' => 'required',
+                'discount_value' => 'required|numeric|min:0',
+                'max_discount_amount' => 'nullable|numeric|min:0',
+                'min_order_amount' => 'nullable|numeric|min:0',
+                'start_date' => 'required|date',
+                'expiry_date' => 'nullable|date|after:start_date',
+                'max_uses' => 'nullable|integer|min:1',
+                'uses_per_user' => 'required|integer|min:1',
+                'description' => 'required|string|max:1000',
+                'applicable_to' => 'required|in:all,specific',
+                'products' => 'required_if:applicable_to,specific|array',
+                'products.*' => 'exists:products,id',
+                'is_active' => 'boolean',
+            ],
+            'validPromocodeSchema' => [
+                "promo_code" => "required|exists:promo_codes,code",
+                'cart_items_ids' => 'required|array|min:1',
+                'cart_items_ids.*' => 'required|exists:product_carts,id'
+            ],
 
             // custom error messages
             'errorMessages' => [
