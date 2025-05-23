@@ -1109,6 +1109,35 @@
 					"response": []
 				},
 				{
+					"name": "Validate Promo code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cart_items_ids\" : [\"682821ae717fde40120a8a15\", \"68302f5199b02d39f1034012\"],\r\n    \"promo_code\" : \"FIRSTORDER250\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/orders/validate-promo-code"
+					},
+					"response": []
+				},
+				{
 					"name": "Review a product",
 					"request": {
 						"method": "POST",
