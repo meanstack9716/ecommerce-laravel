@@ -14,6 +14,7 @@ use App\Models\ProductGallery;
 use App\Models\ProductBrand;
 use App\Models\Seller;
 use App\Enums\Sizes;
+use Illuminate\Support\Facades\URL;
 
 class ProductController extends Controller
 {
@@ -70,15 +71,15 @@ class ProductController extends Controller
         $subSubCategories = collect();
 
         $route = $request->route()->getName();
-        $referer = $request->headers->get('referer');
+        $previousUrl = URL::previous();
         $productData = $request->session()->get($this->productSessionKey, []);
 
         $routes = ['step1', 'step2', 'step3', 'step4'];
 
         $selectedColors = [];
 
-        $isComingFromLaterStep = $referer && array_filter($routes, function($r) use ($referer) {
-            return str_contains($referer, $r);
+        $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
+            return str_contains($previousUrl, $r);
         });
 
         if (!$isComingFromLaterStep) {

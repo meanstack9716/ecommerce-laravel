@@ -64,11 +64,11 @@
                 <label for="address_type" class="font-medium 3xl:text-xl 3xl:font-semibold">Address Type
                     <span class="text-red-600">*</span>
                 </label>
-                <input type="hidden" name="address_type" id="address_type" value="{{ old('address_type', session('client_registration_data.businessAddress.type')) }}">
+                <input type="hidden" name="address_type" id="address_type" value="{{ old('address_type', session('client_registration_data.userAddress.type')) }}">
                 <div class="mt-3 flex flex-wrap items-center gap-4 text-center address-type-options">
                     @foreach (\App\Enums\AddressType::options() as $key => $label)
                         <div class="min-w-20 cursor-pointer py-2 border
-                            {{ old('address_type') == $key || session('client_registration_data.businessAddress.type') == $key ? 'bg-blue-500 text-white border-blue-500' : 'border-neutral-500 text-neutral-500' }} px-6 rounded-3xl font-semibold"
+                            {{ old('address_type') == $key || session('client_registration_data.userAddress.type') == $key ? 'bg-blue-500 text-white border-blue-500' : 'border-neutral-500 text-neutral-500' }} px-6 rounded-3xl font-semibold"
                             data-value="{{ $key }}">
                             {{ $label }}
                         </div>
@@ -159,3 +159,24 @@
         </button>
     </div>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const options = document.querySelectorAll('.address-type-options div');
+    const hiddenInput = document.getElementById('address_type');
+    
+    options.forEach(option => {
+        option.addEventListener('click', function() {
+            options.forEach(opt => {
+                opt.classList.remove('bg-blue-500', 'text-white', 'border-blue-500');
+                opt.classList.add('border-neutral-500', 'text-neutral-500');
+            });
+            
+            this.classList.add('bg-blue-500', 'text-white', 'border-blue-500');
+            this.classList.remove('border-neutral-500', 'text-neutral-500');
+            
+            hiddenInput.value = this.getAttribute('data-value');
+        });
+    });
+});
+</script>

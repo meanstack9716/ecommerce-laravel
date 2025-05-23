@@ -12,6 +12,7 @@ use App\Models\IdentityProof;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
 
 class UserController extends Controller
 {
@@ -44,13 +45,13 @@ class UserController extends Controller
 
     public function showRegistrationForm(Request $request) {
         $route = $request->route()->getName();
-        $referer = $request->headers->get('referer');
+        $previousUrl = URL::previous();
         $registrationData = $request->session()->get($this->clientSessionKey, []);
 
         $routes = ['personal', 'business', 'identity', 'complete'];
 
-        $isComingFromLaterStep = $referer && array_filter($routes, function($r) use ($referer) {
-            return str_contains($referer, $r);
+        $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
+            return str_contains($previousUrl, $r);
         });
         
         if (!$isComingFromLaterStep) {
