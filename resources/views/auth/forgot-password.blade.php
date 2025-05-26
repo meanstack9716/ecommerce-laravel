@@ -1,16 +1,16 @@
 @extends('auth.main')
 
 @section('content')
-<div class="flex p-6 lg:p-8 items-center justify-center min-h-screen flex-col bg-contain bg-center" style="background-image: url('{{ asset('images/bg-blue.png') }}')">
-    <div class="z-20 p-6 sm:p-8 bg-white rounded-4xl shadow-md max-w-lg w-full 3xl:max-w-2xl">
-        <img src="{{ asset('icons/message.png') }}" alt="Logo" class="pointer-events-none mx-auto w-1/4 3xl:w-1/5 mb-2">
+<div class="flex p-6 relative lg:p-8 items-center justify-center sm:justify-end min-h-screen flex-col sm:flex-row bg-contain bg-center" style="background-image: url('{{ asset('images/bg-blue.jpeg') }}')">
+    <div class="bg-[#0a316c] hidden left-0 lg:block lg:absolute bottom-0 w-full h-[25%]"></div>
+    <div class="z-20 p-6 sm:p-8 bg-white rounded-4xl shadow-md max-w-lg w-full 3xl:max-w-2xl sm:mr-6">
         <div class="text-center mb-2">
             <h1 class="text-center text-3xl 3xl:text-5xl font-bold text-gray-900">
                 Forgot password
             </h1>
         </div>
         <p class="text-[#515151] text-center w-3/4 mx-auto 3xl:text-xl">Enter your email address and we will send you an OTP to reset your password.</p>
-        <form class="mt-8 space-y-6" method="POST" action="{{ route('password.email') }}">
+        <form id="reset-password-form" class="mt-8 space-y-6" method="POST" action="{{ route('password.email') }}">
             @csrf
             <div class="space-y-4 3xl:space-y-6 border-0">
                 <div>
@@ -21,6 +21,7 @@
                     @error('email')
                         <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                     @enderror
+                    <span id="emailError" class="mt-2 text-sm text-red-600 3xl:text-base block"></span>
                 </div>
             </div>
             <div>
@@ -45,4 +46,28 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('reset-password-form').addEventListener('submit', function (e) {
+        let hasErrors = false;
+
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+
+        emailError.innerText = '';
+        const emailRegex =  /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+        if (!emailInput.value.trim()) {
+            emailError.innerText = 'Email is required.';
+            hasErrors = true;
+        }  else if (!emailRegex.test(emailInput.value)) {
+            emailError.innerText = 'Please enter a valid email address.';
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            e.preventDefault();
+        }
+    });
+</script>
 @endsection

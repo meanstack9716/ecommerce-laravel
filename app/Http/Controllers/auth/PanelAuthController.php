@@ -59,7 +59,10 @@ class PanelAuthController extends Controller
 
         Mail::to($email)->send(new EmailVerification($verificationCode));
         session()->put('email', $email);
-        return redirect()->route('password.verify-code');
+        return redirect()->route('password.verify-code')->with('toast', [
+            'type' => 'success',
+            'message' => 'If an account with the provided email exists, a password reset link has been sent.'
+        ]);
     }
 
     public function showVerifyCodeForm()
@@ -88,8 +91,9 @@ class PanelAuthController extends Controller
 
         session()->put('email', $email);
         Mail::to($email)->send(new EmailVerification($verificationCode));
-        return back()->with([
-            'message' => 'A new verification code has been sent.',
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'A new Verification code sent successfully!'
         ]);
     }
 
@@ -119,7 +123,10 @@ class PanelAuthController extends Controller
         $verification->delete();
         session()->put('email', $email);
         session()->put('code', $code);
-        return redirect()->route('password.reset');;
+        return redirect()->route('password.reset')->with('toast', [
+            'type' => 'success',
+            'message' => 'Your code has been verified!'
+        ]);
     }
 
     public function showResetPasswordForm()

@@ -176,7 +176,7 @@
 
             @foreach ($section['items'] as $item)
                 @if (!empty($item['submenu']))
-                    <div class="group">
+                    <div class="group {{ $item['active'] ? 'open' : '' }}">
                         <div class="flex justify-between items-center cursor-pointer hover:text-blue-500 hover:bg-blue-100 px-3 transition-all duration-300 group-[.open]:bg-blue-100 group-[.open]:text-blue-500 rounded-md py-2 
                             {{ $item['active'] ? 'text-blue-500 bg-blue-100' : '' }}" 
                             onclick="toggleMenu(this)"
@@ -187,7 +187,7 @@
                                 </span>
                                 <span class="font-medium tracking-wide">{{ $item['title'] }}</span>
                             </div>
-                            <span class="material-symbols-outlined mr-2 rotate-90">
+                            <span class="material-symbols-outlined mr-2 transition-transform duration-300 group-[.open]:rotate-90">
                                 chevron_right
                             </span>
                         </div>
@@ -226,4 +226,12 @@
         const arrowIcon = element.querySelector('.fa-chevron-down');
         arrowIcon.classList.toggle('rotate-180');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.group ul li a').forEach(link => {
+            if (link.classList.contains('bg-blue-100')) {
+                link.closest('.group').classList.add('open');
+            }
+        });
+    });
 </script>

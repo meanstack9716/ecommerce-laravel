@@ -1,15 +1,19 @@
 @extends('auth.main')
 
 @section('content')
-<div class="flex p-6 lg:p-8 items-center justify-center min-h-screen flex-col bg-contain bg-center" style="background-image: url('{{ asset('images/bg-blue.png') }}')">
-    <div class="z-20 p-6 sm:p-8 bg-white rounded-4xl shadow-md max-w-lg w-full 3xl:max-w-2xl relative">
+@if(session('toast'))
+    <x-toast-message type="{{ session('toast.type') }}" message="{{ session('toast.message') }}"/> 
+@endif
+
+<div class="flex p-6 lg:p-8 items-center justify-center sm:justify-end min-h-screen flex-col sm:flex-row bg-contain bg-center" style="background-image: url('{{ asset('images/bg-blue.jpeg') }}')">
+    <div class="bg-[#0a316c] hidden left-0 lg:block lg:absolute bottom-0 w-full h-[25%]"></div>
+    <div class="z-20 sm:mr-6 p-6 sm:p-8 bg-white rounded-4xl shadow-md max-w-lg w-full 3xl:max-w-2xl relative">
        <a href="{{ route('forgot-password') }}" class="text-5xl absolute left-8 top-8">
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
             </svg>
         </a>
 
-        <img src="{{ asset('icons/verify.png') }}" alt="Logo" class="pointer-events-none mx-auto w-1/4 3xl:w-1/5 h-auto mb-5">
         <div class="text- mb-2 3xl:mb-4">
             <h1 class="text-center text-3xl 3xl:text-5xl font-bold text-gray-900">
                 Verify Code
@@ -61,7 +65,7 @@
                 </button>
             </div>
         </form>
-        <form class="flex items-center justify-center" action="{{ route('password.resend-code') }}" method="POST">
+        <form id="resend-form" class="flex items-center justify-center" action="{{ route('password.resend-code') }}" method="POST">
             @csrf
             <input type="hidden" name="email" value="{{ $email }}">
             <div class="flex items-center justify-center mt-3">

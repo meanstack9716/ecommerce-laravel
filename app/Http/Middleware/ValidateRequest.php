@@ -51,7 +51,7 @@ class ValidateRequest
             if ($request->expectsJson() || $request->is('api/*')) {
                 // API response
                 $errors = collect($validator->errors())->map(function ($errorMessages, $field) {
-                    return $errorMessages[0];
+                    return str_replace(' field', '', $errorMessages[0]);                
                 });
                 
                 return response()->json([
@@ -59,8 +59,12 @@ class ValidateRequest
                 ], 422);
             }
 
+            $errors = collect($validator->errors())->map(function ($errorMessages, $field) {
+                return str_replace(' field', '', $errorMessages[0]);
+            })->all();
+
             return redirect()->back()
-                ->withErrors($validator)
+                ->withErrors($errors)
                 ->withInput();
         }
 
