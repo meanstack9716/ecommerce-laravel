@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
+use App\Models\Product;
 
 class CategoryController extends Controller
 {
@@ -63,8 +64,8 @@ class CategoryController extends Controller
         $category->description = $request->category_description;
 
         if ($request->hasFile('category_img')) {
-            if ($category->img_path) {
-                Storage::delete('public/' . $category->img_path);
+            if ($category->img_path && Storage::exists($category->img_path)) {
+                Storage::delete($category->img_path);
             }
             $img_path = $request->file('category_img')->store('categories');
         
@@ -73,8 +74,38 @@ class CategoryController extends Controller
 
         $category->save();
 
-        return redirect()->route('category.list')
-            ->with('success', 'Category updated successfully!');
+        return redirect()->route('category.list')->with('toast', [
+            'type' => 'success',
+            'message' => 'Category updated successfully'
+        ]);
+    }
+
+    public function deleteCategory (Request $request, $categoryId)
+    {
+        $category = Category::find($categoryId);
+        if (!$category) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Category not found.'
+            ]);
+        }
+
+        $productCount = Product::where('category_id', $categoryId)->count();
+
+        if ($productCount > 0) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => "Cannot delete category because it is associated with $productCount product(s)."
+            ]);
+        }
+        SubCategory::where('category_id' , $category->id)->delete();  
+        SubSubCategory::where('category_id' , $category->id)->delete();  
+        $category->delete();
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Category deleted successfully"
+        ]);
     }
 
     public function showSubCategoryForm(Request $request)
@@ -93,7 +124,10 @@ class CategoryController extends Controller
             'img_path' => $img_path,
             'category_id' => $request->category_type
         ]);
-        return redirect()->route('sub-category.list');
+        return redirect()->route('sub-category.list')->with('toast', [
+            'type' => 'success',
+            'message' => 'Sub Category added successfully'
+        ]);;
     }
 
     public function getAllSubCategoriesList(Request $request) {
@@ -136,8 +170,8 @@ class CategoryController extends Controller
         $subCategory->category_id = $request->category_type;
 
         if ($request->hasFile('category_img')) {
-            if ($subCategory->img_path) {
-                Storage::delete('public/' . $subCategory->img_path);
+            if ($subCategory->img_path && Storage::exists($subCategory->img_path)) {
+                Storage::delete($subCategory->img_path);
             }
             $img_path = $request->file('category_img')->store('sub_categories/'. $request->category_type);
         
@@ -148,6 +182,35 @@ class CategoryController extends Controller
 
         return redirect()->route('sub-category.list')
             ->with('success', 'Sub Category updated successfully!');
+    }
+
+    public function deleteSubCategory (Request $request, $categoryId)
+    {
+        $subCategory = SubCategory::find($categoryId);
+        if (!$subCategory) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Category not found.'
+            ]);
+        }
+
+        $productCount = Product::where('sub_category_id', $subCategory->id)->count();
+
+        if ($productCount > 0) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => "Cannot delete category because it is associated with $productCount product(s)."
+            ]);
+        }
+
+        SubSubCategory::where('sub_category_id' , $subCategory->id)->delete();
+        
+        $subCategory->delete();
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Sub Category deleted successfully"
+        ]);
     }
 
     public function getSubcategories(Request $request)
@@ -200,7 +263,10 @@ class CategoryController extends Controller
             'category_id' => $request->category,
             'sub_category_id' => $request->sub_category
         ]);
-        return redirect()->route('sub-sub-category.list');
+        return redirect()->route('sub-sub-category.list')->with('toast', [
+            'type' => 'success',
+            'message' => 'Sub Sub Category added successfully'
+        ]);;
     }
 
     public function editSubSubCategoryDetails(Request $request, $categoryId)
@@ -227,8 +293,8 @@ class CategoryController extends Controller
         $subSubCategory->sub_category_id = $request->sub_category;
 
         if ($request->hasFile('img')) {
-            if ($subSubCategory->img_path) {
-                Storage::delete('public/' . $subSubCategory->img_path);
+            if ($subSubCategory->img_path && Storage::exists($subSubCategory->img_path)) {
+                Storage::delete($subSubCategory->img_path);
             }
             $img_path = $request->file('img')->store('sub_sub_categories/'. $request->sub_category);
         
@@ -237,8 +303,37 @@ class CategoryController extends Controller
 
         $subSubCategory->save();
 
-        return redirect()->route('sub-sub-category.list')
-            ->with('success', 'Sub Sub Category updated successfully!');
+        return redirect()->route('sub-sub-category.list')->with('toast', [
+            'type' => 'success',
+            'message' => 'Sub Sub Category updated successfully'
+        ]);
+    }
+
+    public function deleteSubSubCategory(Request $request, $categoryId)
+    {
+        $subSubCategory = SubSubCategory::find($categoryId);
+        if (!$subSubCategory) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Category not found.'
+            ]);
+        }
+
+        $productCount = Product::where('sub_sub_category_id', $subSubCategory->id)->count();
+
+        if ($productCount > 0) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => "Cannot delete category because it is associated with $productCount product(s)."
+            ]);
+        }
+        
+        $subSubCategory->delete();
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Sub Sub Category deleted successfully"
+        ]);
     }
 
     public function getAllSubSubCategoryList(Request $request) {

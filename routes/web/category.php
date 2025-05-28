@@ -24,7 +24,10 @@ Route::prefix('category')->group(function () {
             Route::put('/{categoryId}', [CategoryController::class, 'updateCategory'])
             ->middleware('validateRequest:updateCategorySchema')
             ->name('category.update');
-            
+
+            Route::delete('/{categoryId}', [CategoryController::class, 'deleteCategory'])->name('category.destroy');
+
+            // Sub categories route            
             Route::get('/sub/list', [CategoryController::class, 'getAllSubCategoriesList'])->name('sub-category.list');
             Route::get('/sub/add', [CategoryController::class, 'showSubCategoryForm'])->name('sub-category.add');
             Route::post('/sub/add', [CategoryController::class, 'addNewSubCategory'])
@@ -35,7 +38,10 @@ Route::prefix('category')->group(function () {
             Route::put('/sub/{categoryIds}', [CategoryController::class, 'updateSubCategory'])
             ->middleware('validateRequest:updateSubCategorySchema')
             ->name('sub-category.update');
+
+            Route::delete('/sub/{categoryId}', [CategoryController::class, 'deleteSubCategory'])->name('sub-category.destroy');
             
+            //Sub Sub categories route
             Route::get('/sub-sub/list', [CategoryController::class, 'getAllSubSubCategoryList'])->name('sub-sub-category.list');
             Route::get('/sub-sub/add', [CategoryController::class, 'showSubSubCategoryForm'])->name('sub-sub-category.add');
             Route::post('/sub-sub/add', [CategoryController::class, 'addNewSubSubCategory'])
@@ -46,6 +52,8 @@ Route::prefix('category')->group(function () {
             Route::put('/sub-sub/{categoryId}', [CategoryController::class, 'updateSubSubCategory'])
             ->middleware('validateRequest:updateSubSubCategorySchema')
             ->name('sub-sub-category.update');
+
+            Route::delete('/sub-sub/{categoryId}', [CategoryController::class, 'deleteSubSubCategory'])->name('sub-sub-category.destroy');
         });
     });
 });

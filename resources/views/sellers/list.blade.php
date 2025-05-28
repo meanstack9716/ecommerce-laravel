@@ -103,7 +103,7 @@
                     Apply Filters
                 </button>
                 @if(request('search') || request('status'))
-                    <a href="{{ route('sub-category.list', ['limit' => request('limit', 10)]) }}"
+                    <a href="{{ route('seller.list', ['limit' => request('limit', 10)]) }}"
                         class="font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
                         Clear Filter
                     </a>
@@ -188,7 +188,7 @@
                 <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
                 <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
                 <label for="limit">Users per page:</label>
-                <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
+                <select name="limit" id="limit" onchange="this.form.submit()" class="cursor-pointer border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)
                         <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
                             {{ $option }}

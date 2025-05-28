@@ -485,32 +485,32 @@ class UserController extends Controller
         $identityProof->id_verify_status = $request->id_verify_status;
 
         if ($request->hasFile('pan_front_path')) {
-            if ($identityProof->pan_front_path) {
-                Storage::delete('public/' . $identityProof->pan_front_path);
+            if ($identityProof->pan_front_path && Storage::exists($identityProof->pan_front_path)) {
+                Storage::delete($identityProof->pan_front_path);
             }
             $img_path = $request->file('pan_front_path')->store('identity_proofs');
             $identityProof->pan_front_path = $img_path;
         }
 
         if ($request->hasFile('pan_back_path')) {
-            if ($identityProof->pan_back_path) {
-                Storage::delete('public/' . $identityProof->pan_back_path);
+            if ($identityProof->pan_back_path && Storage::exists($identityProof->pan_back_path)) {
+                Storage::delete($identityProof->pan_back_path);
             }
             $img_path = $request->file('pan_back_path')->store('identity_proofs');
             $identityProof->pan_back_path = $img_path;
         }
 
         if ($request->hasFile('id_front_path')) {
-            if ($identityProof->id_front_path) {
-                Storage::delete('public/' . $identityProof->id_front_path);
+            if ($identityProof->id_front_path && Storage::exists($identityProof->id_front_path)) {
+                Storage::delete($identityProof->id_front_path);
             }
             $img_path = $request->file('id_front_path')->store('identity_proofs');
             $identityProof->id_front_path = $img_path;
         }
 
         if ($request->hasFile('id_back_path')) {
-            if ($identityProof->id_back_path) {
-                Storage::delete('public/' . $identityProof->id_back_path);
+            if ($identityProof->id_back_path && Storage::exists($identityProof->id_back_path)) {
+                Storage::delete($identityProof->id_back_path);
             }
             $img_path = $request->file('id_back_path')->store('identity_proofs');
             $identityProof->id_back_path = $img_path;

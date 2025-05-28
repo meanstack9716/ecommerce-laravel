@@ -16,7 +16,7 @@
         </div>
 
         <div class="mt-8 bg-white py-8 px-6 shadow rounded-lg sm:px-10">
-            <form action="{{ $formAction }}" method="POST" class="mb-0" enctype="multipart/form-data">
+            <form id="categoryForm" action="{{ $formAction }}" method="POST" class="mb-0" enctype="multipart/form-data">
                 @csrf
                 @if($isEdit)
                     @method('PUT')
@@ -119,7 +119,7 @@
                 </div>
 
                 <div class="mt-8 flex justify-center space-x-4">
-                    <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
+                    <button id="submitButton" type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
                         {{ $submitText }}
                     </button>
                     
@@ -135,6 +135,14 @@
 </div>
 
 <script>
+
+    document.getElementById('categoryForm').addEventListener('submit', function() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...'; // Optional: Change button text
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed'); // Optional: Visual feedback
+    });
+
     document.getElementById('category').addEventListener('change', function() {
         const subcategorySelect = document.getElementById('sub_category');
         const categoryId = this.value;

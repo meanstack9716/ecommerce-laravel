@@ -41,15 +41,6 @@ class DatabaseSeeder extends Seeder
                     'gst_num' => '07ASS1234567890',
                     'status' => 'Approved'
                 ],
-                'address' => [
-                    'type' => "Office",
-                    'line1' => "MPV Tower",
-                    'line2' => "Sec-10",
-                    'city' => 'Noida',
-                    'state' => 'Uttar Pradesh',
-                    'postal_code' => '123456',
-                    'country' => 'India',
-                ]
             ],
         ];
 
@@ -79,17 +70,6 @@ class DatabaseSeeder extends Seeder
                     'status' => $user['business_details']['status'],
                 ]
             );
-
-            Address::create([
-                'user_id' => $adminUser['id'],
-                'type' => $user['address']['type'],
-                'line1' => $user['address']['line1'],
-                'line2' => $user['address']['line2'],
-                'city' => $user['address']['city'],
-                'state' => $user['address']['state'],
-                'postal_code' => $user['address']['postal_code'],
-                'country' => $user['address']['country'],
-            ]);
         }
     }
 }

@@ -3,8 +3,12 @@
 @section('content')
 <div class="p-4 sm:p-6 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
-        <div class="py-5 xl:py-0">
-            <h1 class="text-[26px] font-bold tracking-wide">Sub Sub Categories</h1>
+        <div class="py-5 xl:py-0 flex justify-between items-center text-center">
+            <h1 class="text-[26px] font-bold tracking-wide">Sub Sub Categories List</h1>
+            <a href="{{ route('sub-sub-category.add') }}"
+                class="font-medium bg-[#334a8b]  text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800  border border-[#334a8b]">
+                + Add new category                    
+            </a>
         </div>
 
         <form method="GET" action="{{ route('sub-sub-category.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
@@ -81,11 +85,18 @@
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->category->name }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $category->subCategory->name }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">
-                                <div>
-                                    <a href="{{ route('sub-sub-category.edit', $category->id) }}"
-                                        class="text-sm font-medium  px-4 py-2 text-blue-600">
-                                        Edit
+                                <div class="flex justify-center items-center text-center gap-4">
+                                    <a href="{{ route('sub-sub-category.edit', $category->id) }}" class="m-0 flex">
+                                        <span class="material-symbols-outlined text-blue-500">
+                                            edit_square
+                                        </span>
                                     </a>
+                                    <button onclick="openDeleteModal('{{ route('sub-sub-category.destroy', $category->id) }}', 'Delete {{ $category->name }} category')"
+                                        class="flex cursor-pointer">
+                                        <span class="material-symbols-outlined text-red-600">
+                                            delete
+                                        </span>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -119,4 +130,5 @@
         </div>
     </div>
 </div>
+<x-delete-modal />
 @endsection

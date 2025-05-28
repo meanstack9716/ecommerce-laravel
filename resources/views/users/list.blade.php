@@ -176,7 +176,7 @@
                 <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
                 <input type="hidden" name="status" value="{{ request('status') }}">
                 <label for="limit">Users per page:</label>
-                <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
+                <select name="limit" id="limit" onchange="this.form.submit()" class="cursor-pointer border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)
                         <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
                             {{ $option }}

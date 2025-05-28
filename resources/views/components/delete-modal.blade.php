@@ -1,4 +1,8 @@
-@props(['action' => '', 'itemName' => 'item'])
+@props([
+    'action' => '', 
+    'title' => 'Delete item', 
+    'subtitle' => 'Are you sure you want to delete this item? This action cannot be undone.' 
+])
 
 <div id="deleteModal" class="fixed inset-0 z-100 hidden overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -17,9 +21,9 @@
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Delete {{ $itemName }}</h3>
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">{{ $title}}</h3>
                         <div class="mt-2">
-                            <p class="text-sm text-gray-500">Are you sure you want to delete this {{ $itemName }}? This action cannot be undone.</p>
+                            <p class="text-sm text-gray-500">{{ $subtitle }}</p>
                         </div>
                     </div>
                 </div>
@@ -42,15 +46,16 @@
 
 <script>
     // Open delete confirmation modal
-    function openDeleteModal(url, itemName = 'item') {
+    function openDeleteModal(url, title, subtitle) {
         const modal = document.getElementById('deleteModal');
         const form = document.getElementById('deleteForm');
         
-        if (itemName) {
-            const title = modal.querySelector('h3');
+        if (title || subtitle) {
+            console.log(title, '11111111111111111')
+            const titleContainer = modal.querySelector('h3');
             const message = modal.querySelector('p.text-gray-500');
-            title.textContent = `Delete ${itemName}`;
-            message.textContent = `Are you sure you want to delete this ${itemName}? This action cannot be undone.`;
+            titleContainer.textContent = title ? title : 'Delete item';
+            message.textContent = subtitle ? subtitle : 'Are you sure you want to delete this item? This action cannot be undone.s';
         }
         
         // Set the form action
