@@ -48,18 +48,6 @@
                                 name="category_type" 
                                 value="{{ old('category_type', $subCategory->category_id ?? '') }}"
                             >
-                            <!-- <div class="relative">
-                                <select name="category_type" id="category_type"
-                                    class="mt-1 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">Select category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_type') == $category->id || ( $isEdit && $subCategory->category_id == $category->id)  ? 'selected' : '' }}>{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                                    chevron_right
-                                </span>
-                            </div> -->
                             @error('category_type')
                                 <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                             @enderror
