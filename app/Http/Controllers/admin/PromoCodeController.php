@@ -15,7 +15,10 @@ class PromoCodeController extends Controller
 {
     public function showAddNewPromoCodeForm(Request $request)
     {
-        $products = Product::all();
+        $limit = 10;
+        $query = Product::query()->orderBy('created_at', 'desc');
+        $products = $query->paginate($limit);
+
         return view('promo.form', compact('products'));
     }
 
@@ -70,7 +73,11 @@ class PromoCodeController extends Controller
     public function editPromoCodeDetails(Request $request, $codeId)
     {
         $promocode = PromoCode::findOrFail($codeId);
-        $products = Product::all();
+        if (!empty($promocode->applicable_products) && is_array($promocode->applicable_products)) {
+            $products = Product::whereIn('id', $promocode->applicable_products)->get();
+        } else {
+            $products = Product::limit(5)->get();
+        }
         return view('promo.form', compact('promocode', 'products'));
     }
 

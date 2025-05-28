@@ -31,6 +31,11 @@ class PanelAuthController extends Controller
                 ->with('error', 'Access denied. Only admin or seller can login.')
                 ->withInput();
         }
+        if ($user->status == Constants::STATUS_DEACTIVATED || $user->status == Constants::STATUS_ON_HOLD ) {
+            redirect()->back()
+                ->with('error', 'These account is not activated.')
+                ->withInput();
+        }
         Auth::guard('web')->login($user);
         return redirect('/dashboard');
     }

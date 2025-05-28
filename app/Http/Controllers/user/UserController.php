@@ -22,7 +22,11 @@ class UserController extends Controller
     public function updateUserDetails(Request $request) 
     {
         $user = $request->user();
-        $user->update($request->all());        
+        $user->update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'phone_number' => $request->phone_number,
+        ]);       
         return response()->json([
             'data' => $user->fresh()
         ]);

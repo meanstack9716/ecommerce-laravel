@@ -25,7 +25,11 @@ class CategoryController extends Controller
             'description' => $request->category_description,
             'img_path' => $img_path,
         ]);
-        return redirect()->route('category.list');
+
+        return redirect()->route('category.list')->with('toast', [
+            'type' => 'success',
+            'message' => 'Category Added successfully'
+        ]);
     }
 
     public function getAllCategoriesList(Request $request) {

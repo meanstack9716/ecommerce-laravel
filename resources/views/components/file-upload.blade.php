@@ -2,7 +2,7 @@
     'id',
     'label' => '',
     'name' => '',
-    'accept' => 'image/*',
+    'accept' => '',
     'multiple' => false,
     'helpText' => '',
     'required' => false,

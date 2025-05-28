@@ -21,7 +21,7 @@
 @endphp
 
 <div 
-    class="fixed top-4 right-4 z-50 max-w-xs w-full toast-message"
+    class="fixed top-4 right-4 z-100 max-w-xs w-full toast-message"
     role="alert"
     aria-live="assertive"
     aria-atomic="true"

@@ -29,8 +29,8 @@
                         [
                             'title' => 'Add New User',
                             'icon' => 'person_add',
-                            'route' => '#',
-                            'active' => Request::is('*users/register*'),
+                            'route' => route('user.create'),
+                            'active' => Request::is('*users/create*'),
                         ],
                     ],
                 ],

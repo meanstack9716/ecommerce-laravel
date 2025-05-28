@@ -42,20 +42,26 @@
             <div class="mb-8">
                 <label for="seller-filter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Seller</label>
                 <div class="relative w-60 sm:w-xs">
-                    <div class="relative w-full">
-                        <select id="seller-filter" name="sellerId" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none w-full">
-                            <option value="">All Sellers</option>
-                            @foreach ($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ request('sellerId') == $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->business_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                            chevron_right
-                        </span>
-                    </div>
+                    <input 
+                        type="text" 
+                        id="seller-search" 
+                        name="sellerName" 
+                        class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                        placeholder="Start typing seller name..."
+                        value="{{ request('sellerName') }}"
+                        autocomplete="off"
+                    >
+                    <div id="seller-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+                        search
+                    </span>
                 </div>
+                <input 
+                    type="hidden" 
+                    id="seller-filter" 
+                    name="sellerId" 
+                    value="{{ request('sellerId') }}"
+                >
             </div>
             @endif
         </div>
@@ -255,9 +261,11 @@
 
         function getQueryParams() {
             const sellerId = document.getElementById('seller-filter')?.value || '';
+            const sellerName = document.getElementById('seller-filter-search')?.value || '';
             const period = document.getElementById('period-filter').value;
             let params = sellerId ? `?seller_id=${sellerId}` : '';
             params += params ? `&period=${period}` : `?period=${period}`;
+            params += params ? `&sellerName=${sellerName}` : `?sellerName=${sellerName}`;
             return params;
         }
 
@@ -270,7 +278,6 @@
                     }
                 });
                 const data = await response.json();
-                console.log('API Response:', url, data);
                 if (data.status !== 'success') {
                     throw new Error(data.message || 'API request failed');
                 }
@@ -282,12 +289,88 @@
             }
         }
 
+        const reloadData = async (chartPeriod, currentPage) => {
+            showLoader();
+            try {
+                await Promise.all([
+                    loadOverview(getQueryParams()),
+                    loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
+                    loadTopProducts(getQueryParams()),
+                    loadRecentSales(getQueryParams(), currentPage)
+                ]);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function setupSellerAutocomplete(chartPeriod, currentPage) {
+            const searchInput = document.getElementById('seller-search');
+            const resultsContainer = document.getElementById('seller-search-results');
+            const selectedSellerId = document.getElementById('seller-filter');
+            let debounceTimer;
+
+            searchInput.addEventListener('input', async function(e) {
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    resultsContainer.classList.add('hidden');
+                    selectedSellerId.value = '';
+                    if (query.length === 0) {
+                        await reloadData(chartPeriod, currentPage);
+                    }
+                    return;
+                }
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/api/search/sellers?searchTerm=${encodeURIComponent(query)}`);
+                        const sellers = await response.json();
+                
+                        if (sellers?.data?.length > 0) {
+                            resultsContainer.innerHTML = sellers.data.map(seller => `
+                                <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                    data-seller-id="${seller.id}">
+                                    ${seller.business_name}
+                                </div>
+                            `).join('');
+                            resultsContainer.classList.remove('hidden');
+                        } else {
+                            resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
+                            resultsContainer.classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                        resultsContainer.classList.remove('hidden');
+                        console.error('Error fetching sellers:', error);
+                    }
+                }, 300);
+            });
+
+            resultsContainer.addEventListener('click', async function(e) {
+                const sellerItem = e.target.closest('[data-seller-id]');
+                if (sellerItem) {
+                    const sellerId = sellerItem.getAttribute('data-seller-id');
+                    const sellerName = sellerItem.textContent.trim();
+                    
+                    searchInput.value = sellerName;
+                    selectedSellerId.value = sellerId;
+                    resultsContainer.classList.add('hidden');
+
+                    await reloadData(chartPeriod, currentPage);
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                    resultsContainer.classList.add('hidden');
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             showLoader();
 
             try {
                 const periodFilter = document.getElementById('period-filter');
-                const sellerFilter = document.getElementById('seller-filter');
                 const chartButtons = {
                     monthly: document.getElementById('chart-monthly'),
                     weekly: document.getElementById('chart-weekly'),
@@ -295,7 +378,7 @@
                 };
                 let currentPage = 1;
                 let chartPeriod = 'daily';
-
+                
                 function updateChartButtons(activePeriod) {
                     Object.keys(chartButtons).forEach(period => {
                         chartButtons[period].classList.toggle('bg-blue-100', period === activePeriod);
@@ -305,35 +388,11 @@
                     });
                 }
 
+                setupSellerAutocomplete(chartPeriod, currentPage)
+                
                 periodFilter.addEventListener('change', async () => {
-                    showLoader();
-                    try {
-                        await Promise.all([
-                            loadOverview(getQueryParams()),
-                            loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
-                            loadTopProducts(getQueryParams()),
-                            loadRecentSales(getQueryParams(), currentPage)
-                        ]);
-                    } finally {
-                        hideLoader();
-                    }
+                    reloadData(chartPeriod, currentPage)
                 });
-
-                if (sellerFilter) {
-                    sellerFilter.addEventListener('change', async () => {
-                        showLoader();
-                        try {
-                            await Promise.all([
-                                loadOverview(getQueryParams()),
-                                loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
-                                loadTopProducts(getQueryParams()),
-                                loadRecentSales(getQueryParams(), currentPage)
-                            ]);
-                        } finally {
-                            hideLoader();
-                        }
-                    });
-                }
 
                 Object.keys(chartButtons).forEach(period => {
                     chartButtons[period].addEventListener('click', async () => {

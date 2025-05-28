@@ -31,13 +31,13 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('admin@123'),
                 'is_admin' => true,
-                'phone_number' => '+919876543211',
+                'phone_number' => '9876543211',
                 'role' => 'Seller',
                 'business_details' => [
                     'business_name' =>  'InnoSales',
                     'business_type' => 'Corporation',
                     'business_email' => 'innoSales@gmail.com',
-                    'business_mobile' => '+919876543211',
+                    'business_mobile' => '9876543211',
                     'gst_num' => '07ASS1234567890',
                     'status' => 'Approved'
                 ],

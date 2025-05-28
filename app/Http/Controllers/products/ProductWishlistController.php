@@ -78,6 +78,7 @@ class ProductWishlistController extends Controller
         $items = Wishlist::with([
             'product.sizes',
             'product.sizes.variants',
+            'product.reviews',
             'product.gallery',
         ])->where('user_id', $userId)
         ->get();

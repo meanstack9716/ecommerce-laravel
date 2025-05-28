@@ -22,7 +22,7 @@
                 </label>
                 <div class="relative">
                     <select name="business_type" id="business_type"
-                        class="mt-1 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        class="mt-1 cursor-pointer block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="">Select business type</option>
                         @foreach (\App\Enums\BusinessType::options() as $key => $label)
                             <option value="{{ $key }}" {{ old('business_type') == $key || session('client_registration_data.business.business_type') == $key ? 'selected' : '' }}>{{ $label }}</option>
@@ -101,7 +101,7 @@
                     <span class="text-red-600">*</span>
                 </label>
                 <input type="text" name="address_line1" id="address_line1"
-                    placeholder="" value="{{ old('address_line1', session('client_registration_data.businessAddress.line1')) }}"
+                    placeholder="Enter address line 1" value="{{ old('address_line1', session('client_registration_data.businessAddress.line1')) }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 @error('address_line1')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
@@ -112,7 +112,7 @@
                 <label for="address_line2" class="font-medium 3xl:text-xl 3xl:font-semibold">Street Line 2
                 </label>
                 <input type="text" name="address_line2" id="address_line2"
-                    placeholder="" value="{{ old('address_line2', session('client_registration_data.businessAddress.line2')) }}"
+                    placeholder="Enter address line 2" value="{{ old('address_line2', session('client_registration_data.businessAddress.line2')) }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 @error('address_line2')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
@@ -124,7 +124,7 @@
                     <span class="text-red-600">*</span>
                 </label>
                 <input type="text" name="address_city" id="address_city"
-                    placeholder="" value="{{ old('address_city', session('client_registration_data.businessAddress.city')) }}"
+                    placeholder="Enter city name" value="{{ old('address_city', session('client_registration_data.businessAddress.city')) }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 @error('address_city')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
@@ -135,9 +135,20 @@
                 <label for="address_state" class="font-medium 3xl:text-xl 3xl:font-semibold">State
                     <span class="text-red-600">*</span>
                 </label>
-                <input type="text" name="address_state" id="address_state"
-                    placeholder="" value="{{ old('address_state', session('client_registration_data.businessAddress.state')) }}"
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <div class="relative">
+                    <select name="address_state" id="address_state"
+                        class="mt-1 block  appearance-none cursor-pointer w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select state</option>
+                       @foreach (\App\Enums\States::options() as $key => $label)
+                            <option value="{{ $key }}" {{ old('address_state') == $key || session('client_registration_data.businessAddress.state') == $key  ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
+                        chevron_right
+                    </span>
+                </div>
                 @error('address_state')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                 @enderror
@@ -148,7 +159,7 @@
                     <span class="text-red-600">*</span>
                 </label>
                 <input type="text" name="address_code" id="address_code"
-                    placeholder="" value="{{ old('address_code', session('client_registration_data.businessAddress.postal_code')) }}"
+                    placeholder="Enter pin code" value="{{ old('address_code', session('client_registration_data.businessAddress.postal_code')) }}"
                     class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                 @error('address_code')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
@@ -159,9 +170,18 @@
                 <label for="address_country" class="font-medium 3xl:text-xl 3xl:font-semibold">Country
                     <span class="text-red-600">*</span>
                 </label>
-                <input type="text" name="address_country" id="address_country"
-                    placeholder="" value="{{ old('address_country', session('client_registration_data.businessAddress.country')) }}"
-                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                <div class="relative">
+                    <select name="address_country" id="address_country"
+                        class="mt-1 block appearance-none cursor-pointer w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select country</option>
+                        <option value="India" {{ old('address_country') == 'India' || session('client_registration_data.businessAddress.country') == 'India'  ? 'selected' : '' }}>
+                            India
+                        </option>
+                    </select>
+                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
+                        chevron_right
+                    </span>
+                </div>
                 @error('address_country')
                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                 @enderror

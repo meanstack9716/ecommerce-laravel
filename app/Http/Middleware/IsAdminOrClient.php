@@ -17,7 +17,7 @@ class IsAdminOrClient
             return $next($request);
         }
 
-        if (auth()->check() && auth()->user()->role->name === Constants::SELLER_ROLE) {
+        if (auth()->check() && auth()->user()->role->name === Constants::SELLER_ROLE && ($user->status != Constants::STATUS_DEACTIVATED && $user->status != Constants::STATUS_ON_HOLD) ) {
             return $next($request);
         }
 

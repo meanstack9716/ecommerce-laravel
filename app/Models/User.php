@@ -21,6 +21,7 @@ class User extends Authenticatable
         'gender',
         'profile_path',
         'is_admin',
+        'status',
         'role_id'
     ];
 
@@ -94,6 +95,9 @@ class User extends Authenticatable
             
             if ($defaultRole) {
                 $user->role_id = $defaultRole->_id;
+            }
+            if (empty($user->status)) {
+                $user->status = Constants::STATUS_ACTIVATED;
             }
         });
     }
