@@ -110,8 +110,7 @@ class CategoryController extends Controller
 
     public function showSubCategoryForm(Request $request)
     {
-        $categories = Category::all();
-        return view('categories.sub-categories.form', compact('categories'));
+        return view('categories.sub-categories.form');
     }
 
     public function addNewSubCategory(Request $request)
@@ -149,8 +148,7 @@ class CategoryController extends Controller
         }
 
         $subCategories = $query->paginate($limit);
-        $categories = Category::all();
-        return view('categories.sub-categories.list', compact('categories', 'limit', 'subCategories'));
+        return view('categories.sub-categories.list', compact('limit', 'subCategories'));
 
     }
 

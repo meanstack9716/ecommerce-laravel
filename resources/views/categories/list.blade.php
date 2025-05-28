@@ -31,7 +31,7 @@
                 </div>
             </div>
             <div class="flex items-end gap-5">
-                <button type="submit" class="bg-[#334a8b] text-white px-4 py-2 border border-[#334a8b] 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
+                <button type="submit" class="cursor-pointer bg-[#334a8b] text-white px-4 py-2 border border-[#334a8b] 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
                     Apply Filters
                 </button>
                 @if(request('search'))
