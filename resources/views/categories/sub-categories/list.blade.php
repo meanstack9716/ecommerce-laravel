@@ -15,7 +15,7 @@
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 <div class="flex flex-col items-start gap-2 w-full">
-                    <p class="m-0 text-gray-600 font-medium">Search Sub Category</p>
+                    <p class="m-0 text-gray-600 font-medium">Search by name</p>
                     <div class="relative w-full">
                         <input
                             type="text"
@@ -120,6 +120,7 @@
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <form method="GET" action="{{ route('sub-category.list') }}" class="">
             <input type="hidden" name="search" value="{{ request('search') }}">
+            <input type="hidden" name="category_term" value="{{ request('category_term') }}">
             <input type="hidden" name="categoryId" value="{{ request('categoryId') }}">
             <label for="limit">Categories per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
@@ -145,61 +146,61 @@
         const selectedDataId = document.getElementById('category-filter');
         let debounceTimer;
 
-            searchInput.addEventListener('input', async function(e) {
-                const query = e.target.value.trim();
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
                 
-                if (query.length < 2) {
-                    resultsContainer.classList.add('hidden');
-                    selectedDataId.value = '';
-                    return;
-                }
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(async () => {
-                    try {
-                        const response = await fetch(`/api/search/categories?searchTerm=${encodeURIComponent(query)}`);
-                        const data = await response.json();                
-                        if (data?.data?.length > 0) {
-                            resultsContainer.innerHTML = data.data.map(item => `
-                                <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
-                                    data-category-id="${item.id}">
-                                    ${item.name}
-                                </div>
-                            `).join('');
-                            resultsContainer.classList.remove('hidden');
-                        } else {
-                            resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
-                            resultsContainer.classList.remove('hidden');
-                        }
-                    } catch (error) {
-                        resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+                return;
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/categories?searchTerm=${encodeURIComponent(query)}`);
+                    const data = await response.json();                
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-category-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
                         resultsContainer.classList.remove('hidden');
-                        console.error('Error fetching sellers:', error);
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
+                        resultsContainer.classList.remove('hidden');
                     }
-                }, 300);
-            });
-
-            resultsContainer.addEventListener('click', async function(e) {
-                const selectedItem = e.target.closest('[data-category-id]');
-                if (selectedItem) {
-                    const selectedId = selectedItem.getAttribute('data-category-id');
-                    const selectedName = selectedItem.textContent.trim();
-                    
-                    searchInput.value = selectedName;
-                    selectedDataId.value = selectedId;
-                    resultsContainer.classList.add('hidden');
-
+                } catch (error) {
+                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                    resultsContainer.classList.remove('hidden');
+                    console.error('Error fetching sellers:', error);
                 }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-                    resultsContainer.classList.add('hidden');
-                }
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            setupCategoryAutocomplete();
+            }, 300);
         });
+
+        resultsContainer.addEventListener('click', async function(e) {
+            const selectedItem = e.target.closest('[data-category-id]');
+            if (selectedItem) {
+                const selectedId = selectedItem.getAttribute('data-category-id');
+                const selectedName = selectedItem.textContent.trim();
+                
+                searchInput.value = selectedName;
+                selectedDataId.value = selectedId;
+                resultsContainer.classList.add('hidden');
+
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                resultsContainer.classList.add('hidden');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        setupCategoryAutocomplete();
+    });
 </script>
 @endsection

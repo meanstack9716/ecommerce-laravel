@@ -146,7 +146,6 @@
                     try {
                         const response = await fetch(`/api/search/categories?searchTerm=${encodeURIComponent(query)}`);
                         const data = await response.json();
-                        console.log(data, '1111111111111')
                 
                         if (data?.data?.length > 0) {
                             resultsContainer.innerHTML = data.data.map(item => `

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\SubCategory;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use App\Constants\Constants;
@@ -34,6 +35,29 @@ class SearchController extends Controller
             ->where('name', 'like', "%{$query}%")
             ->limit(10)
             ->get(['id', 'name']);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
+    }
+
+    public function searchSubCategories(Request $request)
+    {
+        $categoryId = $request->input('categoryId');
+        $searchTerm = $request->input('searchTerm');
+    
+        $query = SubCategory::query();
+
+        if ($searchTerm) {
+            $query->where('name', 'like', "%{$searchTerm}%");
+        }
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        $data = $query->limit(10)->get(['id', 'name']);
 
         return response()->json([
             'status' => 'success',

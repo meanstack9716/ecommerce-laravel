@@ -155,8 +155,7 @@ class CategoryController extends Controller
     public function editSubCategoryDetails(Request $request, $categoryId)
     {
         $subCategory = SubCategory::findOrFail($categoryId);
-        $categories = Category::all();      
-        return view('categories.sub-categories.form', compact('subCategory', 'categories'));
+        return view('categories.sub-categories.form', compact('subCategory'));
     }
 
     public function updateSubCategory(Request $request, $categoryId)
@@ -339,6 +338,7 @@ class CategoryController extends Controller
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
+        $subCategoryId = $request->input('subCategoryId');
         
         $query = SubSubCategory::query()->with(['subCategory']);
 
@@ -350,6 +350,10 @@ class CategoryController extends Controller
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
+        }
+
+        if ($subCategoryId) {
+            $query->where('sub_category_id', $subCategoryId);
         }
 
         $subSubCategories = $query->paginate($limit);
