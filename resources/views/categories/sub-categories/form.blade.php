@@ -38,9 +38,6 @@
                                     autocomplete="off"
                                 >
                                 <div id="category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
-                                <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
-                                    search
-                                </span>
                             </div>
                             <input 
                                 type="hidden" 
@@ -156,13 +153,13 @@
                             `).join('');
                             resultsContainer.classList.remove('hidden');
                         } else {
-                            resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
+                            resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No caegory found</div>';
                             resultsContainer.classList.remove('hidden');
                         }
                     } catch (error) {
                         resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
                         resultsContainer.classList.remove('hidden');
-                        console.error('Error fetching sellers:', error);
+                        console.error('Error fetching categories:', error);
                     }
                 }, 300);
             });
@@ -182,7 +179,10 @@
 
             document.addEventListener('click', function(e) {
                 if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-                    resultsContainer.classList.add('hidden');
+                    if (!resultsContainer.classList.contains('hidden')) {
+                        resultsContainer.classList.add('hidden');
+                        searchInput.value = '';
+                    }
                 }
             });
         }

@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
 
             Route::get('/edit/{id}', [ProductController::class, 'getEditProductForm'])->name('product.edit.form');
             Route::post('/edit/{id}', [ProductController::class, 'updateProductDetails'])->name('product.edit.submit');
+
+            Route::delete('/{id}', [ProductController::class, 'deleteProductItem'])->name('product.delete');
         });
         
 
@@ -53,6 +55,8 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
             Route::put('/{brandId}', [ProductBrandController::class, 'updateBrand'])
             ->middleware('validateRequest:updateProductBrandSchema')
             ->name('products.brand.update');
+
+            Route::delete('/{brandId}', [ProductBrandController::class, 'deleteBrand'])->name('products.brand.delete');
         });
     });
 });

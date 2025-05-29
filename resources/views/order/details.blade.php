@@ -11,7 +11,24 @@
                     <p class="text-gray-500 mt-1">Placed on {{ \Carbon\Carbon::parse($order->created_at)->format('F j, Y \a\t g:i A') }}</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                    <span class="px-6 py-2 rounded-lg text-sm font-medium 
+                    <form  action="{{ route('orders.update-status', $order->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <div class="relative">
+                            <select name="status" id="status" onchange="this.form.submit()" 
+                                class="cursor-pointer mt-1 block appearance-none w-full min-w-40 font-medium border border-gray-200 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                @foreach(\App\Enums\OrderStatus::cases() as $status)
+                                    <option value="{{ $status->value }}" {{ $order->status === $status->value ? 'selected' : '' }}>
+                                        {{ ucfirst($status->value) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
+                                chevron_right
+                            </span>
+                        </div>
+                    </form>
+                    <!-- <span class="px-6 py-2 rounded-lg text-sm font-medium 
                         {{ $order->status == 'Pending' ? 'bg-orange-100 text-orange-600' : '' }}
                         {{ $order->status == 'Confirmed' ? 'bg-green-100 text-green-600' : '' }}
                         {{ $order->status == 'Processing' ? 'bg-blue-100 text-blue-800' : '' }}
@@ -19,7 +36,7 @@
                         {{ $order->status == 'Delivered' ? 'bg-green-100 text-green-800' : '' }}
                         {{ $order->status == 'Cancelled' ? 'bg-red-100 text-red-800' : '' }}">
                         {{ $order->status }}
-                    </span>
+                    </span> -->
                 </div>
             </div>
         </div>

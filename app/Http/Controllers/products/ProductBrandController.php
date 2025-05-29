@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use App\Models\ProductBrand;
+use App\Models\Product;
 
 class ProductBrandController extends Controller
 {
@@ -52,6 +53,32 @@ class ProductBrandController extends Controller
 
         return redirect()->route('products.brand.list')
             ->with('success', 'Category updated successfully!');
+    }
+
+    public function deleteBrand (Request $request, $brandId)
+    {
+        $brand = ProductBrand::find($brandId);
+        if (!$brand) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Product brand not found.'
+            ]);
+        }
+
+        $productCount = Product::where('brand_id', $brandId)->count();
+
+        if ($productCount > 0) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => "Cannot delete brand because it is associated with $productCount product(s)."
+            ]);
+        }
+        $brand->delete();
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Brand deleted successfully"
+        ]);
     }
 
     public function getAllProductBrandList(Request $request) {

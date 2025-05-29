@@ -37,6 +37,18 @@ class ProductBrand extends Model
         return $this->hasMany(Product::class, 'brand_id', '_id');
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($brand) {
+            if ($brand->img_path && Storage::exists($brand->img_path)) {
+                Storage::delete($brand->img_path);
+            }
+        });
+    }
+
+
     public $timestamps = true;
 
 }

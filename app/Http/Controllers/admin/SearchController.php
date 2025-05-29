@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
+use App\Models\ProductBrand;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use App\Constants\Constants;
@@ -86,6 +87,7 @@ class SearchController extends Controller
     public function searchSubSubCategories(Request $request)
     {
         $subCategoryId = $request->input('subCategoryId');
+        $categoryId = $request->input('categoryId');
         $searchTerm = $request->input('searchTerm');
     
         $query = SubSubCategory::query();
@@ -99,6 +101,10 @@ class SearchController extends Controller
             $query->where('name', 'like', '%' . $escapedQuery . '%');
         }
 
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
         if ($subCategoryId) {
             $query->where('sub_category_id', $subCategoryId);
         }
@@ -110,4 +116,26 @@ class SearchController extends Controller
             'data' => $data
         ], 200);
     }
+
+    public function searchBrands(Request $request)
+    {
+        $query = $request->input('searchTerm');
+
+        $escapedQuery = str_replace(
+            ['%', '_'], 
+            ['\%', '\_'], 
+            $query
+        );
+    
+        $data = ProductBrand::query()
+            ->where('name', 'like','%' . $escapedQuery . '%')
+            ->limit(10)
+            ->get(['id', 'name']);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
+    }
+
 }

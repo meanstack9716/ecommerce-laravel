@@ -23,7 +23,8 @@ class Product extends Model
         'thumbnail_path',
         'category_id',
         'sub_category_id',
-        'sub_sub_category_id'
+        'sub_sub_category_id',
+        'not_available'
     ];
 
     protected $hidden = [
@@ -33,6 +34,7 @@ class Product extends Model
         'seller_id',
         'brand_id',
         'thumbnail_path',
+        'not_available',
         'sub_category_id',
         'sub_sub_category_id'
     ];
@@ -116,7 +118,7 @@ class Product extends Model
             ->where('color', $color);
     }
     
-    protected $with = ['category', 'subCategory', 'subSubCategory', 'seller'];
+    protected $with = ['category', 'subCategory', 'subSubCategory', 'seller', 'gallery'];
 
     public $timestamps = true;
 

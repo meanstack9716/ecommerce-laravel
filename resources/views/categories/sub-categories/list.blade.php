@@ -29,30 +29,7 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex flex-col items-start gap-2">
-                    <p class="m-0 text-gray-600 font-medium">Search by Category</p>
-                    <div class="relative w-full">
-                        <input 
-                            type="text" 
-                            id="category-search" 
-                            name="category_term" 
-                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                            placeholder="Search category type"
-                            value="{{ request('category_term') }}"
-                            autocomplete="off"
-                            >
-                        <div id="category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
-                            search
-                        </span>
-                    </div>
-                    <input 
-                        type="hidden" 
-                        id="category-filter" 
-                        name="categoryId" 
-                        value="{{ request('categoryId') }}"
-                    >
-                </div>
+                <x-category-filters />
             </div>
             <div class="flex items-end gap-5 sm:min-w-1/4 sm:justify-end">
                 <button type="submit" class="bg-[#334a8b] cursor-pointer border border-[#334a8b] text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
@@ -138,69 +115,4 @@
     </div>
 </div>
 <x-delete-modal />
-
-<script>
-    function setupCategoryAutocomplete() {
-        const searchInput = document.getElementById('category-search');
-        const resultsContainer = document.getElementById('category-search-results');
-        const selectedDataId = document.getElementById('category-filter');
-        let debounceTimer;
-
-        searchInput.addEventListener('input', async function(e) {
-            const query = e.target.value.trim();
-                
-            if (query.length < 2) {
-                resultsContainer.classList.add('hidden');
-                selectedDataId.value = '';
-                return;
-            }
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(async () => {
-                try {
-                    const response = await fetch(`/api/search/categories?searchTerm=${encodeURIComponent(query)}`);
-                    const data = await response.json();                
-                    if (data?.data?.length > 0) {
-                        resultsContainer.innerHTML = data.data.map(item => `
-                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
-                                data-category-id="${item.id}">
-                                ${item.name}
-                            </div>
-                        `).join('');
-                        resultsContainer.classList.remove('hidden');
-                    } else {
-                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
-                        resultsContainer.classList.remove('hidden');
-                    }
-                } catch (error) {
-                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
-                    resultsContainer.classList.remove('hidden');
-                    console.error('Error fetching sellers:', error);
-                }
-            }, 300);
-        });
-
-        resultsContainer.addEventListener('click', async function(e) {
-            const selectedItem = e.target.closest('[data-category-id]');
-            if (selectedItem) {
-                const selectedId = selectedItem.getAttribute('data-category-id');
-                const selectedName = selectedItem.textContent.trim();
-                
-                searchInput.value = selectedName;
-                selectedDataId.value = selectedId;
-                resultsContainer.classList.add('hidden');
-
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
-                resultsContainer.classList.add('hidden');
-            }
-        });
-    }
-
-    document.addEventListener('DOMContentLoaded', async () => {
-        setupCategoryAutocomplete();
-    });
-</script>
 @endsection

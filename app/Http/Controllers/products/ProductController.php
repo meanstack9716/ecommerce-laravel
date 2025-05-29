@@ -15,6 +15,8 @@ use App\Models\ProductBrand;
 use App\Models\Seller;
 use App\Enums\Sizes;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -50,7 +52,8 @@ class ProductController extends Controller
                     'id' => $colorName,
                     'value' => $colorDetails['hex'],
                     'name' => $colorDetails['name'],
-                    'quantity' => $colorDetails['quantity'] ?? 0
+                    'quantity' => $colorDetails['quantity'] ?? 0,
+                    'is_custom' => true
                 ];
                 $newSize['colors'][] = $newColor;
                 $colors[] = $colorDetails['name'];
@@ -126,6 +129,9 @@ class ProductController extends Controller
             'category_id' => $request->category,
             'sub_category_id' =>  $request->sub_category,
             'sub_sub_category_id' =>  $request->sub_sub_category,
+            'category_term' => $request->category_term,
+            'sub_category_term' =>  $request->sub_category_term,
+            'sub_sub_category_term' =>  $request->sub_sub_category_term,
         ];
         
         $request->session()->put($this->productSessionKey.'.category', $category);        
@@ -140,9 +146,8 @@ class ProductController extends Controller
             'product_details' => $request->product_details,
             'product_price' => $request->product_price,
             'discount_per' => $request->discount_per,
-            'product_brand' => $request->product_brand,
-            'new_brand' => $request->product_brand == 'another' ? $request->new_brand : null,
-            'product_sku' => $request->product_sku,
+            'product_brand' => $request->product_brand ?? null,
+            'brand_name' => $request->brand_name,
             'stock_quantity' => $request->stock_quantity,
         ];
         
@@ -170,10 +175,12 @@ class ProductController extends Controller
         }
 
         $brandId = null;
+        $skuNumber = 'PRD-' . Str::upper(Str::random(12));
+        DB::beginTransaction();
 
-        if ($productData['basic']['product_brand'] == 'another') {
+        if (!$productData['basic']['product_brand']) {
             $brand = ProductBrand::create([
-                'name' => $productData['basic']['new_brand']
+                'name' => $productData['basic']['brand_name']
             ]);
             $brandId = $brand->id;
         } else {
@@ -188,7 +195,7 @@ class ProductController extends Controller
             'price' => (float)$productData['basic']['product_price'],
             'discount_percent' => (float)$productData['basic']['discount_per'],
             'delivery_days' => mt_rand(1, 9),
-            'sku' => $productData['basic']['product_sku'],
+            'sku' => $skuNumber,
             'stock_quantity' => $productData['basic']['stock_quantity'],
             'brand_id' => $brandId,
             'category_id' => $productData['category']['category_id'],
@@ -235,9 +242,13 @@ class ProductController extends Controller
                 }
             }
         }
+        DB::commit();
 
         $request->session()->forget($this->productSessionKey);
-        return redirect()->route('dashboard');
+        return redirect()->route('products.list')->with('toast', [
+            'type' => 'success',
+            'message' => "Product added successfully"
+        ]);
     }    
 
     public function getAllProductsList(Request $request) {
@@ -246,12 +257,19 @@ class ProductController extends Controller
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
+        $subCategoryId = $request->input('subCategoryId');
+        $subSubCategoryId = $request->input('subSubCategoryId');
         
         $query = Product::query()->with([]);
 
         if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%");
+            $escapedQuery = str_replace(
+                ['%', '_'],
+                ['\%', '\_'],
+                $search
+            );
+            $query->where(function ($q) use ($escapedQuery) {
+                $q->where('title', 'like', "%{$escapedQuery}%");
             });
         }
 
@@ -261,6 +279,14 @@ class ProductController extends Controller
 
         if ($categoryId) {
             $query->where('category_id', $categoryId);
+        }
+
+        if ($subCategoryId) {
+            $query->where('sub_category_id', $subCategoryId);
+        }
+
+        if ($subSubCategoryId) {
+            $query->where('sub_sub_category_id', $subSubCategoryId);
         }
 
         $products = $query->paginate($limit);
@@ -285,14 +311,28 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);    
         $sizeDetails = $this->getSizeDetails($request->sizes);
 
+        DB::beginTransaction();
+        $brandId = null;
+
+        if (empty($request->product_brand)) {
+            $brand = ProductBrand::create([
+                'name' => $request->brand_name
+            ]);
+            $brandId = $brand->id;
+        } else {
+            $brandId = $request->product_brand;
+        }
         $product->update([
             'title' => $request->title,
             'description' => $request->description,
             'details' => $request->details,
             'price' => (float)$request->price,
+            'brand_id' => $brandId,
             'discount_percent' => (float)$request->discount_percent,
-            'sku' => $request->sku,
             'stock_quantity' => $request->stock_quantity,
+            'category_id' => $request->category,
+            'sub_category_id' => $request->sub_category,
+            'sub_sub_category_id' => $request->sub_sub_category,
         ]);
 
         $existingSizeIds = $product->sizes()->pluck('id')->toArray();
@@ -348,8 +388,12 @@ class ProductController extends Controller
                 ProductSize::whereIn('id', $sizesToDelete)->delete();
             }
         }
+        DB::commit();
 
-        return redirect()->route('products.list');
+        return redirect()->route('products.list')->with('toast', [
+            'type' => 'success',
+            'message' => "Product updated successfully"
+        ]);
     }
 
     public function fetchProductsList(Request $request) {

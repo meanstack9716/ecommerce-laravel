@@ -3,8 +3,12 @@
 @section('content')
 <div class="p-4 sm:p-6 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-5">
-        <div class="py-5 xl:py-0">
+        <div class="py-5 xl:py-0 flex justify-between items-center text-center">
             <h1 class="text-[26px] font-bold tracking-wide">Products List</h1>
+            <a href="{{ route('products.add.step1') }}"
+                class="font-medium bg-[#334a8b]  text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800  border border-[#334a8b]">
+                + Add new product                    
+            </a>
         </div>
 
         <form method="GET" action="{{ route('products.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
@@ -25,28 +29,13 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex flex-col items-start gap-2">
-                    <p class="m-0 text-gray-600 font-medium">Search by Category</p>
-                    <div class="relative w-full">
-                        <select name="categoryId" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none w-full">
-                            <option value="">All Categories</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" {{ request('categoryId') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                            chevron_right
-                        </span>
-                    </div>
-                </div>
+                <x-category-filters :showSubCategoryFilter="true" :showSubSubCategoryFilter="true" />
             </div>
             <div class="flex items-end gap-5 sm:min-w-1/4 sm:justify-end">
                 <button type="submit" class="bg-[#334a8b] border border-[#334a8b] cursor-pointer text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
                     Apply Filters
                 </button>
-                @if(request('search') || request('categoryId'))
+                @if(request('search') || request('categoryId') || request('subCategoryId') || request('subSubCategoryId'))
                     <a href="{{ route('products.list', ['limit' => request('limit', 10)]) }}"
                         class="font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
                         Clear Filter
@@ -97,8 +86,19 @@
                         <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $product->sku }}</td>
 
                         <td class="px-4 py-2 border text-center border-gray-200 font-medium">
-                            <a href="{{ route('product.edit.form', $product->id) }}"
-                                class="text-blue-600 hover:underline text-sm">Edit Details</a>
+                            <div class="flex justify-center items-center text-center gap-4">
+                                <a href="{{ route('product.edit.form', $product->id) }}" class="m-0 flex">
+                                    <span class="material-symbols-outlined text-blue-500">
+                                        edit_square
+                                    </span>
+                                </a>
+                                <button onclick="openDeleteModal('{{ route('product.delete', $product->id) }}', 'Delete {{ $product->title }}')"
+                                    class="flex cursor-pointer">
+                                    <span class="material-symbols-outlined text-red-600">
+                                        delete
+                                    </span>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                     @empty
@@ -115,6 +115,12 @@
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <form method="GET" action="{{ route('products.list') }}" class="">
                 <input type="hidden" name="search" value="{{ request('search') }}">
+                <input type="hidden" name="category_term" value="{{ request('category_term') }}">
+                <input type="hidden" name="categoryId" value="{{ request('categoryId') }}">
+                <input type="hidden" name="sub_category_term" value="{{ request('sub_category_term') }}">
+                <input type="hidden" name="subCategoryId" value="{{ request('subCategoryId') }}">
+                <input type="hidden" name="sub_sub_category_term" value="{{ request('sub_sub_category_term') }}">
+                <input type="hidden" name="subSubCategoryId" value="{{ request('subSubCategoryId') }}">
                 <div class="flex items-center gap-2 relative w-fit">
                     <span class="text-sm text-gray-600">Items per page:</span>
                     <div class="relative">
@@ -139,4 +145,6 @@
         </div>
     </div>
 </div>
+<x-delete-modal />
+
 @endsection
