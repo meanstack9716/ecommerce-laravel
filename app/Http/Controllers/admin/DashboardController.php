@@ -5,11 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Seller;
-use App\Models\User;
-use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Constants\Constants;
 
 class DashboardController extends Controller
@@ -17,78 +14,41 @@ class DashboardController extends Controller
     public function viewDashboard(Request $request) 
     {
         $user = $request->user();
-        $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
+        $sellers = Seller::where('status', Constants::STATUS_APPROVED)->get();
         return view('dashboard.index', compact('sellers'));
     }
 
-
-    public function getPeriodDates(string $period, $now = null)
+    private function getDateRange(Request $request)
     {
-        $now = $now instanceof Carbon ? $now : Carbon::now();
-        $startDate = null;
-        $endDate = null;
-
-        switch ($period) {
-            case 'today':
-                $startDate = $now->copy()->startOfDay();
-                $endDate = $now->copy()->endOfDay();
-                break;
-
-            case 'yesterday':
-                $startDate = $now->copy()->subDay()->startOfDay();
-                $endDate = $now->copy()->subDay()->endOfDay();
-                break;
-
-            case 'this_week':
-                $startDate = $now->copy()->startOfWeek();
-                $endDate = $now->copy()->endOfWeek();
-                break;
-
-            case 'last_week':
-                $startDate = $now->copy()->subWeek()->startOfWeek();
-                $endDate = $now->copy()->subWeek()->endOfWeek();
-                break;
-            
-            case 'this_month':
-                $startDate = $now->copy()->startOfMonth();
-                $endDate = $now->copy()->endOfMonth();
-                break;
-
-            case 'last_month':
-                $startDate = $now->copy()->subMonth()->startOfMonth();
-                $endDate = $now->copy()->subMonth()->endOfMonth();
-                break;
-
-            case 'this_quarter':
-                $startDate = $now->copy()->startOfQuarter();
-                $endDate = $now->copy()->endOfQuarter();
-                break;
-
-            case 'last_quarter':
-                $startDate = $now->copy()->subQuarter()->startOfQuarter();
-                $endDate = $now->copy()->subQuarter()->endOfQuarter();
-                break;
-
-            case 'this_year':
-                $startDate = $now->copy()->startOfYear();
-                $endDate = $now->copy()->endOfYear();
-                break;
-            
-            case 'last_year':
-                $startDate = $now->copy()->subYear()->startOfYear();
-                $endDate = $now->copy()->subYear()->endOfYear();
-                break;
-
-            default:
-                throw new \InvalidArgumentException("Unknown period: {$period}");
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        
+        // Default to last 30 days if no dates provided
+        if (!$startDate || !$endDate) {
+            $endDate = Carbon::now();
+            $startDate = Carbon::now()->subDays(30);
+            return [$startDate, $endDate];
         }
-
-        return [$startDate, $endDate];
+        
+        return [
+            Carbon::parse($startDate)->startOfDay(),
+            Carbon::parse($endDate)->endOfDay()
+        ];
     }
 
-    private function filterSellerAndPeriod($user, $sellerId, $startDate, $endDate)
+    private function getComparisonDateRange($startDate, $endDate)
     {
-        $query = Order::whereBetween('created_at', [$startDate, $endDate]);
+        $diffInDays = $startDate->diffInDays($endDate);
+        
+        return [
+            $startDate->copy()->subDays($diffInDays + 1),
+            $startDate->copy()->subSecond()
+        ];
+    }
+
+    private function filterSeller($user, $sellerId)
+    {
+        $query = Order::query();
 
         if ($user->is_admin) {
             if ($sellerId) {
@@ -116,10 +76,12 @@ class DashboardController extends Controller
             $sellerId = $request->query('seller_id');
             $limit = (int) $request->query('limit', 5);
             $page = (int) $request->query('page', 1);
-            $period = $request->query('period', 'this_month');
-            [$startDate, $endDate] = $this->getPeriodDates($period);
+            
+            [$startDate, $endDate] = $this->getDateRange($request);
 
-            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
+            $query = $this->filterSeller($user, $sellerId)
+                ->whereBetween('created_at', [$startDate, $endDate]);
+
             $totalOrders = $query->count();
             $orders = $query->with(['user', 'items.product'])
                 ->orderByDesc('created_at')
@@ -165,38 +127,23 @@ class DashboardController extends Controller
     {
         try {
             $user = $request->user();
-            
             $sellerId = $request->query('seller_id');
-            $period = $request->query('period', 'this_month');
             
-            [$startDate, $endDate] = $this->getPeriodDates($period);
-            $prevEndDate = $startDate->copy()->subSecond();
-            $prevStartDate = $prevEndDate->copy();
-            
-            if ($period === 'this_month') {
-                $prevStartDate = $startDate->copy()->subMonth()->startOfMonth();
-            } elseif ($period === 'last_month') {
-                $prevStartDate = $startDate->copy()->subMonth()->startOfMonth();
-                $prevEndDate = $startDate->copy()->subSecond();
-            } elseif ($period === 'this_quarter') {
-                $prevStartDate = $startDate->copy()->subQuarter()->startOfQuarter();
-            } elseif ($period === 'this_year') {
-                $prevStartDate = $startDate->copy()->subYear()->startOfYear();
-                $prevEndDate = $prevStartDate->copy()->endOfYear();
-            }
+            [$startDate, $endDate] = $this->getDateRange($request);
+            [$prevStartDate, $prevEndDate] = $this->getComparisonDateRange($startDate, $endDate);
 
-            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
-            $prevQuery = $this->filterSellerAndPeriod($user, $sellerId, $prevStartDate, $prevEndDate);
+            $query = $this->filterSeller($user, $sellerId)
+                ->whereBetween('created_at', [$startDate, $endDate]);
+                
+            $prevQuery = $this->filterSeller($user, $sellerId)
+                ->whereBetween('created_at', [$prevStartDate, $prevEndDate]);
 
-            $orders = $query->get();
-            $prevOrders = $prevQuery->get();
-
-            $totalSales = $orders->sum('total_amount') ?: 0;
-            $prevTotalSales = $prevOrders->sum('total_amount') ?: 0;
+            $totalSales = $query->sum('total_amount') ?: 0;
+            $prevTotalSales = $prevQuery->sum('total_amount') ?: 0;
             $salesChange = $prevTotalSales > 0 ? (($totalSales - $prevTotalSales) / $prevTotalSales * 100) : ($totalSales > 0 ? 100 : 0);
 
-            $orderCount = $orders->count() ?: 0;
-            $prevOrderCount = $prevOrders->count() ?: 0;
+            $orderCount = $query->count() ?: 0;
+            $prevOrderCount = $prevQuery->count() ?: 0;
             $orderChange = $prevOrderCount > 0 ? (($orderCount - $prevOrderCount) / $prevOrderCount * 100) : ($orderCount > 0 ? 100 : 0);
 
             $avgOrderValue = $orderCount > 0 ? ($totalSales / $orderCount) : 0;
@@ -224,50 +171,62 @@ class DashboardController extends Controller
         try {
             $user = $request->user();
             $sellerId = $request->query('seller_id');
-            $period = $request->query('period', 'monthly');
-            $filterPeriod = $request->query('filter_period', 'this_month');
-
-            [$startDate, $endDate] = $this->getPeriodDates($filterPeriod);
+            $period = $request->query('period', 'daily');
+            
+            [$startDate, $endDate] = $this->getDateRange($request);
+            
             $labels = [];
             $salesData = [];
-
+            
             if ($period === 'monthly') {
-                $months = $startDate->diffInMonths($endDate) + 1;
-                for ($i = 0; $i < $months; $i++) {
-                    $monthStart = $startDate->copy()->addMonths($i)->startOfMonth();
-                    $monthEnd = $monthStart->copy()->endOfMonth();
-                    if ($monthEnd <= $endDate) {
-                        $labels[] = $monthStart->format('M Y');
-                        $salesData[] = $this->getSalesForPeriod($user, $sellerId, $monthStart, $monthEnd);
+                $current = $startDate->copy()->startOfMonth();
+                while ($current <= $endDate) {
+                    $monthEnd = $current->copy()->endOfMonth();
+                    if ($monthEnd > $endDate) {
+                        $monthEnd = $endDate;
                     }
+                    
+                    $labels[] = $current->format('M Y');
+                    $salesData[] = $this->filterSeller($user, $sellerId)
+                        ->whereBetween('created_at', [$current, $monthEnd])
+                        ->sum('total_amount') ?: 0;
+                        
+                    $current = $monthEnd->copy()->addDay()->startOfMonth();
                 }
             } elseif ($period === 'weekly') {
-                $weeks = $startDate->diffInWeeks($endDate) + 1;
-                for ($i = 0; $i < $weeks; $i++) {
-                    $weekStart = $startDate->copy()->addWeeks($i)->startOfWeek();
-                    $weekEnd = $weekStart->copy()->endOfWeek();
-                    if ($weekEnd <= $endDate) {
-                        $labels[] = "Week {$weekStart->weekOfYear}";
-                        $salesData[] = $this->getSalesForPeriod($user, $sellerId, $weekStart, $weekEnd);
+                $current = $startDate->copy()->startOfWeek();
+                while ($current <= $endDate) {
+                    $weekEnd = $current->copy()->endOfWeek();
+                    if ($weekEnd > $endDate) {
+                        $weekEnd = $endDate;
                     }
+                    
+                    $labels[] = 'Week ' . $current->weekOfYear;
+                    $salesData[] = $this->filterSeller($user, $sellerId)
+                        ->whereBetween('created_at', [$current, $weekEnd])
+                        ->sum('total_amount') ?: 0;
+                        
+                    $current = $weekEnd->copy()->addDay()->startOfWeek();
                 }
             } else { // daily
-                $days = $startDate->diffInDays($endDate) + 1;
-                for ($i = 0; $i < $days; $i++) {
-                    $dayStart = $startDate->copy()->addDays($i)->startOfDay();
-                    $dayEnd = $dayStart->copy()->endOfDay();
-                    if ($dayEnd <= $endDate) {
-                        $labels[] = $dayStart->format('d M');
-                        $salesData[] = $this->getSalesForPeriod($user, $sellerId, $dayStart, $dayEnd);
-                    }
+                $current = $startDate->copy();
+                while ($current <= $endDate) {
+                    $dayEnd = $current->copy()->endOfDay();
+                    
+                    $labels[] = $current->format('d M');
+                    $salesData[] = $this->filterSeller($user, $sellerId)
+                        ->whereBetween('created_at', [$current, $dayEnd])
+                        ->sum('total_amount') ?: 0;
+                        
+                    $current = $dayEnd->copy()->addSecond();
                 }
             }
 
             return response()->json([
                 'status' => 'success',
                 'data' => [
-                    'labels' => array_reverse($labels),
-                    'sales' => array_reverse($salesData),
+                    'labels' => $labels,
+                    'sales' => $salesData,
                     'period' => $period
                 ]
             ], 200);
@@ -276,27 +235,21 @@ class DashboardController extends Controller
         }
     }
 
-    private function getSalesForPeriod($user, $sellerId, $startDate, $endDate)
-    {
-        $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
-        return floatval($query->sum('total_amount') ?: 0);
-    }
-
     public function topProducts(Request $request)
     {
         try {
             $user = $request->user();
             $sellerId = $request->query('seller_id');
-            $period = $request->query('period', 'this_month');
+            
+            [$startDate, $endDate] = $this->getDateRange($request);
 
-            [$startDate, $endDate] = $this->getPeriodDates($period);
+            $query = $this->filterSeller($user, $sellerId)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->with('items.product');
 
-            $query = $this->filterSellerAndPeriod($user, $sellerId, $startDate, $endDate);
-
-            $orders = $query->with('items.product')->get();
+            $orders = $query->get();
             $productSales = [];
-            // $totalSales = 0;
-             $totalSales = $query->sum('total_amount') ?: 0;
+            $totalSales = $query->sum('total_amount') ?: 0;
 
             foreach ($orders as $order) {
                 foreach ($order->items as $item) {
@@ -307,7 +260,6 @@ class DashboardController extends Controller
                             $productSales[$productId] ?? ['name' => $item->product->title, 'amount' => 0],
                             ['amount' => ($productSales[$productId]['amount'] ?? 0) + $amount]
                         );
-                        // $totalSales += $amount;
                     }
                 }
             }

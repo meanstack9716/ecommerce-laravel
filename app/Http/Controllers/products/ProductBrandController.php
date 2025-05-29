@@ -40,8 +40,8 @@ class ProductBrandController extends Controller
         $brand->description = $request->description;
 
         if ($request->hasFile('img')) {
-            if ($brand->img_path) {
-                Storage::delete('public/' . $brand->img_path);
+            if ($brand->img_path && Storage::exists($brand->img_path)) {
+                Storage::delete($brand->img_path);
             }
             $img_path = $request->file('img')->store('brands');
         

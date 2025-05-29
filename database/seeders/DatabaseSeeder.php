@@ -31,25 +31,16 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@admin.com',
                 'password' => Hash::make('admin@123'),
                 'is_admin' => true,
-                'phone_number' => '+919876543211',
+                'phone_number' => '9876543211',
                 'role' => 'Seller',
                 'business_details' => [
                     'business_name' =>  'InnoSales',
                     'business_type' => 'Corporation',
                     'business_email' => 'innoSales@gmail.com',
-                    'business_mobile' => '+919876543211',
+                    'business_mobile' => '9876543211',
                     'gst_num' => '07ASS1234567890',
                     'status' => 'Approved'
                 ],
-                'address' => [
-                    'type' => "Office",
-                    'line1' => "MPV Tower",
-                    'line2' => "Sec-10",
-                    'city' => 'Noida',
-                    'state' => 'Uttar Pradesh',
-                    'postal_code' => '123456',
-                    'country' => 'India',
-                ]
             ],
         ];
 
@@ -79,17 +70,6 @@ class DatabaseSeeder extends Seeder
                     'status' => $user['business_details']['status'],
                 ]
             );
-
-            Address::create([
-                'user_id' => $adminUser['id'],
-                'type' => $user['address']['type'],
-                'line1' => $user['address']['line1'],
-                'line2' => $user['address']['line2'],
-                'city' => $user['address']['city'],
-                'state' => $user['address']['state'],
-                'postal_code' => $user['address']['postal_code'],
-                'country' => $user['address']['country'],
-            ]);
         }
     }
 }

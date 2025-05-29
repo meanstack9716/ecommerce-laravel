@@ -12,7 +12,7 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::post('/login', [PanelAuthController::class, 'signinPanelUser'])->middleware('validateRequest:loginSchema')->name('login.submit');
-Route::post('/forgot-password', [PanelAuthController::class, 'sendEmailCodeForUser'])->middleware('validateRequest:isRegisteredEmailSchema')->name('password.email');
+Route::post('/forgot-password', [PanelAuthController::class, 'sendEmailCodeForUser'])->name('password.email');
 Route::post('/resend-verification-code', [PanelAuthController::class, 'resendVerificationCode'])->name('password.resend-code');
 Route::post('/verify-reset-code', [PanelAuthController::class, 'verifyEmailCode'])->middleware('validateRequest:verifyEmailSchema')->name('password.submit-code');
 Route::post('/reset-password', [PanelAuthController::class, 'resetUserPassword'])->middleware('validateRequest:resetPasswordSchema')->name('password.reset');

@@ -21,5 +21,8 @@ class Constants
     public const STATUS_RECEIVED = "Received";
     public const STATUS_REJECTED = "Rejected";
     public const STATUS_VERIFIED = "Verified";
+    public const STATUS_ACTIVATED = "Activated";
+    public const STATUS_DEACTIVATED = "Deactivated";
+    public const STATUS_ON_HOLD = "On Hold";
 
 }

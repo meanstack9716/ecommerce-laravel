@@ -53,6 +53,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
         }
 
+        if ($user->status == Constants::STATUS_DEACTIVATED || $user->status == Constants::STATUS_ON_HOLD ) {
+            return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

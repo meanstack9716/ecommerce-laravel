@@ -47,6 +47,17 @@ class Category extends Model
         return $this->hasMany(Product::class, 'category_id', '_id');
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($category) {
+            if ($category->img_path && Storage::exists($category->img_path)) {
+                Storage::delete($category->img_path);
+            }
+        });
+    }
+
     public $timestamps = true;
 
 }

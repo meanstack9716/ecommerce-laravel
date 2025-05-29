@@ -6,7 +6,7 @@
             </span>
 
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" 
+            <a href="{{ $paginator->previousPageUrl() }}&{{ http_build_query(request()->except('page')) }}" 
                class="px-4 py-2 bg-[#334a8b] hover:bg-blue-950 text-white text-sm rounded-lg transition-colors duration-200">
                 Previous
             </a>
@@ -18,7 +18,7 @@
 
         {{-- Next Page Link --}}
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" 
+            <a href="{{ $paginator->nextPageUrl() }}&{{ http_build_query(request()->except('page')) }}" 
                class="px-4 py-2 bg-[#334a8b] hover:bg-blue-950 text-white text-sm rounded-lg transition-colors duration-200">
                 Next
             </a>

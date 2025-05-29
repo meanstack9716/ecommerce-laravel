@@ -25,6 +25,17 @@ class SubCategory extends Model
         'img_url',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($subCategory) {
+            if ($subCategory->img_path && Storage::exists($subCategory->img_path)) {
+                Storage::delete($subCategory->img_path);
+            }
+        });
+    }
+
     public function getImgUrlAttribute()
     {
         if ($this->img_path) {

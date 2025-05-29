@@ -12,3 +12,4 @@ require __DIR__ . '/api/order.php';
 require __DIR__ . '/api/cart.php';
 require __DIR__ . '/api/wishlist.php';
 require __DIR__ . '/api/dashboard.php';
+require __DIR__ . '/api/search.php';

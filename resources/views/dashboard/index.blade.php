@@ -20,42 +20,48 @@
             </div>
         </div>
 
-        <!-- Seller and product Filter (Admin Only) -->
+        <!-- Seller and Date Range Filter -->
         <div class="flex flex-col gap-4 sm:flex-row w-full">
             <div class="sm:mb-8">
-                <label for="seller-filter" class="block text-sm font-medium text-gray-700 mb-2">Period</label>
-                <div class="relative">
-                    <div class="relative w-60 sm:w-xs">
-                        <select id="period-filter" name="period" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none w-full">
-                            <option value="this_month">This Month</option>
-                            <option value="last_month">Last Month</option>
-                            <option value="this_quarter">This Quarter</option>
-                            <option value="this_year">This Year</option>
-                        </select>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                            chevron_right
-                        </span>
-                    </div>
+                <label for="date-range" class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
+                <div class="relative w-60 sm:w-xs">
+                    <input 
+                        type="text" 
+                        id="date-range" 
+                        name="date-range" 
+                        class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 w-full"
+                        placeholder="Select date range"
+                        autocomplete="off"
+                    >
+                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+                        calendar_month
+                    </span>
                 </div>
             </div>
             @if (auth()->user()->is_admin)
             <div class="mb-8">
                 <label for="seller-filter" class="block text-sm font-medium text-gray-700 mb-2">Filter by Seller</label>
                 <div class="relative w-60 sm:w-xs">
-                    <div class="relative w-full">
-                        <select id="seller-filter" name="sellerId" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none w-full">
-                            <option value="">All Sellers</option>
-                            @foreach ($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ request('sellerId') == $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->business_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                            chevron_right
-                        </span>
-                    </div>
+                    <input 
+                        type="text" 
+                        id="seller-search" 
+                        name="sellerName" 
+                        class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                        placeholder="Start typing seller name..."
+                        value="{{ request('sellerName') }}"
+                        autocomplete="off"
+                    >
+                    <div id="seller-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+                        search
+                    </span>
                 </div>
+                <input 
+                    type="hidden" 
+                    id="seller-filter" 
+                    name="sellerId" 
+                    value="{{ request('sellerId') }}"
+                >
             </div>
             @endif
         </div>
@@ -106,21 +112,6 @@
                 </div>
                 <p class="mt-2 text-xs text-gray-500 flex items-center" id="avg-order-change"></p>
             </div>
-
-            <!-- <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-500 truncate">Conversion Rate</p>
-                        <p class="mt-1 text-2xl font-semibold text-gray-900" id="conversion-rate">0%</p>
-                    </div>
-                    <div class="bg-blue-50 p-3 rounded-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                        </svg>
-                    </div>
-                </div>
-                <p class="mt-2 text-xs text-gray-500 flex items-center" id="conversion-rate-change"></p>
-            </div> -->
         </div>
         
         <!-- Charts Section -->
@@ -129,8 +120,8 @@
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-lg font-semibold text-gray-900">Sales Performance</h2>
                     <div class="flex space-x-2">
-                        <button id="chart-daily" class="px-3 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-800 ">Daily</button>
-                        <button id="chart-weekly" class="px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-50">Weekly</button>
+                        <button id="chart-daily" class="hidden px-3 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-800 ">Daily</button>
+                        <button id="chart-weekly" class="hidden px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-50">Weekly</button>
                         <button id="chart-monthly" class="hidden px-3 py-1 text-xs font-medium rounded-md text-gray-500 hover:bg-gray-50">Monthly</button>
                     </div>
                 </div>
@@ -183,9 +174,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
     <script>
         // Professional color palette
+        let dateRangePicker;
         const colors = {
             primary: {
                 50: '#f0f9ff',
@@ -253,11 +247,28 @@
             return statusClass;
         }
 
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
         function getQueryParams() {
             const sellerId = document.getElementById('seller-filter')?.value || '';
-            const period = document.getElementById('period-filter').value;
-            let params = sellerId ? `?seller_id=${sellerId}` : '';
-            params += params ? `&period=${period}` : `?period=${period}`;
+            const sellerName = document.getElementById('seller-search')?.value || '';
+            const dateRange = dateRangePicker.selectedDates;
+    
+            let params = sellerId ? `?seller_id=${sellerId}` : '?';
+            params += sellerName ? `&sellerName=${sellerName}` : '';
+    
+            if (dateRange.length === 2) {
+                const startDate = formatDate(dateRange[0]);
+                const endDate = formatDate(dateRange[1]);
+                params += `&start_date=${startDate}&end_date=${endDate}`;
+            } else {
+                const endDate = formatDate(new Date());
+                const startDate = formatDate(new Date(new Date().setDate(new Date().getDate() - 30)));
+                params += `&start_date=${startDate}&end_date=${endDate}`;
+            }
+    
             return params;
         }
 
@@ -270,7 +281,6 @@
                     }
                 });
                 const data = await response.json();
-                console.log('API Response:', url, data);
                 if (data.status !== 'success') {
                     throw new Error(data.message || 'API request failed');
                 }
@@ -282,71 +292,130 @@
             }
         }
 
+        const reloadData = async (chartPeriod, currentPage) => {
+            showLoader();
+            try {
+                await Promise.all([
+                    loadOverview(getQueryParams()),
+                    loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
+                    loadTopProducts(getQueryParams()),
+                    loadRecentSales(getQueryParams(), currentPage)
+                ]);
+            } finally {
+                hideLoader();
+            }
+        };
+
+        function setupSellerAutocomplete(chartPeriod, currentPage) {
+            const searchInput = document.getElementById('seller-search');
+            const resultsContainer = document.getElementById('seller-search-results');
+            const selectedSellerId = document.getElementById('seller-filter');
+            let debounceTimer;
+
+            searchInput.addEventListener('input', async function(e) {
+                const query = e.target.value.trim();
+                
+                if (query.length < 2) {
+                    resultsContainer.classList.add('hidden');
+                    selectedSellerId.value = '';
+                    if (query.length === 0) {
+                        await reloadData(chartPeriod, currentPage);
+                    }
+                    return;
+                }
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/api/search/sellers?searchTerm=${encodeURIComponent(query)}`);
+                        const sellers = await response.json();
+                
+                        if (sellers?.data?.length > 0) {
+                            resultsContainer.innerHTML = sellers.data.map(seller => `
+                                <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                    data-seller-id="${seller.id}">
+                                    ${seller.business_name}
+                                </div>
+                            `).join('');
+                            resultsContainer.classList.remove('hidden');
+                        } else {
+                            resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No seller found</div>';
+                            resultsContainer.classList.remove('hidden');
+                        }
+                    } catch (error) {
+                        resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                        resultsContainer.classList.remove('hidden');
+                        console.error('Error fetching sellers:', error);
+                    }
+                }, 300);
+            });
+
+            resultsContainer.addEventListener('click', async function(e) {
+                const sellerItem = e.target.closest('[data-seller-id]');
+                if (sellerItem) {
+                    const sellerId = sellerItem.getAttribute('data-seller-id');
+                    const sellerName = sellerItem.textContent.trim();
+                    
+                    searchInput.value = sellerName;
+                    selectedSellerId.value = sellerId;
+                    resultsContainer.classList.add('hidden');
+
+                    await reloadData(chartPeriod, currentPage);
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                    resultsContainer.classList.add('hidden');
+                }
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             showLoader();
+            let chartPeriod = 'daily';
+            let currentPage = 1;
+
+            dateRangePicker = flatpickr("#date-range", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                defaultDate: [new Date(new Date().setDate(new Date().getDate() - 30)), new Date()], // Default to last 30 days
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        reloadData(chartPeriod, currentPage);
+                    }
+                }
+            });
 
             try {
-                const periodFilter = document.getElementById('period-filter');
-                const sellerFilter = document.getElementById('seller-filter');
-                const chartButtons = {
-                    monthly: document.getElementById('chart-monthly'),
-                    weekly: document.getElementById('chart-weekly'),
-                    daily: document.getElementById('chart-daily')
-                };
-                let currentPage = 1;
-                let chartPeriod = 'daily';
+                // const chartButtons = {
+                //     monthly: document.getElementById('chart-monthly'),
+                //     weekly: document.getElementById('chart-weekly'),
+                //     daily: document.getElementById('chart-daily')
+                // };
+                
+                // function updateChartButtons(activePeriod) {
+                //     Object.keys(chartButtons).forEach(period => {
+                //         chartButtons[period].classList.toggle('bg-blue-100', period === activePeriod);
+                //         chartButtons[period].classList.toggle('text-blue-800', period === activePeriod);
+                //         chartButtons[period].classList.toggle('text-gray-500', period !== activePeriod);
+                //         chartButtons[period].classList.toggle('hover:bg-gray-50', period !== activePeriod);
+                //     });
+                // }
 
-                function updateChartButtons(activePeriod) {
-                    Object.keys(chartButtons).forEach(period => {
-                        chartButtons[period].classList.toggle('bg-blue-100', period === activePeriod);
-                        chartButtons[period].classList.toggle('text-blue-800', period === activePeriod);
-                        chartButtons[period].classList.toggle('text-gray-500', period !== activePeriod);
-                        chartButtons[period].classList.toggle('hover:bg-gray-50', period !== activePeriod);
-                    });
-                }
-
-                periodFilter.addEventListener('change', async () => {
-                    showLoader();
-                    try {
-                        await Promise.all([
-                            loadOverview(getQueryParams()),
-                            loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
-                            loadTopProducts(getQueryParams()),
-                            loadRecentSales(getQueryParams(), currentPage)
-                        ]);
-                    } finally {
-                        hideLoader();
-                    }
-                });
-
-                if (sellerFilter) {
-                    sellerFilter.addEventListener('change', async () => {
-                        showLoader();
-                        try {
-                            await Promise.all([
-                                loadOverview(getQueryParams()),
-                                loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`),
-                                loadTopProducts(getQueryParams()),
-                                loadRecentSales(getQueryParams(), currentPage)
-                            ]);
-                        } finally {
-                            hideLoader();
-                        }
-                    });
-                }
-
-                Object.keys(chartButtons).forEach(period => {
-                    chartButtons[period].addEventListener('click', async () => {
-                        chartPeriod = period;
-                        updateChartButtons(period);
-                        showLoader();
-                        try {
-                            await loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`);
-                        } finally {
-                            hideLoader();
-                        }
-                    });
-                });
+                setupSellerAutocomplete(chartPeriod, currentPage);
+                
+                // Object.keys(chartButtons).forEach(period => {
+                //     chartButtons[period].addEventListener('click', async () => {
+                //         chartPeriod = period;
+                //         updateChartButtons(period);
+                //         showLoader();
+                //         try {
+                //             await loadSalesChart(`${getQueryParams()}&period=${chartPeriod}`);
+                //         } finally {
+                //             hideLoader();
+                //         }
+                //     });
+                // });
 
                 document.getElementById('prev-page').addEventListener('click', async () => {
                     if (currentPage > 1) {
@@ -447,8 +516,6 @@
                 document.getElementById('order-count-change').innerHTML = formatChange(data.order_count_change, true);
                 document.getElementById('avg-order-value').textContent = `₹${data.avg_order_value.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
                 document.getElementById('avg-order-change').innerHTML = formatChange(data.avg_order_change, true);
-                // document.getElementById('conversion-rate').textContent = `${data.conversion_rate.toFixed(1)}%`;
-                // document.getElementById('conversion-rate-change').innerHTML = formatChange(data.conversion_rate_change, true);
             } catch (error) {
                 console.error('Error loading overview:', error);
             }
@@ -578,6 +645,6 @@
             } catch (error) {
                 console.error('Error loading top products:', error);
             }
-        }        
+        }
     </script>
 @endsection

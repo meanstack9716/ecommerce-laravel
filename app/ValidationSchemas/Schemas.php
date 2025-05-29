@@ -34,6 +34,20 @@ class Schemas
                 'code' => 'required|digits:6',
                 'password_confirmation' => 'required',
             ],
+            'addNewUserSchema' => [
+                'email' => 'required|email|unique:users',
+                'first_name' => 'required|string|max:255|min:3',
+                'last_name' => 'required|string|max:255|min:3',
+                'phone_number' => 'required|string|regex:/^[0-9]{10}$/|unique:users,phone_number',
+                'status' => 'required|string'
+            ],
+            'updateUserDetailsSchema' => [
+                'email' => 'required|email',
+                'first_name' => 'required|string|max:255|min:3',
+                'last_name' => 'required|string|max:255|min:3',
+                'phone_number' => 'required|string|regex:/^[0-9]{10}$/',
+                'status' => 'required|string'
+            ],
             'updateUserSchema' => [
                 'first_name' => 'sometimes|string|max:255|min:3',
                 'last_name' => 'sometimes|string|max:255|min:3',
@@ -44,13 +58,13 @@ class Schemas
                 'image' => 'required|image|max:5120'
             ],
             'addClientPersonalSchema' => [
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'first_name' => 'required|string|max:255|min:3',
+                'last_name' => 'required|string|max:255|min:3',
                 'email' => 'required|email|unique:users,email',
                 'phone_number' => 'required|string|regex:/^[0-9]{10}$/|unique:users,phone_number',
                 'address_type' => ['required', Rule::in(AddressType::values())],
                 'address_line1' => 'required|string|min:3',
-                'address_city' => 'required|string',
+                'address_city' => 'required|string|min:3',
                 'address_state' => 'required|string|min:3',
                 'address_code' => 'required|string|regex:/^[1-9][0-9]{5}$/',
                 'address_country' => 'required|string|min:3',
@@ -63,7 +77,7 @@ class Schemas
                 'gst_num' => 'required|regex:/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/',
                 'address_line1' => 'required|string|min:3',
                 'address_type' => ['required', Rule::in(AddressType::values())],
-                'address_city' => 'required|string',
+                'address_city' => 'required|string|min:3',
                 'address_state' => 'required|string|min:3',
                 'address_code' => 'required|string|regex:/^[1-9][0-9]{5}$/',
                 'address_country' => 'required|string|min:3',

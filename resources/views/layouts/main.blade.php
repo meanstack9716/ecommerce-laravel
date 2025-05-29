@@ -34,6 +34,9 @@
         </div>
 
         <div class="duration-500 pt-18 3xl:pt-20 lg:pl-72 3xl:pl-80 w-full" id="main">
+            @if(session('toast'))
+                <x-toast-message type="{{ session('toast.type') }}" message="{{ session('toast.message') }}"/> 
+            @endif
             @yield('content')
 
             @include('partials.footer')

@@ -4,7 +4,7 @@
 <div class="bg-[#134c9b] flex items-center justify-center min-h-screen flex-col bg-left-top bg-no-repeat">
     <div class="flex flex-col-reverse lg:grid lg:grid-cols-5 h-full w-full z-20">
         <div class="flex justify-center items-center w-full h-full lg:col-span-3">
-            <img src="{{ asset('images/auth-bg-1.png') }}" alt="Logo" class="w-full lg:h-screen">
+            <img src="{{ asset('images/auth-bg.jpeg') }}" alt="Logo" class="w-full lg:h-screen">
         </div>
         <div class="lg:col-span-2 flex relative w-full">
             <div class="bg-[#0a316c] hidden lg:block lg:absolute bottom-0 w-full h-[30%]"></div>
@@ -18,7 +18,7 @@
                     <h1 class="text-center text-4xl 3xl:text-6xl font-bold text-gray-900">
                         Sign in
                     </h1>
-                    <form class="mt-8 space-y-6" method="POST" action="{{ route('login.submit') }}">
+                    <form id="loginForm" class="mt-8 space-y-6" method="POST" action="{{ route('login.submit') }}">
                         @csrf
                         <div class="space-y-4 3xl:space-y-6 border-0">
                             <div>
@@ -29,6 +29,7 @@
                                 @error('email')
                                     <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                                 @enderror
+                                <span id="emailError" class="mt-2 text-sm text-red-600 3xl:text-base block"></span>
                             </div>
                             <x-password-field 
                                 name="password" 
@@ -36,6 +37,7 @@
                                 value="{{ old('password') }}"
                                 id="login-password"
                             />
+                            <span id="passwordError" class="mt-2 text-sm text-red-600 3xl:text-base block"></span>
                             <div class="flex items-center justify-end">
                                 <div class="text-sm 3xl:text-lg">
                                     <a href="{{ route('forgot-password') }}" class="font-semibold text-[#334b8c] cursor-pointer">
@@ -59,4 +61,37 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+        let hasErrors = false;
+
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('login-password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+
+        emailError.innerText = '';
+        passwordError.innerText = '';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailInput.value.trim()) {
+            emailError.innerText = 'Email is required.';
+            hasErrors = true;
+        } else if (!emailRegex.test(emailInput.value)) {
+            emailError.innerText = 'Please enter a valid email address.';
+            hasErrors = true;
+        }
+
+
+        if (!passwordInput.value.trim()) {
+            passwordError.innerText = 'Password is required.';
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            e.preventDefault();
+        }
+    });
+</script>
 @endsection
