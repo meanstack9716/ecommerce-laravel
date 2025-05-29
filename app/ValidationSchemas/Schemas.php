@@ -207,7 +207,8 @@ class Schemas
             'postNewReviewSchema' => [
                 'product_id' => 'required|exists:products,id',
                 'rating' => 'required|numeric|min:1|max:5',
-                'review' =>'required|string|min:100',
+                'review' =>'required|string|min:4',
+                'images.*' => 'required|image'
             ],
             'addPromoCodeSchema' => [
                 'code' => 'required|string|min:4|max:50|unique:promo_codes,code',

@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "fbd1756a-ff12-44be-8b99-3eb33c08284c",
+		"_postman_id": "a95e5faa-92d1-4d8b-91fa-ce13c7e3b974",
 		"name": "e-commerce(laravel)",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
-		"_exporter_id": "7103822"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25016909"
 	},
 	"item": [
 		{
@@ -23,7 +23,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/register"
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
@@ -41,7 +50,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/login"
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				},
@@ -59,7 +77,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/verify-user"
+						"url": {
+							"raw": "{{base_url}}/auth/verify-user",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"verify-user"
+							]
+						}
 					},
 					"response": []
 				},
@@ -88,7 +115,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/logout"
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
 					},
 					"response": []
 				},
@@ -106,7 +142,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/send-email-code"
+						"url": {
+							"raw": "{{base_url}}/auth/send-email-code",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"send-email-code"
+							]
+						}
 					},
 					"response": []
 				},
@@ -124,7 +169,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/verify-email-code"
+						"url": {
+							"raw": "{{base_url}}/auth/verify-email-code",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"verify-email-code"
+							]
+						}
 					},
 					"response": []
 				},
@@ -142,7 +196,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/auth/reset-password"
+						"url": {
+							"raw": "{{base_url}}/auth/reset-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						}
 					},
 					"response": []
 				}
@@ -167,7 +230,16 @@
 								"type": "text"
 							}
 						],
-						"url": "{{base_url}}/user/me"
+						"url": {
+							"raw": "{{base_url}}/user/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"me"
+							]
+						}
 					},
 					"response": []
 				},
@@ -176,7 +248,16 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/user/roles"
+						"url": {
+							"raw": "{{base_url}}/user/roles",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"roles"
+							]
+						}
 					},
 					"response": []
 				},
@@ -205,7 +286,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/user/update-profile"
+						"url": {
+							"raw": "{{base_url}}/user/update-profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"update-profile"
+							]
+						}
 					},
 					"response": []
 				},
@@ -235,7 +325,16 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/user/update-profile-pic"
+						"url": {
+							"raw": "{{base_url}}/user/update-profile-pic",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"update-profile-pic"
+							]
+						}
 					},
 					"response": []
 				},
@@ -266,7 +365,16 @@
 								}
 							]
 						},
-						"url": "{{base_url}}/user/delete-profile-pic"
+						"url": {
+							"raw": "{{base_url}}/user/delete-profile-pic",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"delete-profile-pic"
+							]
+						}
 					},
 					"response": []
 				}
@@ -280,7 +388,16 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{base_url}}/settings/faq"
+						"url": {
+							"raw": "{{base_url}}/settings/faq",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"settings",
+								"faq"
+							]
+						}
 					},
 					"response": []
 				}
@@ -612,7 +729,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/add"
+						"url": {
+							"raw": "{{base_url}}/cart/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"add"
+							]
+						}
 					},
 					"response": []
 				},
@@ -641,7 +767,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/update"
+						"url": {
+							"raw": "{{base_url}}/cart/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"update"
+							]
+						}
 					},
 					"response": []
 				},
@@ -670,7 +805,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/to-wishlist"
+						"url": {
+							"raw": "{{base_url}}/cart/to-wishlist",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"to-wishlist"
+							]
+						}
 					},
 					"response": []
 				},
@@ -702,7 +846,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/list"
+						"url": {
+							"raw": "{{base_url}}/cart/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
@@ -731,7 +884,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/remove"
+						"url": {
+							"raw": "{{base_url}}/cart/remove",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"remove"
+							]
+						}
 					},
 					"response": []
 				},
@@ -760,7 +922,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/cart/remove-all"
+						"url": {
+							"raw": "{{base_url}}/cart/remove-all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"cart",
+								"remove-all"
+							]
+						}
 					},
 					"response": []
 				}
@@ -794,7 +965,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/wishlist/add"
+						"url": {
+							"raw": "{{base_url}}/wishlist/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wishlist",
+								"add"
+							]
+						}
 					},
 					"response": []
 				},
@@ -826,7 +1006,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/wishlist/list"
+						"url": {
+							"raw": "{{base_url}}/wishlist/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wishlist",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
@@ -855,7 +1044,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/wishlist/to-cart"
+						"url": {
+							"raw": "{{base_url}}/wishlist/to-cart",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wishlist",
+								"to-cart"
+							]
+						}
 					},
 					"response": []
 				},
@@ -884,7 +1082,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/wishlist/remove"
+						"url": {
+							"raw": "{{base_url}}/wishlist/remove",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wishlist",
+								"remove"
+							]
+						}
 					},
 					"response": []
 				},
@@ -913,7 +1120,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/wishlist/remove-all"
+						"url": {
+							"raw": "{{base_url}}/wishlist/remove-all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"wishlist",
+								"remove-all"
+							]
+						}
 					},
 					"response": []
 				}
@@ -945,7 +1161,16 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "{{base_url}}/address/types-list"
+						"url": {
+							"raw": "{{base_url}}/address/types-list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"address",
+								"types-list"
+							]
+						}
 					},
 					"response": []
 				},
@@ -974,7 +1199,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/address/add"
+						"url": {
+							"raw": "{{base_url}}/address/add",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"address",
+								"add"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1003,7 +1237,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/address/update"
+						"url": {
+							"raw": "{{base_url}}/address/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"address",
+								"update"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1030,7 +1273,16 @@
 							"mode": "raw",
 							"raw": ""
 						},
-						"url": "{{base_url}}/address/list"
+						"url": {
+							"raw": "{{base_url}}/address/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"address",
+								"list"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1104,7 +1356,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/orders/new"
+						"url": {
+							"raw": "{{base_url}}/orders/new",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"new"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1133,7 +1394,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/orders/validate-promo-code"
+						"url": {
+							"raw": "{{base_url}}/orders/validate-promo-code",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"validate-promo-code"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1149,20 +1419,45 @@
 							},
 							{
 								"key": "Accept",
-								"value": "application/json",
+								"value": "multipart/form-data",
 								"type": "text"
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"product_id\" : \"68199c47c7bec7c9d1038132\",\r\n    \"rating\" : \"4\",\r\n    \"review\" : \"Vey comfortable\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "product_id",
+									"value": "68199c47c7bec7c9d1038132",
+									"type": "text"
+								},
+								{
+									"key": "rating",
+									"value": "4",
+									"type": "text"
+								},
+								{
+									"key": "review",
+									"value": "Vey comfortable",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"type": "file",
+									"src": []
 								}
-							}
+							]
 						},
-						"url": "{{base_url}}/products/review"
+						"url": {
+							"raw": "{{base_url}}/products/review",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"review"
+							]
+						}
 					},
 					"response": []
 				},
@@ -1298,7 +1593,16 @@
 								}
 							}
 						},
-						"url": "{{base_url}}/orders/status-types"
+						"url": {
+							"raw": "{{base_url}}/orders/status-types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"status-types"
+							]
+						}
 					},
 					"response": []
 				}

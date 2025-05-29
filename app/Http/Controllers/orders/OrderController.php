@@ -18,6 +18,7 @@ use App\Models\OrderItem;
 use App\Models\Seller;
 use App\Constants\Constants;
 use App\Enums\OrderStatus;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -418,7 +419,7 @@ class OrderController extends Controller
 
         if (!$hasPurchased) {
             return response()->json([
-                'errors' => [
+                'errors' => [ 
                     'product' => 'You can only review products you have purchased'
                 ]
             ], 403);
@@ -441,6 +442,8 @@ class OrderController extends Controller
                 $q->where('product_id', $productId);
             })->latest()->first();
 
+        DB::beginTransaction();
+
         $review = ProductReview::create([
             'user_id' => $user->id,
             'product_id' => $productId,
@@ -449,9 +452,79 @@ class OrderController extends Controller
             'review' => $request->review,
         ]);
 
+        $imagePaths = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('reviews/'.$productId);
+                $imagePaths[] = $path;
+            }
+        }
+
+        $review->img_paths = $imagePaths;
+        $review->save();
+
+        DB::commit();
+
         return response()->json([
             'message' => 'Review submitted successfully',
             'review' => $review
+        ], 201);
+    }
+
+    public function updateProductReview(Request $request)
+    {
+        $user = $request->user();
+        $productId = $request->product_id;
+
+        $review = ProductReview::where('user_id', $user->id)
+            ->where('product_id', $productId)->first();
+
+
+        if (!$review) {
+            return response()->json([
+                'errors' => [ 
+                    'review' => 'You cannot update this review'
+                ]
+            ], 403);
+        }
+        DB::beginTransaction();
+        $imagePaths = $review->img_paths ?? [];
+
+        if ($request->has('remove_img_indexes')) {
+            $removeIndexes = $request->remove_img_indexes;
+
+            foreach ($removeIndexes as $index) {
+                if (isset($imagePaths[$index])) {
+                    $removePath = $imagePaths[$index];
+
+                    if (Storage::exists($removePath)) {
+                        Storage::delete($removePath);
+                    }
+
+                    unset($imagePaths[$index]);
+                }
+            }
+            $imagePaths = array_values($imagePaths);
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $path = $file->store('reviews/'.$productId);
+                $imagePaths[] = $path;
+            }
+        }
+        $review->rating = $request->rating;
+        $review->review = $request->review;
+        $review->img_paths = $imagePaths;
+
+        $review->save();
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Review updated successfully',
+            'review' => $review->fresh(),
+            'imss' => $imagePaths
         ], 201);
     }
 }

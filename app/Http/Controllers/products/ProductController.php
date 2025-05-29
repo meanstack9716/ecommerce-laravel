@@ -574,4 +574,18 @@ class ProductController extends Controller
             'data' => $product
         ]);
     }
+
+    public function deleteProductItem(Request $request, $productId)
+    {
+        $product = Product::find($productId);
+        if ($product) {
+            $product->not_available = true;
+            $product->save();            
+        }
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Product deleted successfully"
+        ]);
+    }
 }

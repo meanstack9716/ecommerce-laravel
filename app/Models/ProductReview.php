@@ -14,13 +14,30 @@ class ProductReview extends Model
         'order_id',
         'rating',
         'review',
+        'img_paths'
     ];
 
     protected $hidden = [
         'updated_at',
         'created_at',
+        'img_paths',
         'user_id',
     ];
+
+
+    protected $appends = [
+        'img_urls',
+    ];
+
+    public function getImgUrlsAttribute()
+    {
+        if ($this->img_paths) {
+            return array_map(function ($path) {
+                return Storage::url($path);
+            }, $this->img_paths);
+        }
+        return [];
+    }
 
     public function by()
     {
