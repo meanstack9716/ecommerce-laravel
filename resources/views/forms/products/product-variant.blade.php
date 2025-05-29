@@ -59,7 +59,6 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     const product = @json(session('product_data'));
-    console.log(product, '1111111111111') 
     const config = {
         standardColors : [
         @foreach(\App\Enums\Color::cases() as $color)
@@ -159,7 +158,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
                     ${config.standardColors.map(color => {
                         const variant = sizeData ? sizeData.colors.find((item) => item.value === color.hex) : null;
-                        console.log(variant)
                         return `
                         
                         <div class="flex items-center justify-between w-full gap-4">
