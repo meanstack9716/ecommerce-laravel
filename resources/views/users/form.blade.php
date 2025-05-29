@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="mt-8 flex justify-center space-x-4">
-                    <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
+                    <button type="submit" id="submitButton" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
                         {{ $submitText }}
                     </button>
                     @if($isEdit)
@@ -111,5 +111,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById('user-register-form').addEventListener('submit', function() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...';
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+    });
+</script>
 
 @endsection

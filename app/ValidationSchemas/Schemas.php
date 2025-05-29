@@ -138,9 +138,8 @@ class Schemas
                 'product_details' => 'required|min:10',
                 'product_price' => 'required|numeric|min:0',
                 'discount_per' => 'nullable|numeric|lt:100|min:0',
-                'product_brand' => 'required|min:3',
-                'new_brand' => 'required_if:product_brand,another|nullable|string',
-                'product_sku' => 'required',
+                'brand_name' => 'required|min:3',
+                'product_brand' => 'nullable|exists:product_brands,_id',
                 'stock_quantity' => 'required|integer|min:0',
             ],
             'addProductVariantsSchema' => [

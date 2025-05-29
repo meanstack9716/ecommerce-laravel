@@ -52,6 +52,14 @@ class PanelAuthController extends Controller
     public function sendEmailCodeForUser(Request $request)
     {
         $email = $request->email;
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return redirect()->route('password.verify-code')->with('toast', [
+                'type' => 'success',
+                'message' => 'If an account with the provided email exists, a password reset link has been sent.'
+            ]);
+        }
         VerificationCode::where('email', $email)->delete();
 
         $code = rand(100000, 999999);
@@ -83,6 +91,14 @@ class PanelAuthController extends Controller
     public function resendVerificationCode(Request $request)
     {
         $email = $request->email;
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->with('toast', [
+                'type' => 'success',
+                'message' => 'A new Verification code sent successfully!'
+            ]);
+        }
     
         VerificationCode::where('email', $email)->delete();
 

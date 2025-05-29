@@ -18,11 +18,12 @@
                 <div class="flex space-x-6 mt-2">
                     <div class="flex items-center">
                         <input type="radio" id="size_type_standard" name="size_type" value="standard" 
-                            class="h-5 w-5 text-blue-600 focus:ring-blue-500 accent-blue-600" checked>
+                            class="h-5 w-5 text-blue-600 focus:ring-blue-500 accent-blue-600" {{ old('size_type', session('product_data.size_type') ?? 'standard') === 'standard' ? 'checked' : '' }}>
                         <label for="size_type_standard" class="ml-2 block font-medium text-sm text-gray-700">Standard Sizes (S, M, L, XL, etc.)</label>
                     </div>
                     <div class="flex items-center">
                         <input type="radio" id="size_type_numeric" name="size_type" value="numeric" 
+                           {{ old('size_type', session('product_data.size_type') ?? '') === 'numeric' ? 'checked' : '' }}
                            class="h-5 w-6 text-blue-600 focus:ring-blue-500 ccent-blue-600">
                         <label for="size_type_numeric" class="ml-2 block text-sm font-medium text-gray-700">Numeric Sizes (28, 30, 32, etc.)</label>
                     </div>
@@ -56,6 +57,8 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    const product = @json(session('product_data'));
     const config = {
         standardColors : [
         @foreach(\App\Enums\Color::cases() as $color)
@@ -71,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             '{{ $size }}',
         @endforeach
     ],
+    hexCodes: @json(\App\Enums\Color::allHexCodes()),
 
     numericSizes: [
         @foreach(\App\Enums\Size::numericSizes() as $size)
@@ -87,7 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let sizeCounter = 0;
 
-    addSizeBlock();
+    if(product?.sizes && product.sizes.length) {
+        product.sizes.forEach((itemSize) => addSizeBlock(null, itemSize))
+    } else {
+        addSizeBlock();
+    }
 
     // Event Listeners
     addSizeBtn.addEventListener('click', addSizeBlock);
@@ -96,11 +104,18 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', validateForm);
 
     // Functions
-    function addSizeBlock() {
+    function addSizeBlock(event, itemSize) {
         const sizeId = `size_${sizeCounter++}`;
         const isNumeric = sizeTypeNumeric.checked;
         const sizeOptions = isNumeric ? config.numericSizes : config.standardSizes;
-        
+
+        const sizeData = itemSize
+        let customVariants = [];
+
+        if (sizeData) {
+            customVariants = sizeData.colors.filter((color) => !config.hexCodes.includes(color.value))
+        }
+       
         const sizeBlock = document.createElement('div');
         sizeBlock.className = 'size-block mb-6 p-4 border border-gray-200 rounded-lg';
         sizeBlock.dataset.sizeId = sizeId;
@@ -113,9 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="size-select cursor-pointer mt-2 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Select size</option>
                             ${sizeOptions.map(size => `
-                                <option class="disabled:text-neutral-200" value="${size}">${size}</option>
+                                <option class="disabled:text-neutral-200" value="${size}" ${sizeData && sizeData.value === size ? 'selected' : '' }>${size}</option>
                             `).join('')}
-                            <option value="custom">Custom Size</option>
+                            <option value="custom" ${sizeData && !sizeOptions.includes(sizeData.value) ? 'selected' : ''}>Custom Size</option>
                         </select>
                         <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
                             chevron_right
@@ -125,8 +140,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         type="text" 
                         name="sizes[${sizeId}][custom_size]" 
                         id="sizes[${sizeId}][custom_size]"
+                        value="${sizeData && !sizeOptions.includes(sizeData.value) ? sizeData.value : ''}"
                         placeholder="Enter custom size" 
-                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 hidden focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeData && !sizeOptions.includes(sizeData.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     >
                     <p class="size-error mt-1 text-sm font-medium text-red-600 hidden"></p>
                 </div>
@@ -140,11 +156,15 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="standard-colors mb-5">
                 <label class="font-medium 3xl:text-xl 3xl:font-semibold">Standard Colors</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
-                    ${config.standardColors.map(color => `
+                    ${config.standardColors.map(color => {
+                        const variant = sizeData ? sizeData.colors.find((item) => item.value === color.hex) : null;
+                        return `
+                        
                         <div class="flex items-center justify-between w-full gap-4">
                             <div class="flex items-center">
                                 <input type="checkbox" id="${sizeId}_${color.name}" 
                                     name="sizes[${sizeId}][colors][standard][${color.hex}][enabled]" 
+                                    ${variant ? "checked" : "" }
                                     value="1" class="color-checkbox h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
                                 <label for="${sizeId}_${color.name}" class="ml-3 flex items-center font-medium text-gray-700">
                                     <span class="w-6 h-6 mr-2 rounded-full border border-gray-300" style="background-color:${color.hex}"></span>
@@ -153,10 +173,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <input type="hidden" name="sizes[${sizeId}][colors][standard][${color.hex}][name]" value="${color.name}">
                             </div>
                             <input type="number" name="sizes[${sizeId}][colors][standard][${color.hex}][quantity]" 
-                                value="0" class="quantity-input ml-2 block w-2/3 border border-gray-300 rounded-md shadow-sm py-1 px-3 hidden focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
+                                value="${variant?.quantity ?? 0}" class="quantity-input ml-2 block w-2/3 border border-gray-300 rounded-md shadow-sm py-1 px-3 ${variant ? "" : "hidden" } focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                                 placeholder="Enter quantity" min="0">
                         </div>
-                    `).join('')}
+                    `}).join('')}
                 </div>
                 <p class="color-error mt-1 text-sm font-medium text-red-600 hidden"></p>
             </div>
@@ -173,12 +193,12 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
 
         sizeContainer.appendChild(sizeBlock);
-        setupSizeBlockEvents(sizeBlock);
+        setupSizeBlockEvents(sizeBlock, customVariants);
         updateRemoveButtons();
         updateDisabledSizeOptions();
     }
 
-    function setupSizeBlockEvents(sizeBlock) {
+    function setupSizeBlockEvents(sizeBlock, customVariants) {
         const sizeSelect = sizeBlock.querySelector('.size-select');
         const customSizeInput = sizeBlock.querySelector('.custom-size-input');
         const removeBtn = sizeBlock.querySelector('.remove-size-btn');
@@ -195,6 +215,10 @@ document.addEventListener('DOMContentLoaded', function() {
             updateRemoveButtons();
             updateDisabledSizeOptions();
         });
+
+        customVariants.forEach((customColor) => {
+            addCustomColorField(sizeBlock.querySelector('.custom-color-container'), sizeBlock.dataset.sizeId, customColor);
+        })
 
         addCustomColorBtn.addEventListener('click', function() {
             addCustomColorField(sizeBlock.querySelector('.custom-color-container'), sizeBlock.dataset.sizeId);
@@ -228,21 +252,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function addCustomColorField(container, sizeId) {
-        const colorId = `color_${Date.now()}`;
+    function addCustomColorField(container, sizeId, customColor) {
+        const colorId = `color_${Math.floor(100000 + Math.random() * 900000)}`;
         const colorField = document.createElement('div');
         colorField.className = 'flex items-center mb-2 space-x-4 lg:w-2/3';
         colorField.innerHTML = `
             <div class="border cursor-pointer border-gray-300 rounded-md shadow-sm py-1 px-3 flex items-center text-center w-1/2">
                 <div class="color-picker-wrapper flex items-center text-center">
                 <input type="color" name="sizes[${sizeId}][colors][custom][${colorId}][hex]" 
-                    value="#000000" class="h-8 w-8 border border-gray-300 rounded-lg">
-                <span class="hex-value text-sm ml-1">#000000</span>
+                    value="${customColor?.value || '#000000'}" class="h-8 w-8 border border-gray-300 rounded-lg">
+                <span class="hex-value text-sm ml-1">${customColor?.value || '#000000'}</span>
                 </div>
                 <input type="text" name="sizes[${sizeId}][colors][custom][${colorId}][name]" 
+                    value="${customColor?.name || ''}"
                     placeholder="Color name" class="ml-2 block w-1/2 border-none focus:outline-none">
             </div>
-            <input type="number" name="sizes[${sizeId}][colors][custom][${colorId}][quantity]" 
+            <input type="number" name="sizes[${sizeId}][colors][custom][${colorId}][quantity]"
+               value="${customColor?.quantity || '0'}"
                 min="0" class="block w-1/2 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Quantity">
             <button type="button" class="remove-color-btn ml-2">
                 <span class="material-symbols-outlined text-red-600 bg-red-100 rounded-full">cancel</span>

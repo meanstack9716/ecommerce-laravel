@@ -21,7 +21,7 @@
             'label' => 'Product Price',
             'placeholder' => 'Enter your product price',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'required' => 'true'
         ],
         [
@@ -29,7 +29,7 @@
             'label' => 'Product Discount percent (%)',
             'placeholder' => 'Enter discount percent',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'default' => '0'
         ],
         [
@@ -37,16 +37,8 @@
             'label' => 'Product Stocks',
             'placeholder' => 'Enter available stock for product',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'default' => '0',
-            'required' => 'true'
-        ],
-        [
-            'name' => 'product_sku',
-            'label' => 'Product Sku',
-            'placeholder' => 'Enter sku code for product',
-            'col' => 3,
-            'type' => 'text',
             'required' => 'true'
         ],
     ];
@@ -61,16 +53,15 @@
         <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
             @foreach ($detailFields as $field)
                 <div class="sm:col-span-{{ $field['col'] }}">
-                    @if($field['type'] === 'text')
-                        <x-textfield 
-                            name="{{ $field['name'] }}" 
-                            label="{{ $field['label'] }}" 
-                            value="{{ old($field['name'], session('product_data.basic.' . $field['name']), $field['default'] ?? '') }}"
-                            id="{{ $field['name'] }}"
-                            :required="$field['required'] ?? false"
-                            placeholder="{{ $field['placeholder'] }}"
-                        />
-                    @endif
+                    <x-textfield 
+                        name="{{ $field['name'] }}" 
+                        label="{{ $field['label'] }}" 
+                        type="{{ $field['type'] }}"
+                        value="{{ old($field['name'], session('product_data.basic.' . $field['name']), $field['default'] ?? '') }}"
+                        id="{{ $field['name'] }}"
+                        :required="$field['required'] ?? false"
+                        placeholder="{{ $field['placeholder'] }}"
+                    />
                 </div>
             @endforeach
 
@@ -78,38 +69,28 @@
                 <label class="font-medium 3xl:text-xl 3xl:font-semibold">Product Brand
                     <span class="text-red-600">*</span>
                 </label>
-                <div class="relative">
-                    <select name="product_brand" id="product_brand"
-                        class="brand-select max-h-40 cursor-pointer mt-2 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">Select Brand</option>
-                        @foreach($brands as $brand)
-                            <option value="{{ $brand->id }}" {{ old('product_brand') == $brand->id || session('product_data.basic.product_brand') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
-                        @endforeach
-                        <option value="another" {{ old('product_brand') == "another" || session('product_data.basic.product_brand') == "another" ? 'selected' : '' }}>Another Brand</option>
-                    </select>
-                    <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                        chevron_right
-                    </span>
-                </div>
-                    @error('product_brand')
-                        <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                    @enderror
+                <div class="relative w-full">
                     <input 
                         type="text" 
-                        name="new_brand" 
-                        id="new_brand"
-                        value="{{ old('new_brand', session('product_data.basic.new_brand')) }}"
-                        placeholder="Enter the name of brand" 
-                        class="custom-brand-input mt-3 
-                            {{ old('product_brand') == 'another' || session('product_data.basic.product_brand') == 'another' ? 'block' : 'hidden' }}
-                            w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        id="brand-search" 
+                        name="brand_name" 
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="Search brand name or type new brand name"
+                        value="{{ old('brand_name', session('product_data.basic.brand_name') ?? '') }}"
+                        autocomplete="off"
                     >
-                    @error('new_brand')
-                        <p class="custom-brand-error mt-1 text-sm text-red-600
-                            {{ old('product_brand') == 'another' || session('product_data.basic.product_brand') == 'another' ? 'block' : 'hidden' }}"
-                        >{{ $message }}</p>
-                    @enderror
+                    <div id="brand-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
                 </div>
+                <input 
+                    type="hidden" 
+                    id="brand-filter" 
+                    name="product_brand" 
+                    value="{{ old('product_brand', session('product_data.basic.product_brand') ?? '') }}"
+                >
+                @error('brand_name')
+                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                @enderror
+            </div>
 
             <div class="sm:col-span-6">
                 <x-quill-editor 
@@ -139,14 +120,67 @@
 </form>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const brandSelect = document.querySelector('.brand-select');
-        const customBrandInput = document.querySelector('.custom-brand-input');
-        const customBrandError = document.querySelector('.custom-brand-error');
+    function setupBrandAutocomplete() {
+        const searchInput = document.getElementById('brand-search');
+        const resultsContainer = document.getElementById('brand-search-results');
+        const selectedDataId = document.getElementById('brand-filter');
+        let debounceTimer;
 
-        brandSelect.addEventListener('change', function() {
-            customBrandInput.classList.toggle('hidden', this.value !== 'another');
-            customBrandError.classList.toggle('hidden', this.value !== 'another');
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
+                
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+                return;
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/brands?searchTerm=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-brand-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No brand found</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                    } catch (error) {
+                        resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                        resultsContainer.classList.remove('hidden');
+                        console.error('Error fetching brands:', error);
+                    }
+                }, 300);
+            });
+
+            resultsContainer.addEventListener('click', async function(e) {
+                const selectedItem = e.target.closest('[data-brand-id]');
+                if (selectedItem) {
+                    const selectedId = selectedItem.getAttribute('data-brand-id');
+                    const selectedName = selectedItem.textContent.trim();
+                    
+                    searchInput.value = selectedName;
+                    selectedDataId.value = selectedId;
+                    resultsContainer.classList.add('hidden');
+
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                    resultsContainer.classList.add('hidden');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            setupBrandAutocomplete();
         });
-    })
 </script>

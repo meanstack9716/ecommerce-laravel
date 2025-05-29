@@ -1,127 +1,121 @@
-<form action="{{ route('products.add.step1.submit') }}" method="POST" class="mb-0">
-    @csrf
-    <div class="space-y-6">
-        <h3 class="text-xl font-medium text-gray-900">Product Category</h3>
-        
-        <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <div class="sm:col-span-6">
-                <label for="category" class="font-medium 3xl:text-xl 3xl:font-semibold">Category
-                    <span class="text-red-600">*</span>
-                </label>
-                <div class="relative w-full">
-                    <input 
-                        type="text" 
-                        id="category-search" 
-                        name="category_term" 
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Search category type"
-                        value="{{ old('category_term', session('product_data.category.category_term') ?? '') }}"
-                        autocomplete="off"
-                    >
-                    <div id="category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div> 
-                </div>
-                <input 
-                    type="hidden" 
-                    id="category-filter" 
-                    name="category" 
-                    value="{{ old('category', session('product_data.category.category_id') ?? '') }}"
-                >
-                
-                @error('category')
-                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                @enderror
-            </div>
+@props([
+    'showCategoryFilter' => true, 
+    'showSubCategoryFilter' => false, 
+    'showSubSubCategoryFilter' => false
+])
 
-            <div class="sm:col-span-6">
-                <label for="sub_category" class="font-medium 3xl:text-xl 3xl:font-semibold">Sub Category
-                    <span class="text-red-600">*</span>
-                </label>
-                <div class="relative w-full">
-                    <input 
-                        type="text" 
-                        id="sub-category-search" 
-                        name="sub_category_term" 
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Search sub category type"
-                        value="{{ old('sub_category_term', session('product_data.category.sub_category_term') ?? '') }}"
-                        autocomplete="off"
-                        {{ !old('category') && !session('product_data.category.category_id') ? 'disabled' : '' }}
-                    >
-                    <div id="sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
-                </div>
-                <input 
-                    type="hidden" 
-                    id="sub-category-filter" 
-                    name="sub_category" 
-                    value="{{ old('sub_category', session('product_data.category.sub_category_id') ?? '') }}"
-                >
-                @error('sub_category')
-                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div class="sm:col-span-6">
-                <label for="sub_sub_category" class="font-medium 3xl:text-xl 3xl:font-semibold">Sub Sub Category
-                    <span class="text-red-600">*</span>
-                </label>
-                <div class="relative w-full">
-                    <input 
-                        type="text" 
-                        id="sub-sub-category-search" 
-                        name="sub_sub_category_term" 
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Search sub sub category type"
-                        value="{{ old('sub_sub_category_term', session('product_data.category.sub_sub_category_term') ?? '') }}"
-                        autocomplete="off"
-                        {{ !old('sub_category') && !session('product_data.category.sub_category_id') ? 'disabled' : '' }}
-                    >
-                    <div id="sub-sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
-                </div>
-                <input 
-                    type="hidden" 
-                    id="sub-sub-category-filter" 
-                    name="sub_sub_category" 
-                    value="{{ old('sub_sub_category', session('product_data.category.sub_sub_category_id') ?? '') }}"
-                >
-                @error('sub_sub_category')
-                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                @enderror
-            </div>
-        </div>
+@if($showCategoryFilter)
+<div class="flex flex-col items-start gap-2">
+    <p class="m-0 text-gray-600 font-medium">Search by Category</p>
+    <div class="relative w-full">
+        <input 
+            type="text" 
+            id="category-search" 
+            name="category_term" 
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Search category type"
+            value="{{ request('category_term') }}"
+            autocomplete="off"
+        >
+        <div id="category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+            search
+        </span>
     </div>
+    <input 
+        type="hidden" 
+        id="category-filter" 
+        name="categoryId" 
+        value="{{ request('categoryId') }}"
+    >
+</div>
+@endif
 
-    <div class="mt-8 flex justify-end">
-        <button type="submit" class="ml-3 inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
-            Next
-        </button>
+@if($showSubCategoryFilter)
+<div class="flex flex-col items-start gap-2">
+    <p class="m-0 text-gray-600 font-medium">Search by Sub Category</p>
+    <div class="relative w-full">
+        <input 
+            type="text" 
+            id="sub-category-search" 
+            name="sub_category_term" 
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Search sub category type"
+            value="{{ request('sub_category_term') }}"
+            autocomplete="off"
+        >
+        <div id="sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+            search
+        </span>
     </div>
-</form>
+    <input 
+        type="hidden" 
+        id="sub-category-filter" 
+        name="subCategoryId" 
+        value="{{ request('subCategoryId') }}"
+    >
+</div>
+@endif
+
+@if($showSubSubCategoryFilter)
+<div class="flex flex-col items-start gap-2">
+    <p class="m-0 text-gray-600 font-medium">Search by Sub Sub Category</p>
+    <div class="relative w-full">
+        <input 
+            type="text" 
+            id="sub-sub-category-search" 
+            name="sub_sub_category_term" 
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Search sub sub category type"
+            value="{{ request('sub_sub_category_term') }}"
+            autocomplete="off"
+        >
+        <div id="sub-sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 pointer-events-none">
+            search
+        </span>
+    </div>
+    <input 
+        type="hidden" 
+        id="sub-sub-category-filter" 
+        name="subSubCategoryId" 
+        value="{{ request('subSubCategoryId') }}"
+    >
+</div>
+@endif
+
+
 
 <script>
 
-    function setupCategoryAutocomplete() {
+    function setupCategoryAutocomplete(hasSub, hasSubSub) {
         const searchInput = document.getElementById('category-search');
         const resultsContainer = document.getElementById('category-search-results');
         const selectedDataId = document.getElementById('category-filter');
+
         const subCategorySearch = document.getElementById('sub-category-search');
         const subCategoryFilter = document.getElementById('sub-category-filter');
+
         const subSubCategorySearch = document.getElementById('sub-sub-category-search');
         const subSubCategoryFilter = document.getElementById('sub-sub-category-filter');
         let debounceTimer;
+
+        if (!searchInput || !resultsContainer) return;
 
         searchInput.addEventListener('input', async function(e) {
             const query = e.target.value.trim();
             if (query.length < 2) {
                 resultsContainer.classList.add('hidden');
                 selectedDataId.value = '';
-
-                subCategorySearch.value = '';
-                subCategorySearch.disabled = true;
-                subCategoryFilter.value = '';
-
-                subSubCategorySearch.value = '';
-                subSubCategorySearch.disabled = true;
-                subSubCategoryFilter.value = '';
+                if (hasSub) {
+                    subCategorySearch.value = '';
+                    subCategoryFilter.value = '';
+                }
+                if (hasSubSub) {
+                    subSubCategorySearch.value = '';
+                    subSubCategoryFilter.value = '';
+                }
                 return;
             }
 
@@ -160,12 +154,14 @@
                 searchInput.value = selectedName;
                 selectedDataId.value = selectedId;
                 resultsContainer.classList.add('hidden');
-                subCategorySearch.disabled = false;
-                subCategorySearch.value = '';
-                subCategoryFilter.value = '';
-
-                subSubCategorySearch.value = '';
-                subSubCategoryFilter.value = '';
+                if (hasSub) {
+                    subCategorySearch.value = '';
+                    subCategoryFilter.value = '';
+                }
+                if (hasSubSub) {
+                    subSubCategorySearch.value = '';
+                    subSubCategoryFilter.value = '';
+                }
             }
 
         });
@@ -180,32 +176,30 @@
         });
     }
 
-    function setupSubCategoryAutocomplete() {
+    function setupSubCategoryAutocomplete(hasSubSub) {
         const searchInput = document.getElementById('sub-category-search');
         const resultsContainer = document.getElementById('sub-category-search-results');
         const selectedDataId = document.getElementById('sub-category-filter');
+        const categoryFilter = document.getElementById('category-filter');
+
         const subSubCategorySearch = document.getElementById('sub-sub-category-search');
         const subSubCategoryFilter = document.getElementById('sub-sub-category-filter');
-        const categoryFilter = document.getElementById('category-filter');
         let debounceTimer;
+
+        if (!searchInput || !resultsContainer) return;
 
         searchInput.addEventListener('input', async function(e) {
             const query = e.target.value.trim();
             const categoryId = categoryFilter.value;
-                
-            if (!categoryId) {
-                resultsContainer.innerHTML = '<div class="p-3 text-gray-500">Please select a category first</div>';
-                resultsContainer.classList.remove('hidden');
-                return;
-            }
 
             if (query.length < 2) {
                 resultsContainer.classList.add('hidden');
                 selectedDataId.value = '';
 
-                subSubCategorySearch.value = '';
-                subSubCategorySearch.disabled = true;
-                subSubCategoryFilter.value = '';
+                if (hasSubSub) {
+                    subSubCategorySearch.value = '';
+                    subSubCategoryFilter.value = '';
+                }
                 return;
             }
 
@@ -245,9 +239,11 @@
                 searchInput.value = selectedName;
                 selectedDataId.value = selectedId;
                 resultsContainer.classList.add('hidden');
-                subSubCategorySearch.disabled = false;
-                subSubCategorySearch.value = '';
-                subSubCategoryFilter.value = '';
+
+                if (hasSubSub) {
+                    subSubCategorySearch.value = '';
+                    subSubCategoryFilter.value = '';
+                }
             }
         });
 
@@ -265,19 +261,17 @@
         const searchInput = document.getElementById('sub-sub-category-search');
         const resultsContainer = document.getElementById('sub-sub-category-search-results');
         const selectedDataId = document.getElementById('sub-sub-category-filter');
+        const categoryFilter = document.getElementById('category-filter');
         const subCategoryFilter = document.getElementById('sub-category-filter');
+
         let debounceTimer;
+        if (!searchInput || !resultsContainer) return;
 
         searchInput.addEventListener('input', async function(e) {
             const query = e.target.value.trim();
+            const categoryId = categoryFilter.value;
             const subCategoryId = subCategoryFilter.value;
                 
-            if (!subCategoryId) {
-                resultsContainer.innerHTML = '<div class="p-3 text-gray-500">Please select a sub category first</div>';
-                resultsContainer.classList.remove('hidden');
-                return;
-            }
-
             if (query.length < 2) {
                 resultsContainer.classList.add('hidden');
                 selectedDataId.value = '';
@@ -287,7 +281,9 @@
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(async () => {
                 try {
-                    let url = `/api/search/sub-sub-categories?searchTerm=${encodeURIComponent(query)}&subCategoryId=${subCategoryId}`
+                    let url = `/api/search/sub-sub-categories?searchTerm=${encodeURIComponent(query)}`
+                    url += categoryId ?  `&categoryId=${categoryId}` : '';
+                    url += subCategoryId ?  `&subCategoryId=${subCategoryId}` : '';
                     const response = await fetch(url);
                     const data = await response.json();
                     if (data?.data?.length > 0) {
@@ -305,7 +301,7 @@
                 } catch (error) {
                     resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
                     resultsContainer.classList.remove('hidden');
-                    console.error('Error fetching sub sub categories:', error);
+                    console.error('Error fetching sub categories:', error);
                 }
             }, 300);
         });
@@ -331,22 +327,14 @@
             }
         });
     }
-    
 
     document.addEventListener('DOMContentLoaded', async () => {
-        setupCategoryAutocomplete();
-        setupSubCategoryAutocomplete();
-        setupSubSubCategoryAutocomplete();
+        const showCategoryFilter = @json($showCategoryFilter);
+        const showSubCategoryFilter = @json($showSubCategoryFilter);
+        const showSubSubCategoryFilter = @json($showSubSubCategoryFilter);
 
-        const categoryFilter = document.getElementById('category-filter');
-        const subCategorySearch = document.getElementById('sub-category-search');
-        const subCategoryFilter = document.getElementById('sub-category-filter');
-        const subSubCategorySearch = document.getElementById('sub-sub-category-search');
-        if (categoryFilter.value) {
-            subCategorySearch.disabled = false;
-        }
-        if (subCategoryFilter.value) {
-            subSubCategorySearch.disabled = false;
-        }
+        if (showCategoryFilter) setupCategoryAutocomplete(showSubCategoryFilter, showSubSubCategoryFilter);
+        if (showSubCategoryFilter) setupSubCategoryAutocomplete(showSubSubCategoryFilter);
+        if (showSubSubCategoryFilter) setupSubSubCategoryAutocomplete();
     });
 </script>

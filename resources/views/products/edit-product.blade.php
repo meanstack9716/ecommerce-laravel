@@ -23,7 +23,7 @@
             'label' => 'Product Price',
             'placeholder' => 'Enter your product price',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'required' => 'true'
         ],
         [
@@ -31,7 +31,7 @@
             'label' => 'Product Discount percent (%)',
             'placeholder' => 'Enter discount percent',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'default' => '0'
         ],
         [
@@ -39,17 +39,9 @@
             'label' => 'Product Stocks',
             'placeholder' => 'Enter available stock for product',
             'col' => 3,
-            'type' => 'text',
+            'type' => 'number',
             'default' => '0',
             'required' => 'true'
-        ],
-        [
-            'name' => 'sku',
-            'label' => 'Product Sku',
-            'placeholder' => 'Enter sku code for product',
-            'col' => 3,
-            'type' => 'text',
-            'required' => 'true',
         ],
     ];
 
@@ -66,26 +58,140 @@
             <form action="{{ route('product.edit.submit', $product->id) }}" method="POST" class="mb-0" enctype="multipart/form-data" id="product-submit-form">
                 @csrf
                 <div class="space-y-6">
+                    <h3 class="text-xl font-medium text-gray-900">Product Category</h3>
+        
+                    <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div class="sm:col-span-6">
+                            <label for="category" class="font-medium 3xl:text-xl 3xl:font-semibold">Category
+                                <span class="text-red-600">*</span>
+                            </label>
+                            <div class="relative w-full">
+                                <input 
+                                    type="text" 
+                                    id="category-search" 
+                                    name="category_term" 
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Search category type"
+                                    value="{{ old('category_term', $product->category->name ?? '') }}"
+                                    autocomplete="off"
+                                >
+                                <div id="category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div> 
+                            </div>
+                            <input 
+                                type="hidden" 
+                                id="category-filter" 
+                                name="category" 
+                                value="{{ old('category', $product->category_id ?? '') }}"
+                            >
+                            <p id="category-error" class="mt-1 text-sm text-red-500 hidden"></p>
+                            @error('category')
+                                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="sm:col-span-6">
+                            <label for="sub_category" class="font-medium 3xl:text-xl 3xl:font-semibold">Sub Category
+                                <span class="text-red-600">*</span>
+                            </label>
+                            <div class="relative w-full">
+                                <input 
+                                    type="text" 
+                                    id="sub-category-search" 
+                                    name="sub_category_term" 
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Search sub category type"
+                                    value="{{ old('sub_category_term', $product->subCategory->name ?? '') }}"
+                                    autocomplete="off"
+                                    {{ !old('category') && !$product->category_id ? 'disabled' : '' }}
+                                >
+                                <div id="sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+                            </div>
+                            <input 
+                                type="hidden" 
+                                id="sub-category-filter" 
+                                name="sub_category" 
+                                value="{{ old('sub_category', $product->sub_category_id ?? '') }}"
+                            >
+                            <p id="sub_category-error" class="mt-1 text-sm text-red-500 hidden"></p>
+                            @error('sub_category')
+                                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="sm:col-span-6">
+                            <label for="sub_sub_category" class="font-medium 3xl:text-xl 3xl:font-semibold">Sub Sub Category
+                                <span class="text-red-600">*</span>
+                            </label>
+                            <div class="relative w-full">
+                                <input 
+                                    type="text" 
+                                    id="sub-sub-category-search" 
+                                    name="sub_sub_category_term" 
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Search sub sub category type"
+                                    value="{{ old('sub_sub_category_term', $product->subSubCategory->name ?? '') }}"
+                                    autocomplete="off"
+                                    {{ !old('sub_category') && !$product->sub_category_id ? 'disabled' : '' }}
+                                >
+                                <div id="sub-sub-category-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+                            </div>
+                            <input 
+                                type="hidden" 
+                                id="sub-sub-category-filter" 
+                                name="sub_sub_category" 
+                                value="{{ old('sub_sub_category', $product->sub_sub_category_id ?? '') }}"
+                            >
+                            <p id="sub_sub_category-error" class="mt-1 text-sm text-red-500 hidden"></p>
+                            @error('sub_sub_category')
+                                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                     <h3 class="text-xl font-medium text-gray-900">Product Description</h3>
         
                     <div class="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                         @foreach ($detailFields as $field)
                             <div class="sm:col-span-{{ $field['col'] }}">
-                                @if($field['type'] === 'text')
-                                    <x-textfield 
-                                        name="{{ $field['name'] }}" 
-                                        label="{{ $field['label'] }}" 
-                                        value="{{ old($field['name'], $product->{$field['name']}) }}"                                        
-                                        id="{{ $field['name'] }}"
-                                        :required="$field['required'] ?? false"
-                                        placeholder="{{ $field['placeholder'] }}"
-                                    />
-                                @endif
-                                <p id="{{ $field['name'] . '-error' }}" class="mt-1 text-sm text-red-600 hidden"></p>
+                                <x-textfield 
+                                    name="{{ $field['name'] }}" 
+                                    label="{{ $field['label'] }}" 
+                                    type="{{ $field['type'] }}"
+                                    value="{{ old($field['name'], $product->{$field['name']}) }}"                                        
+                                    id="{{ $field['name'] }}"
+                                    :required="$field['required'] ?? false"
+                                    placeholder="{{ $field['placeholder'] }}"
+                                />
+                                <p id="{{ $field['name'] . '-error' }}" class="mt-1 text-sm text-red-500 hidden"></p>
                             </div>
                         @endforeach
-                        <div class="sm:col-span-6">
-                            <x-textfield :disabled="true" label="Product Brand" name="brand" value="{{ $product->brand->name}}"/>
+                        <div class="sm:col-span-3">
+                            <x-textfield :disabled="true" label="Product Sku" name="sku" value="{{ $product->sku}}"/>
+                        </div>
+                        <div class="w-full sm:col-span-6">
+                            <label class="font-medium 3xl:text-xl 3xl:font-semibold">Product Brand
+                                <span class="text-red-600">*</span>
+                            </label>
+                            <div class="relative w-full">
+                                <input 
+                                    type="text" 
+                                    id="brand-search" 
+                                    name="brand_name" 
+                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Search brand name or type new brand name"
+                                    value="{{ old('brand_name', $product->brand->name ?? '') }}"
+                                    autocomplete="off"
+                                >
+                                <div id="brand-search-results" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg hidden max-h-60 overflow-auto"></div>
+                            </div>
+                            <input 
+                                type="hidden" 
+                                id="brand-filter" 
+                                name="product_brand" 
+                                value="{{ old('product_brand', $product->brand->id ?? '') }}"
+                            >
+                            <p id="brand_name-error" class="mt-1 text-sm text-red-500 hidden"></p>
+                            @error('brand_name')
+                                <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="sm:col-span-6">
@@ -137,10 +243,14 @@
                         </button>
                     </div>
                 </div>
-                <div class="mt-8 flex justify-center">
-                    <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
-                        submit
+                <div class="mt-8 flex justify-center space-x-4">
+                    <button id="submitButton" type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
+                        Submit
                     </button>
+                    
+                    <a href="{{ route('products.list') }}" class="inline-flex justify-center py-2 px-6 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
@@ -149,6 +259,11 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+
+    setupCategoryAutocomplete();
+    setupSubCategoryAutocomplete();
+    setupSubSubCategoryAutocomplete();
+    setupBrandAutocomplete();
 
     const product = @json($product);
 
@@ -236,7 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         placeholder="Enter custom size" 
                         class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeData && !sizeOptions.includes(sizeData.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     >
-                    <p class="size-error mt-1 text-sm font-medium text-red-600 hidden"></p>
+                    <p class="size-error mt-1 text-sm font-medium text-red-500 hidden"></p>
                 </div>
                 <div class="flex sm:justify-end">
                     <button type="button" class="w-fit cursor-pointer font-medium remove-size-btn px-5 py-2 bg-red-100 text-red-600 rounded-md hover:bg-red-200">
@@ -250,7 +365,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
                     ${config.standardColors.map(color => {
                         const variant = sizeData ? sizeData.variants.find((item) => item.value === color.hex) : null;
-                        console.log(variant)
                         return `
                         
                         <div class="flex items-center justify-between w-full gap-4">
@@ -271,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `}).join('')}
                 </div>
-                <p class="color-error mt-1 text-sm font-medium text-red-600 hidden"></p>
+                <p class="color-error mt-1 text-sm font-medium text-red-500 hidden"></p>
             </div>
 
             <div class="custom-colors mb-5">
@@ -396,13 +510,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function formatLabel(name) {
+        return name
+            .replace(/_/g, ' ') // Replace underscores with spaces
+            .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize each word
+    }
+
     function validateTextField(field, minLength = 1) {
         const value = field.value.trim();
         const errorElement = document.getElementById(`${field.name}-error`);
         
         if (!value || value.length < minLength) {
             if (errorElement) {
-                errorElement.textContent = `This field is required${minLength > 1 ? ` and must be at least ${minLength} characters` : ''}`;
+                errorElement.textContent = `${formatLabel(field.name)} is required${minLength > 1 ? ` and must be at least ${minLength} characters` : ''}`;
                 errorElement.classList.remove('hidden');
             }
             field.classList.add('border-red-500');
@@ -461,18 +581,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function validateForm(e) {
         e.preventDefault();
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...'; // Optional: Change button text
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed'); // Optional: Visual feedback
         clearErrors();
         
         const sizeBlocks = document.querySelectorAll('.size-block');
         const errors = [];
         let isValid = true;
 
+        isValid = validateTextField(document.getElementById('category-filter')) && isValid;
+        isValid = validateTextField(document.getElementById('sub-category-filter')) && isValid;
+        isValid = validateTextField(document.getElementById('sub-sub-category-filter')) && isValid;
         isValid = validateTextField(document.getElementById('title'), 3) && isValid;
         isValid = validateTextField(document.getElementById('description'), 10) && isValid;
         isValid = validateNumberField(document.getElementById('price'), 0.01) && isValid;
         isValid = validateDiscountField(document.getElementById('discount_percent')) && isValid;
         isValid = validateNumberField(document.getElementById('stock_quantity'), 0) && isValid;
         isValid = validateTextField(document.getElementById('sku'), 3) && isValid;
+        isValid = validateTextField(document.getElementById('brand-search'), 3) && isValid;
 
         // Validate at least one size
         if (sizeBlocks.length === 0) {
@@ -502,9 +630,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (errors.length > 0) {
+            const firstError = document.querySelector('.text-red-500:not(.hidden)');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            submitButton.disabled = false;
+            submitButton.textContent = 'Submit'; // Optional: Change button text
+            submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
         } else {
             if(isValid) {
                 form.submit();
+            } else {
+                const firstError = document.querySelector('.text-red-500:not(.hidden)');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                submitButton.disabled = false;
+                submitButton.textContent = 'Submit'; // Optional: Change button text
+                submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
     }
@@ -563,5 +706,298 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
+    function setupCategoryAutocomplete() {
+        const searchInput = document.getElementById('category-search');
+        const resultsContainer = document.getElementById('category-search-results');
+        const selectedDataId = document.getElementById('category-filter');
+        const subCategorySearch = document.getElementById('sub-category-search');
+        const subCategoryFilter = document.getElementById('sub-category-filter');
+        const subSubCategorySearch = document.getElementById('sub-sub-category-search');
+        const subSubCategoryFilter = document.getElementById('sub-sub-category-filter');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+
+                subCategorySearch.value = '';
+                subCategorySearch.disabled = true;
+                subCategoryFilter.value = '';
+
+                subSubCategorySearch.value = '';
+                subSubCategorySearch.disabled = true;
+                subSubCategoryFilter.value = '';
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/categories?searchTerm=${encodeURIComponent(query)}`);
+                    const data = await response.json();                
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-category-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No category found</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                    resultsContainer.classList.remove('hidden');
+                    console.error('Error fetching categories:', error);
+                }
+            }, 300);
+        });
+
+        resultsContainer.addEventListener('click', async function(e) {
+            const selectedItem = e.target.closest('[data-category-id]');
+
+            if (selectedItem) {
+                const selectedId = selectedItem.getAttribute('data-category-id');
+                const selectedName = selectedItem.textContent.trim();
+                
+                searchInput.value = selectedName;
+                selectedDataId.value = selectedId;
+                resultsContainer.classList.add('hidden');
+                subCategorySearch.disabled = false;
+                subCategorySearch.value = '';
+                subCategoryFilter.value = '';
+
+                subSubCategorySearch.value = '';
+                subSubCategoryFilter.value = '';
+            }
+
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                if (!resultsContainer.classList.contains('hidden')) {
+                    resultsContainer.classList.add('hidden');
+                    searchInput.value = '';
+                }
+            }
+        });
+    }
+
+    function setupSubCategoryAutocomplete() {
+        const searchInput = document.getElementById('sub-category-search');
+        const resultsContainer = document.getElementById('sub-category-search-results');
+        const selectedDataId = document.getElementById('sub-category-filter');
+        const subSubCategorySearch = document.getElementById('sub-sub-category-search');
+        const subSubCategoryFilter = document.getElementById('sub-sub-category-filter');
+        const categoryFilter = document.getElementById('category-filter');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
+            const categoryId = categoryFilter.value;
+                
+            if (!categoryId) {
+                resultsContainer.innerHTML = '<div class="p-3 text-gray-500">Please select a category first</div>';
+                resultsContainer.classList.remove('hidden');
+                return;
+            }
+
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+
+                subSubCategorySearch.value = '';
+                subSubCategorySearch.disabled = true;
+                subSubCategoryFilter.value = '';
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    let url = `/api/search/sub-categories?searchTerm=${encodeURIComponent(query)}`
+                    url += categoryId ?  `&categoryId=${categoryId}` : '';
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-sub-category-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No sub category found</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                    resultsContainer.classList.remove('hidden');
+                    console.error('Error fetching sub categories:', error);
+                }
+            }, 300);
+        });
+
+        resultsContainer.addEventListener('click', async function(e) {
+            const selectedItem = e.target.closest('[data-sub-category-id]');
+            if (selectedItem) {
+                const selectedId = selectedItem.getAttribute('data-sub-category-id');
+                const selectedName = selectedItem.textContent.trim();
+                
+                searchInput.value = selectedName;
+                selectedDataId.value = selectedId;
+                resultsContainer.classList.add('hidden');
+                subSubCategorySearch.disabled = false;
+                subSubCategorySearch.value = '';
+                subSubCategoryFilter.value = '';
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                if (!resultsContainer.classList.contains('hidden')) {
+                    resultsContainer.classList.add('hidden');
+                    searchInput.value = '';
+                }
+            }
+        });
+    }
+
+    function setupSubSubCategoryAutocomplete() {
+        const searchInput = document.getElementById('sub-sub-category-search');
+        const resultsContainer = document.getElementById('sub-sub-category-search-results');
+        const selectedDataId = document.getElementById('sub-sub-category-filter');
+        const subCategoryFilter = document.getElementById('sub-category-filter');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
+            const subCategoryId = subCategoryFilter.value;
+                
+            if (!subCategoryId) {
+                resultsContainer.innerHTML = '<div class="p-3 text-gray-500">Please select a sub category first</div>';
+                resultsContainer.classList.remove('hidden');
+                return;
+            }
+
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+                return;
+            }
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    let url = `/api/search/sub-sub-categories?searchTerm=${encodeURIComponent(query)}&subCategoryId=${subCategoryId}`
+                    const response = await fetch(url);
+                    const data = await response.json();
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-sub-sub-category-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No sub sub category found</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                    resultsContainer.classList.remove('hidden');
+                    console.error('Error fetching sub sub categories:', error);
+                }
+            }, 300);
+        });
+
+        resultsContainer.addEventListener('click', async function(e) {
+            const selectedItem = e.target.closest('[data-sub-sub-category-id]');
+            if (selectedItem) {
+                const selectedId = selectedItem.getAttribute('data-sub-sub-category-id');
+                const selectedName = selectedItem.textContent.trim();
+                
+                searchInput.value = selectedName;
+                selectedDataId.value = selectedId;
+                resultsContainer.classList.add('hidden');
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                if (!resultsContainer.classList.contains('hidden')) {
+                    resultsContainer.classList.add('hidden');
+                    searchInput.value = '';
+                }
+            }
+        });
+    }
+
+    function setupBrandAutocomplete() {
+        const searchInput = document.getElementById('brand-search');
+        const resultsContainer = document.getElementById('brand-search-results');
+        const selectedDataId = document.getElementById('brand-filter');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', async function(e) {
+            const query = e.target.value.trim();
+                
+            if (query.length < 2) {
+                resultsContainer.classList.add('hidden');
+                selectedDataId.value = '';
+                return;
+            }
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/api/search/brands?searchTerm=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                
+                    if (data?.data?.length > 0) {
+                        resultsContainer.innerHTML = data.data.map(item => `
+                            <div class="p-3 hover:bg-gray-100 cursor-pointer border-b border-gray-100 last:border-b-0" 
+                                data-brand-id="${item.id}">
+                                ${item.name}
+                            </div>
+                        `).join('');
+                        resultsContainer.classList.remove('hidden');
+                    } else {
+                        resultsContainer.innerHTML = '<div class="p-3 text-gray-500">No brand found</div>';
+                        resultsContainer.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    resultsContainer.innerHTML = '<div class="p-3 text-red-500">Error loading results</div>';
+                    resultsContainer.classList.remove('hidden');
+                    console.error('Error fetching brands:', error);
+                }
+            }, 300);
+        });
+
+        resultsContainer.addEventListener('click', async function(e) {
+            const selectedItem = e.target.closest('[data-brand-id]');
+            if (selectedItem) {
+                const selectedId = selectedItem.getAttribute('data-brand-id');
+                const selectedName = selectedItem.textContent.trim();
+                    
+                searchInput.value = selectedName;
+                selectedDataId.value = selectedId;
+                resultsContainer.classList.add('hidden');
+
+            }
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                resultsContainer.classList.add('hidden');
+            }
+        });
+    }
 </script>
 @endsection

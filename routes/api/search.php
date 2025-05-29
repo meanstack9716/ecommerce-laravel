@@ -9,6 +9,8 @@ Route::prefix('search')->middleware('auth:sanctum', 'web')->group(function () {
         Route::get('/sellers', [SearchController::class, 'searchSellers']);
         Route::get('/categories', [SearchController::class, 'searchCategories']);
         Route::get('/sub-categories', [SearchController::class, 'searchSubCategories']);
+        Route::get('/sub-sub-categories', [SearchController::class, 'searchSubSubCategories']);
+        Route::get('/brands', [SearchController::class, 'searchBrands']);
         
     });
 });

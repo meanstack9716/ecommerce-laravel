@@ -3,8 +3,12 @@
 @section('content')
 <div class="p-4 sm:p-6 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
-        <div class="py-5 xl:py-0">
+        <div class="py-5 xl:py-0 flex justify-between items-center text-center">
             <h1 class="text-[26px] font-bold tracking-wide">Brands List</h1>
+            <a href="{{ route('products.brand.add') }}"
+                class="font-medium bg-[#334a8b]  text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800  border border-[#334a8b]">
+                + Add new brand                    
+            </a>
         </div>
 
         <form method="GET" action="{{ route('products.brand.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
@@ -27,12 +31,12 @@
                 </div>
             </div>
             <div class="flex items-end gap-5">
-                <button type="submit" class="bg-[#334a8b] border border-[#334a8b] text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
+                <button type="submit" class="cursor-pointer bg-[#334a8b] border border-[#334a8b] text-white px-4 py-2 3xl:px-6 rounded-lg 3xl:text-lg hover:bg-blue-800 font-medium">
                     Apply Filters
                 </button>
                 @if(request('search'))
                     <a href="{{ route('products.brand.list', ['limit' => request('limit', 10)]) }}"
-                        class=" font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500">
+                        class=" font-medium  px-4 py-2 border border-red-500 rounded-lg text-red-500 cursor-pointer">
                         Clear Filter
                     </a>
                 @endif
@@ -61,18 +65,25 @@
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">{{ $brand->name }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 text-sm text-gray-800">{{ $brand->description }}</td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">
-                                <div>
-                                    <a href="{{ route('products.brand.edit', $brand->id) }}"
-                                        class="text-sm font-medium  px-4 py-2 text-blue-600">
-                                        Edit
+                                <div class="flex justify-center items-center text-center gap-4">
+                                    <a href="{{ route('products.brand.edit', $brand->id) }}" class="m-0 flex">
+                                        <span class="material-symbols-outlined text-blue-500">
+                                            edit_square
+                                        </span>
                                     </a>
+                                    <button onclick="openDeleteModal('{{ route('products.brand.delete', $brand->id) }}', 'Delete {{ $brand->name }}')"
+                                        class="flex cursor-pointer">
+                                        <span class="material-symbols-outlined text-red-600">
+                                            delete
+                                        </span>
+                                    </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="4" class="px-4 py-4 text-center text-sm text-gray-500">
-                                No users found.
+                                No brand found.
                             </td>
                         </tr>
                     @endforelse
@@ -84,7 +95,7 @@
             <form method="GET" action="{{ route('products.brand.list') }}" class="">
                 <input type="hidden" name="search" value="{{ request('search') }}">
                 <label for="limit">Brands per page:</label>
-                <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
+                <select name="limit" id="limit" onchange="this.form.submit()" class="cursor-pointer  border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)
                         <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
                             {{ $option }}
@@ -98,4 +109,5 @@
         </div>
     </div>
 </div>
+<x-delete-modal />
 @endsection
