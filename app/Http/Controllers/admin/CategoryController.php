@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
+use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 
 class CategoryController extends Controller
@@ -98,9 +99,11 @@ class CategoryController extends Controller
                 'message' => "Cannot delete category because it is associated with $productCount product(s)."
             ]);
         }
+        DB::beginTransaction();
         SubCategory::where('category_id' , $category->id)->delete();  
         SubSubCategory::where('category_id' , $category->id)->delete();  
         $category->delete();
+        DB::commit();
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
@@ -199,10 +202,12 @@ class CategoryController extends Controller
                 'message' => "Cannot delete category because it is associated with $productCount product(s)."
             ]);
         }
-
+        DB::beginTransaction();
+        
         SubSubCategory::where('sub_category_id' , $subCategory->id)->delete();
         
         $subCategory->delete();
+        DB::commit();
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
