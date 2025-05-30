@@ -88,13 +88,20 @@ class ProductBrandController extends Controller
 
         $query = ProductBrand::query();
 
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%");
             });
         }
 
-        $query->orderBy('name', 'asc');
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $brands = $query->paginate($limit);
         return view('products.brands.list', compact('brands', 'limit'));

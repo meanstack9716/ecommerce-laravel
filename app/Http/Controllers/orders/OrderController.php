@@ -371,8 +371,13 @@ class OrderController extends Controller
         $status = $request->input('status');
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
 
-        $query = Order::query()->with(['items', 'items.product'])->orderBy('created_at', 'desc');
+        $query = Order::query()->with(['items', 'items.product']);
 
         if (!$user->is_admin) {
             $query->where('seller_id', $user->sellerDetails->id);
@@ -385,6 +390,9 @@ class OrderController extends Controller
         if($sellerId) {
             $query->where('seller_id', $sellerId);
         }
+
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $orders = $query->paginate($limit);
         return view('order.list', compact('orders', 'limit', 'sellers'));

@@ -1,4 +1,49 @@
 @extends('layouts.main')
+@php
+    $tableFields = [
+        [
+            'label' => 'Order Number',
+            'field' => 'order_number',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Seller Name',
+            'field' => '',
+            'hide' => auth()->user()->is_admin ? false  : true,
+            'allow_sort' => false
+        ],
+        [
+            'label' => 'Shipping Address',
+            'field' => 'shipping_address',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Payment Method',
+            'field' => 'payment_method',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Total Amount',
+            'field' => 'total_amount',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Status',
+            'field' => 'status',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Date',
+            'field' => 'created_at',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Actions',
+            'field' => '',
+            'allow_sort' => false
+        ],
+    ];
+@endphp
 
 @section('content')
 <div class="p-4 sm:p-8 w-full">
@@ -9,24 +54,11 @@
 
         <form method="GET" action="{{ route('orders.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
+            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
-                 @if(auth()->user()->is_admin)
-                <div class="flex flex-col items-start gap-2">
-                    <p class="m-0 text-gray-600 font-medium">Search by Seller Name</p>
-                    <div class="relative w-full">
-                        <select name="sellerId" class="border cursor-pointer border-gray-300 rounded-lg px-4 py-2 appearance-none w-full">
-                            <option value="">All Sellers</option>
-                            @foreach ($sellers as $seller)
-                                <option value="{{ $seller->id }}" {{ request('sellerId') == $seller->id ? 'selected' : '' }}>
-                                    {{ $seller->business_name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
-                            chevron_right
-                        </span>
-                    </div>
-                </div>
+                @if(auth()->user()->is_admin)
+                <x-seller-filter />
                 @endif
 
                  <div class="flex flex-col items-start gap-2">
@@ -61,20 +93,12 @@
 
         <div class="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
             <table class="min-w-full table-auto">
-                <thead class="bg-indigo-100 text-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Order number</th>
-                        @if(auth()->user()->is_admin)
-                            <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Seller Name</th>
-                        @endif
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Shipping Address</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Payment Method</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Total Amount</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Status</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Date</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Actions</th>
-                    </tr>
-                </thead>
+                <x-table-header 
+                    :fields="$tableFields" 
+                    routeName="orders.list"
+                    :sortBy="request('sort_by')"
+                    :sortOrder="request('sort_order', 'asc')"
+                />
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($orders as $order)
                         <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
@@ -144,6 +168,10 @@
 
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <form method="GET" action="{{ route('orders.list') }}" class="">
+            <input type="hidden" name="seller_term" value="{{ request('seller_term') }}">
+            <input type="hidden" name="sellerId" value="{{ request('sellerId') }}">
+            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
             <label for="limit">Orders per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)

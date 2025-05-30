@@ -1,5 +1,35 @@
 @extends('layouts.main')
 
+@php
+    $tableFields = [
+        [
+            'label' => 'Image',
+            'field' => 'img',
+            'allow_sort' => false
+        ],
+        [
+            'label' => 'Name',
+            'field' => 'name',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Description',
+            'field' => 'description',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Category Name',
+            'field' => '',
+            'allow_sort' => false
+        ],
+        [
+            'label' => 'Actions',
+            'field' => '',
+            'allow_sort' => false
+        ],
+    ];
+@endphp
+
 @section('content')
 <div class="p-4 sm:p-6 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-6">
@@ -13,6 +43,8 @@
 
         <form method="GET" action="{{ route('sub-category.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
+            <input type="text" name="sort_by" value="{{ request('sort_by') }}" class="hidden"/>
+            <input type="text" name="sort_order" value="{{ request('sort_order', 'asc') }}" class="hidden"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 <div class="flex flex-col items-start gap-2 w-full">
                     <p class="m-0 text-gray-600 font-medium">Search by name</p>
@@ -46,15 +78,12 @@
 
         <div class="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
             <table class="min-w-full table-auto">
-                <thead class="bg-indigo-100 text-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Image</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Name</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Description</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Category Name</th>
-                        <th class="px-6 py-3 text-center text-sm font-medium text-gray-500 uppercase tracking-wider min-w-60">Actions</th>
-                    </tr>
-                </thead>
+                <x-table-header 
+                    :fields="$tableFields" 
+                    routeName="sub-category.list"
+                    :sortBy="request('sort_by')"
+                    :sortOrder="request('sort_order', 'asc')"
+                />
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($subCategories as $category)
                         <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
@@ -97,6 +126,8 @@
         <div class="pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
             <form method="GET" action="{{ route('sub-category.list') }}" class="">
             <input type="hidden" name="search" value="{{ request('search') }}">
+            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
             <input type="hidden" name="category_term" value="{{ request('category_term') }}">
             <input type="hidden" name="categoryId" value="{{ request('categoryId') }}">
             <label for="limit">Categories per page:</label>

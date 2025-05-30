@@ -54,7 +54,7 @@
             const titleContainer = modal.querySelector('h3');
             const message = modal.querySelector('p.text-gray-500');
             titleContainer.textContent = title ? title : 'Delete item';
-            message.textContent = subtitle ? subtitle : 'Are you sure you want to delete this item? This action cannot be undone.s';
+            message.textContent = subtitle ? subtitle : 'Are you sure you want to delete this item? This action cannot be undone.';
         }
         
         // Set the form action

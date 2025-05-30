@@ -8,11 +8,13 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Product;
+use App\Models\ProductCart;
 use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\ProductGallery;
 use App\Models\ProductBrand;
 use App\Models\Seller;
+use App\Models\Wishlist;
 use App\Enums\Sizes;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
@@ -259,8 +261,14 @@ class ProductController extends Controller
         $categoryId = $request->input('categoryId');
         $subCategoryId = $request->input('subCategoryId');
         $subSubCategoryId = $request->input('subSubCategoryId');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
         
-        $query = Product::query()->with([]);
+        
+        $query = Product::query()->with([])->where('not_available' , '!=', true);
 
         if ($search) {
             $escapedQuery = str_replace(
@@ -289,14 +297,16 @@ class ProductController extends Controller
             $query->where('sub_sub_category_id', $subSubCategoryId);
         }
 
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
+
         $products = $query->paginate($limit);
-        $categories = Category::all();
-        return view('products.product-list', compact('products', 'limit', 'categories'));
+        return view('products.product-list', compact('products', 'limit'));
     }
 
     public function getProductDetailView($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id)->where('not_available' , '!=', true);;
         return view('products.details', compact('product'));
     }
 
@@ -422,7 +432,7 @@ class ProductController extends Controller
             'sizes.variants', 
             'gallery',
             'reviews'
-        ]);
+        ])->where('not_available' , '!=', true);
 
         // Multiple Brands Selection
         if ($brandIds) {
@@ -568,7 +578,7 @@ class ProductController extends Controller
             'sizes.variants', 
             'gallery',
             'reviews'
-        ])->find($id);
+        ])->where('not_available', '!=', true)->find($id);
 
         return response()->json([
             'data' => $product
@@ -577,11 +587,15 @@ class ProductController extends Controller
 
     public function deleteProductItem(Request $request, $productId)
     {
+        DB::beginTransaction();
         $product = Product::find($productId);
         if ($product) {
             $product->not_available = true;
             $product->save();            
         }
+        ProductCart::where('product_id' , $product->id)->delete();
+        Wishlist::where('product_id' , $product->id)->delete();
+        DB::commit();
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
