@@ -23,6 +23,7 @@ class SubCategory extends Model
 
     protected $appends = [
         'img_url',
+        'sub_sub_category_count'
     ];
 
     protected static function boot()
@@ -42,6 +43,11 @@ class SubCategory extends Model
             return Storage::url($this->img_path);
         }
         return null;
+    }
+
+    public function getSubSubCategoryCountAttribute()
+    {
+        return $this->subSubCategories()->count();
     }
 
     public function category()
