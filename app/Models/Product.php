@@ -41,6 +41,7 @@ class Product extends Model
 
     protected $appends = [
         'thumbnail_url',
+        'total_rating'
     ];
 
     public function getThumbnailUrlAttribute()
@@ -69,6 +70,18 @@ class Product extends Model
         $this->final_price = $discount > 0 
             ? $price - ($price * $discount / 100)
             : $price;
+    }
+
+    public function getTotalRatingAttribute()
+    {
+        if ($this->reviews->isEmpty()) {
+            return 0;
+        }
+        
+        $total = $this->reviews->avg('rating');
+        
+        // Round to 1 decimal place for display
+        return round($total, 1);
     }
 
     public function seller()
