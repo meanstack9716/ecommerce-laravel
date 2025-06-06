@@ -422,6 +422,7 @@ class ProductController extends Controller
         
         // Size filters (multiple sizes)
         $sizes = $request->input('sizes');
+        $colors = $request->input('colors');        
         
         $query = Product::query()->with([
             'category', 
@@ -484,6 +485,43 @@ class ProductController extends Controller
                         ]
                     ]
                 ]);
+            });
+        }
+
+        // Color filter - matches colors with supports partial matching
+        if ($colors) {
+            if (is_string($colors)) {
+                $colors = explode(',', $colors);
+            }
+    
+            // Normalize all input colors to lowercase
+            $colors = array_map('strtolower', $colors);
+    
+            $query->whereHas('sizes.variants', function($q) use ($colors) {
+                $q->where(function($subQuery) use ($colors) {
+                    foreach ($colors as $color) {
+                        $subQuery->orWhere(function($q) use ($color) {
+                            $q->whereRaw([
+                                '$expr' => [
+                                    '$or' => [
+                                        [
+                                            '$eq' => [
+                                                ['$toLower' => '$name'],
+                                                $color
+                                            ]
+                                        ],
+                                        [
+                                            '$regexMatch' => [
+                                                'input' => ['$toLower' => '$name'],
+                                                'regex' => $color
+                                            ]
+                                        ]
+                                    ]
+                                ]
+                            ]);
+                        });
+                    }
+                });
             });
         }
 
@@ -600,6 +638,21 @@ class ProductController extends Controller
         return redirect()->back()->with('toast', [
             'type' => 'success',
             'message' => "Product deleted successfully"
+        ]);
+    }
+
+    public function fetchProductsColorsList(Request $request)
+    {
+        $colors = ProductVariant::select('value', 'name')
+            ->get()
+            ->unique(function ($variant) {
+                return $variant->value . '|' . $variant->name;
+            })
+            ->toArray();
+    
+        return response()->json([
+            'success' => true,
+            'data' => $colors
         ]);
     }
 }

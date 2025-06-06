@@ -10,6 +10,7 @@ use App\Http\Middleware\ValidateRequest;
 Route::prefix('products')->group(function () {
 
     Route::get('/list', [ProductController::class, 'fetchProductsList']);
+    Route::get('/colors-list', [ProductController::class, 'fetchProductsColorsList']);
     Route::get('/{id}', [ProductController::class, 'fetchProductDetailsById']);
     Route::middleware(['auth:sanctum'])->group(function () {
 
