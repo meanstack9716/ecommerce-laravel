@@ -1,5 +1,40 @@
 @extends('layouts.main')
 
+@php
+    $tableFields = [
+        [
+            'label' => 'Product Image',
+            'field' => '',
+            'allow_sort' => false
+        ],
+        [
+            'label' => 'Product Title',
+            'field' => 'title',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Product Price',
+            'field' => 'final_price',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Product Discount',
+            'field' => 'discount_percent',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Product Sku',
+            'field' => 'sku',
+            'allow_sort' => true
+        ],
+        [
+            'label' => 'Actions',
+            'field' => '',
+            'allow_sort' => false
+        ],
+    ];
+@endphp
+
 @section('content')
 <div class="p-4 sm:p-6 w-full">
     <div class="bg-white shadow-md rounded-lg border border-gray-200 p-4 xl:p-8 w-full space-y-5">
@@ -13,6 +48,8 @@
 
         <form method="GET" action="{{ route('products.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
+            <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 <div class="flex flex-col items-start gap-2 w-full">
                     <p class="m-0 text-gray-600 font-medium">Search Products</p>
@@ -46,16 +83,12 @@
 
         <div class="overflow-x-auto bg-white shadow-md rounded-lg border border-gray-200">
             <table class="min-w-full table-auto">
-                <thead class="bg-indigo-100 text-gray-700">
-                    <tr>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Product Image</th>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Product Title</th>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Product Price</th>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Product Discount</th>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Product SKU</th>
-                        <th class="px-6 py-3 text-sm min-w-60 font-medium text-gray-500 uppercase tracking-wider text-center">Actions</th>
-                    </tr>
-                </thead>
+                <x-table-header 
+                    :fields="$tableFields" 
+                    routeName="products.list"
+                    :sortBy="request('sort_by')"
+                    :sortOrder="request('sort_order', 'asc')"
+                />
                 <tbody class="divide-y divide-gray-200">
                     @forelse ($products as $product)
                      <tr class="{{ $loop->odd ? 'bg-white' : 'bg-gray-50' }} hover:bg-indigo-50">
@@ -121,6 +154,8 @@
                 <input type="hidden" name="subCategoryId" value="{{ request('subCategoryId') }}">
                 <input type="hidden" name="sub_sub_category_term" value="{{ request('sub_sub_category_term') }}">
                 <input type="hidden" name="subSubCategoryId" value="{{ request('subSubCategoryId') }}">
+                <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
+                <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
                 <div class="flex items-center gap-2 relative w-fit">
                     <span class="text-sm text-gray-600">Items per page:</span>
                     <div class="relative">

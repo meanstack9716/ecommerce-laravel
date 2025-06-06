@@ -2,14 +2,15 @@
     'fields' => [], 
     'routeName' => '',
     'sortBy' => request('sort_by'),
-    'sortOrder' => request('sort_order', 'asc')
+    'sortOrder' => request('sort_order', 'asc'),
 ])
 
 <thead class="bg-indigo-100 text-gray-700">
     <tr>
         @foreach ($fields as $field)
+            @if(!isset($field['hide']) || $field['hide'] != true)
             @if($field['allow_sort'] && !empty($field['field']))
-                <th class="px-6 py-3 text-center text-sm font-semibold min-w-40">
+                <th class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider min-w-60 text-gray-500 ">
                     <a href="{{ route($routeName, array_merge(request()->query(), [
                         'sort_by' => $field['field'], 
                         'sort_order' => $sortBy === $field['field'] && $sortOrder === 'asc' ? 'desc' : 'asc',
@@ -25,9 +26,10 @@
                     </a>
                 </th>
             @else
-                <th class="px-6 py-3 text-center text-sm font-semibold min-w-40">
+                <th class="px-6 py-3 text-center text-sm font-semibold uppercase tracking-wider min-w-60 text-gray-500">
                     {{ $field['label'] }}
                 </th>
+            @endif
             @endif
         @endforeach
     </tr>

@@ -38,6 +38,11 @@ class CategoryController extends Controller
 
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
 
         $query = Category::query();
 
@@ -46,6 +51,9 @@ class CategoryController extends Controller
                 $q->where('name', 'like', "%{$search}%");
             });
         }
+
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $categories = $query->paginate($limit);
         return view('categories.list', compact('categories', 'limit'));
@@ -137,6 +145,11 @@ class CategoryController extends Controller
         $limit = $request->input('limit', 10);
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
         
         $query = SubCategory::query()->with(['category']);
 
@@ -149,6 +162,9 @@ class CategoryController extends Controller
         if ($categoryId) {
             $query->where('category_id', $categoryId);
         }
+
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $subCategories = $query->paginate($limit);
         return view('categories.sub-categories.list', compact('limit', 'subCategories'));
@@ -344,6 +360,11 @@ class CategoryController extends Controller
         $search = $request->input('search');
         $categoryId = $request->input('categoryId');
         $subCategoryId = $request->input('subCategoryId');
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
         
         $query = SubSubCategory::query()->with(['subCategory']);
 
@@ -360,6 +381,9 @@ class CategoryController extends Controller
         if ($subCategoryId) {
             $query->where('sub_category_id', $subCategoryId);
         }
+
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $subSubCategories = $query->paginate($limit);
         $categories = Category::all();

@@ -18,7 +18,7 @@
         </div>
         
         <div class="mt-8 bg-white py-8 px-6 shadow rounded-lg sm:px-10">
-            <form action="{{ $formAction }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ $formAction }}" id="promo-code-form" method="POST" enctype="multipart/form-data">
                 @csrf
                 @if($isEdit)
                     @method('PUT')
@@ -220,9 +220,15 @@
                 </div>
 
                 <div class="mt-8 flex justify-center space-x-4">
-                    <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
+                    
+                    <button type="submit" id="submitButton" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
                         {{ $submitText }}
                     </button>
+                    @if($isEdit)
+                        <a href="{{ route('promo-code.list') }}" class="inline-flex justify-center py-2 px-6 border border-gray-300 shadow-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            Cancel
+                        </a>
+                    @endif
                 </div>
             </form>
         </div>
@@ -230,6 +236,12 @@
 </div>
 
 <script>
+    document.getElementById('promo-code-form').addEventListener('submit', function() {
+        const submitButton = document.getElementById('submitButton');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Submitting...'; // Optional: Change button text
+        submitButton.classList.add('opacity-50', 'cursor-not-allowed'); // Optional: Visual feedback
+    });
     document.addEventListener('DOMContentLoaded', function() {
 
         const initialProducts = @json($products);

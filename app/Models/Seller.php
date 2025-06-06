@@ -31,7 +31,7 @@ class Seller extends Model
 
     public function userDetails()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', '_id');
     }
 
     public function identityProof()

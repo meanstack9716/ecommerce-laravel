@@ -21,6 +21,8 @@ Route::prefix('promo-code')->group(function () {
             Route::put('/{codeId}', [PromoCodeController::class, 'updatePromoCode'])
                 ->middleware('validateRequest:updatePromoCodeSchema')
                 ->name('promo-code.update');
+
+            Route::delete('/{codeId}', [PromoCodeController::class, 'deletePromoCode'])->name('promo-code.delete');
         });
     });
 });

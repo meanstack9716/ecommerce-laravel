@@ -45,7 +45,10 @@ class PromoCodeController extends Controller
         ];
         PromoCode::create($promo);
 
-        return redirect()->route('promo-code.list');
+        return redirect()->route('promo-code.list')->with('toast', [
+            'type' => 'success',
+            'message' => "Promo code  added successfully"
+        ]);
     }
 
     public function getAllPromoCodeList(Request $request) 
@@ -54,8 +57,13 @@ class PromoCodeController extends Controller
         $limit = $request->input('limit', 10);
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
+        $sortBy = $request->input('sort_by', 'created_at');
+        $sortOrder = $request->input('sort_order', 'asc');
+        if (empty($sortBy)) {
+            $sortBy = 'created_at';
+        }
 
-        $query = PromoCode::query()->orderBy('created_at', 'desc');
+        $query = PromoCode::query();
 
         if (!$user->is_admin) {
             $query->where('created_by', $user->sellerDetails->id);
@@ -64,6 +72,9 @@ class PromoCodeController extends Controller
         if($sellerId) {
             $query->where('created_by', $sellerId);
         }
+
+        $sortOrder = in_array(strtolower($sortOrder), ['asc', 'desc']) ? strtolower($sortOrder) : 'asc';
+        $query->orderBy($sortBy, $sortOrder);
 
         $codes = $query->paginate($limit);
         return view('promo.list', compact('codes', 'limit', 'sellers'));
@@ -115,14 +126,33 @@ class PromoCodeController extends Controller
 
         try {
             $promocode->update($updatedPromo);
-            return redirect()->route('promo-code.list')
-                ->with('success', 'Promo code updated successfully!');
+            return redirect()->route('promo-code.list')->with('toast', [
+                'type' => 'success',
+                'message' => "Promo code  update successfully"
+            ]);
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withErrors(['code' => 'Failed to update promo code: ' . $e->getMessage()])
                 ->withInput();
         }
 
+    }
+
+    public function deletePromoCode(Request $request, $codeId)
+    {
+        $promocode = PromoCode::find($codeId);
+        if (!$promocode) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Promo code not found.'
+            ]);
+        }
+        $promocode->delete();
+
+        return redirect()->back()->with('toast', [
+            'type' => 'success',
+            'message' => "Promo code  deleted successfully"
+        ]);
     }
 
 }

@@ -35,7 +35,7 @@ class UserController extends Controller
     public function updateProfilePic(Request $request) 
     {
         $user = $request->user();
-        if ($user->profile_id) {
+        if ($user->profile_path) {
             Storage::delete($user->profile_path);
         }
 

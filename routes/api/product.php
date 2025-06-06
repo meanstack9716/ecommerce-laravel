@@ -14,5 +14,6 @@ Route::prefix('products')->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/review', [OrderController::class, 'createProductReview'])->middleware('validateRequest:postNewReviewSchema');
+        Route::post('/update-review', [OrderController::class, 'updateProductReview'])->middleware('validateRequest:postNewReviewSchema');
     });
 });
