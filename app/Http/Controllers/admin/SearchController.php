@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\ProductBrand;
+use App\Models\SearchTermAnalytic;
 use App\Models\Seller;
 use Illuminate\Http\Request;
 use App\Constants\Constants;
@@ -136,6 +137,19 @@ class SearchController extends Controller
             'status' => 'success',
             'data' => $data
         ], 200);
+    }
+
+    public function getRecommendedKeywords(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+
+        $keywords = SearchTermAnalytic::orderBy('search_count', 'desc')
+            ->limit($limit)
+            ->pluck('keyword');
+
+        return response()->json([
+            'data' => $keywords,
+        ]);
     }
 
 }

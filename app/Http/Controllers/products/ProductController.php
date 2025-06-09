@@ -14,6 +14,7 @@ use App\Models\ProductVariant;
 use App\Models\ProductGallery;
 use App\Models\ProductBrand;
 use App\Models\Seller;
+use App\Models\SearchTermAnalytic;
 use App\Models\Wishlist;
 use App\Enums\Sizes;
 use Illuminate\Support\Facades\URL;
@@ -70,10 +71,6 @@ class ProductController extends Controller
 
     public function showAddProductForm(Request $request)
     {
-        $categories = Category::all();
-        $brands = ProductBrand::all();
-        $subCategories = collect();
-        $subSubCategories = collect();
 
         $route = $request->route()->getName();
         $previousUrl = URL::previous();
@@ -83,13 +80,13 @@ class ProductController extends Controller
 
         $selectedColors = [];
 
-        $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
-            return str_contains($previousUrl, $r);
-        });
+        // $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
+        //     return str_contains($previousUrl, $r);
+        // });
 
-        if (!$isComingFromLaterStep) {
-            $request->session()->forget($this->productSessionKey);
-        }
+        // if (!$isComingFromLaterStep) {
+        //     $request->session()->forget($this->productSessionKey);
+        // }
 
         if (str_contains($route, 'step2')) {
             if (empty($productData['category'])) {
@@ -112,17 +109,7 @@ class ProductController extends Controller
                 return redirect()->route('products.add.step3');
             }
         }
-    
-        $categoryId = old('category') ?? ($productData['category']['category_id'] ?? null);
-        if ($categoryId) {
-            $subCategories = SubCategory::where('category_id', $categoryId)->get();
-        }
-        
-        $subCategoryId = old('sub_category') ?? ($productData['category']['sub_category_id'] ?? null);
-        if ($subCategoryId) {
-            $subSubCategories = SubSubCategory::where('sub_category_id', $subCategoryId)->get();
-        }
-        return view('forms.products.index', compact('categories', 'subCategories', 'subSubCategories', 'brands', 'selectedColors'));
+        return view('forms.products.index', compact('selectedColors'));
     }
 
     public function storeProductCategoryDetails(Request $request)
@@ -594,16 +581,38 @@ class ProductController extends Controller
     
         // Pagination or full list
         if ($limit) {
-            $products = $query->paginate($limit, ['*'], 'page', $page);            
+            $products = $query->paginate($limit, ['*'], 'page', $page);    
+            if ($searchTerm && $products->count() > 0) {
+                $this->saveSearchTermAnalytics($searchTerm);
+            }        
             return response()->json([
                 'data' => $products->items(),
             ]);
         }
     
         $products = $query->get();
+         if ($searchTerm && $products->count() > 0) {
+            $this->saveSearchTermAnalytics($searchTerm);
+        }
+
         return response()->json([
             'data' => $products,
         ]);
+    }
+
+    private function saveSearchTermAnalytics ($key) {
+       $term = trim(strtolower($key));
+
+        $record = SearchTermAnalytic::where('keyword', $term)->first();
+
+        if ($record) {
+            $record->increment('search_count');
+        } else {
+            SearchTermAnalytic::create([
+                'keyword' => $term,
+                'search_count' => 1,
+            ]);
+        }
     }
 
     public function fetchProductDetailsById(Request $request, $id) {
