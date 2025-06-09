@@ -18,6 +18,7 @@ class Address extends Model
         'city',
         'state',
         'postal_code',
+        'is_primary',
         'country',
         'longitude',
         'latitude'
