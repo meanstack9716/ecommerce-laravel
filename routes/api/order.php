@@ -7,6 +7,9 @@ use App\Http\Middleware\ValidateRequest;
 
 Route::prefix('orders')->group(function () {
     Route::get('/status-types', [OrderController::class, 'fetchOrderStatusesList']);
+    Route::get('/payment-types', [OrderController::class, 'fetchAvailablePaymentTypes']);
+
+    Route::get('/razorpay/payment/callback', [OrderController::class, 'handleRazorpayCallback'])->name('razorpay.payment.callback');
     Route::middleware(['auth:sanctum'])->group(function () {
 
         Route::post('/new', [OrderController::class, 'createNewOrder'])->middleware('validateRequest:createNewOrderSchema');
