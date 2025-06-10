@@ -188,7 +188,8 @@ class OrderController extends Controller
         ];
     }
 
-    public function validatePromoCode(Request $request) {
+    public function validatePromoCode(Request $request) 
+    {
         $userId = $request->user()->id;
 
         $cartItems = ProductCart::where('user_id', $userId)
@@ -338,16 +339,17 @@ class OrderController extends Controller
 
             if ($request->payment_method == Constants::RAZOR_PAY_PAYMENT) {                
 
+                $refrenceId = 'PAY-' . Str::upper(Str::random(12));
                 $payment = PaymentHistory::create([
                     'user_id' => $request->user()->id,
                     'status' => Constants::STATUS_PENDING,
                     'order_ids' => $orderIds,
-                    'total_amount' => $totalAmount,
-                    'reference_id' => $order->order_number,
+                    'total_amount' => $orderTotalAmount,
+                    'reference_id' => $refrenceId,
                     'payment_gateway' => 'razorpay',
                 ]);
 
-                $result = $this->generateRazorpayPaymentLink($request, $orderIds, $totalAmount, $payment);
+                $result = $this->generateRazorpayPaymentLink($request, $orderIds, $orderTotalAmount, $payment);
 
                 if ($result['isValid']) {
                     DB::commit();
@@ -469,7 +471,7 @@ class OrderController extends Controller
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
         $sortBy = $request->input('sort_by', 'created_at');
-        $sortOrder = $request->input('sort_order', 'asc');
+        $sortOrder = $request->input('sort_order', 'desc');
         if (empty($sortBy)) {
             $sortBy = 'created_at';
         }
@@ -651,7 +653,7 @@ class OrderController extends Controller
             DB::beginTransaction();
 
             $payment = PaymentHistory::where('reference_id', $referenceId)
-                ->where('status', StatusConstants::PENDING)
+                ->where('status', Constants::STATUS_PENDING)
                 ->first();
 
             if (!$payment) {

@@ -190,7 +190,7 @@
                                 <p class="mt-1 text-sm text-gray-600">{{ $order->payment_method }}</p>
                             </div>
                             <span class="px-6 py-2 rounded-lg text-sm font-medium 
-                                {{ $order->payment_status == 'Paid' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-600' }}">
+                                {{ $order->payment_status == 'Received' ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-600' }}">
                                 {{ $order->payment_status }}
                             </span>
                         </div>
