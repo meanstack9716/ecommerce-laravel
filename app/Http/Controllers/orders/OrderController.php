@@ -188,6 +188,22 @@ class OrderController extends Controller
         $groupedBySeller = $cartItems->groupBy(function ($item) {
             return $item->product->seller_id;
         });
+        $totalOrderCount = $groupedBySeller->count();
+        $totalPromoCodeDisc = 0;
+        $promoCodeDiscount = 0;
+
+
+        if ($request->promo_code) {
+            $promocode = PromoCode::where('code', $request->promo_code)->first();
+            $result = $this->checkValidPromoCode($promocode, $cartItems, $userId);
+            
+            if ($result['isValid']) {
+                $totalPromoCodeDisc = $result['discount_amount'];
+                $promoCodeDiscount = $result['discount_amount'] / $totalOrderCount;
+            } else {
+                return response()->json(['errors' => ['promo_code' => $result['error']]], 422);
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -200,6 +216,9 @@ class OrderController extends Controller
                     'seller_id' => $sellerId,
                     'order_number' => $orderNumber,
                     'total_amount' => 0,
+                    'order_amount' => 0,
+                    'promo_code_applied' => $request->promo_code ? true : false,
+                    'promo_code_disount' => $promoCodeDiscount,
                     'status' => Constants::STATUS_PENDING,
                     'shipping_address' => $shippingAddressString,
                     'shipping_address_type' => $shippingAddress->type,
@@ -264,7 +283,12 @@ class OrderController extends Controller
                     $newquantity = $productVariant->stock_quantity - $cartItem->quantity;
                     $productVariant->update(['stock_quantity' => $newquantity]);
                 }
-                $order->update(['total_amount' => $totalAmount]);
+                $orderAmount = $totalAmount;
+                $totalAmount = $totalAmount - $promoCodeDiscount;
+                $order->update([
+                    'total_amount' => $totalAmount,
+                    'order_amount' => $orderAmount
+                ]);
             }
 
             ProductCart::where('user_id', $userId)

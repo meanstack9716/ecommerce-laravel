@@ -1507,7 +1507,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cart_items_ids\" : [],\r\n    \"shipping_address_id\" : \"\",\r\n    \"payment_method\" : \"\",\r\n    \"order_note\" : \"\"\r\n}",
+							"raw": "{\r\n    \"cart_items_ids\" : [\"6848707297263fadc40dc802\", \"684870c697263fadc40dc803\"],\r\n    \"shipping_address_id\" : \"68442ad8edbc61af1f016553\",\r\n    \"payment_method\" : \"Cash On Delivery\",\r\n    \"order_note\" : \"\",\r\n    \"promo_code\" : \"FIRSTORDER250\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1795,7 +1795,7 @@
 					"response": []
 				},
 				{
-					"name": "Oder Statuses List",
+					"name": "Order Statuses List",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1819,6 +1819,36 @@
 							"path": [
 								"orders",
 								"status-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Available Payments Types",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/payment-types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"payment-types"
 							]
 						}
 					},
