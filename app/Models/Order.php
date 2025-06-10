@@ -17,6 +17,7 @@ class Order extends Model
         'status',
         'shipping_address',
         'shipping_address_type',
+        'promo_code_id',
         'promo_code_applied',
         'promo_code_disount',
         'payment_method',
@@ -42,5 +43,10 @@ class Order extends Model
     public function reviews()
     {
         return $this->hasMany(ProductReview::class, 'order_id', '_id');
+    }
+
+    public function promoCode()
+    {
+        return $this->belongsTo(PromoCode::class, 'promo_code_id', '_id');
     }
 }

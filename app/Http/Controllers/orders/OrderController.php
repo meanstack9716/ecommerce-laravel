@@ -96,7 +96,7 @@ class OrderController extends Controller
         // Check user-specific usage limit
         if ($promocode->uses_per_user) {
             $userOrderCount = Order::where('user_id', $userId)
-                ->where('promocode_id', $promocode->id)
+                ->where('promo_code_id', $promocode->id)
                 ->count();
 
             if ($userOrderCount >= $promocode->uses_per_user) {
@@ -191,7 +191,7 @@ class OrderController extends Controller
         $totalOrderCount = $groupedBySeller->count();
         $totalPromoCodeDisc = 0;
         $promoCodeDiscount = 0;
-
+        $promocode;
 
         if ($request->promo_code) {
             $promocode = PromoCode::where('code', $request->promo_code)->first();
@@ -218,6 +218,7 @@ class OrderController extends Controller
                     'total_amount' => 0,
                     'order_amount' => 0,
                     'promo_code_applied' => $request->promo_code ? true : false,
+                    'promo_code_id' => $request->promo_code ? $promocode->id : null,
                     'promo_code_disount' => $promoCodeDiscount,
                     'status' => Constants::STATUS_PENDING,
                     'shipping_address' => $shippingAddressString,
@@ -311,7 +312,7 @@ class OrderController extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews' ])
+        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews', 'promoCode' ])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc');
         
@@ -365,7 +366,8 @@ class OrderController extends Controller
             'items.product.sizes',
             'items.product.brand',
             'items.product.sizes.variants',
-            'items.product.reviews'
+            'items.product.reviews',
+            'promoCode'
         ])->find($orderId);
 
         if (!$order) {
