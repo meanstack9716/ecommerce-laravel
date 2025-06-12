@@ -55,6 +55,7 @@ class PanelAuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
+            session()->put('email', $email);
             return redirect()->route('password.verify-code')->with('toast', [
                 'type' => 'success',
                 'message' => 'If an account with the provided email exists, a password reset link has been sent.'
@@ -94,6 +95,7 @@ class PanelAuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
+            session()->put('email', $email);
             return back()->with('toast', [
                 'type' => 'success',
                 'message' => 'A new Verification code sent successfully!'
