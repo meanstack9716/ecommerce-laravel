@@ -154,13 +154,13 @@ class UserController extends Controller
 
         $routes = ['personal', 'business', 'identity', 'complete'];
 
-        $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
-            return str_contains($previousUrl, $r);
-        });
+        // $isComingFromLaterStep = $previousUrl && array_filter($routes, function($r) use ($previousUrl) {
+        //     return str_contains($previousUrl, $r);
+        // });
         
-        if (!$isComingFromLaterStep) {
-            $request->session()->forget($this->clientSessionKey);
-        }
+        // if (!$isComingFromLaterStep) {
+        //     $request->session()->forget($this->clientSessionKey);
+        // }
 
 
         if (str_contains($route, 'business')) {

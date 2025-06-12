@@ -18,6 +18,7 @@ class Order extends Model
         'shipping_address',
         'shipping_address_type',
         'promo_code_id',
+        'promo_code_name',
         'promo_code_applied',
         'promo_code_disount',
         'payment_method',

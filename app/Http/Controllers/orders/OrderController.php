@@ -219,6 +219,7 @@ class OrderController extends Controller
                     'order_amount' => 0,
                     'promo_code_applied' => $request->promo_code ? true : false,
                     'promo_code_id' => $request->promo_code ? $promocode->id : null,
+                    'promo_code_name' => $request->promo_code ? $promocode->code : null,
                     'promo_code_disount' => $promoCodeDiscount,
                     'status' => Constants::STATUS_PENDING,
                     'shipping_address' => $shippingAddressString,
@@ -558,7 +559,15 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Review updated successfully',
             'review' => $review->fresh(),
-            'imss' => $imagePaths
         ], 201);
+    }
+
+    public function fetchPromoCodeList(Request $request)
+    {
+         $promoCodes = PromoCode::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'data' => $promoCodes,
+        ], 200);
     }
 }

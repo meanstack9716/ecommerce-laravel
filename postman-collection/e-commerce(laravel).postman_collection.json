@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5d0b49a2-b95a-4ea7-89fd-2d323da2c926",
+		"_postman_id": "7ae7f634-076b-4c02-abd6-39646dd02827",
 		"name": "e-commerce(laravel)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25016909"
@@ -1659,10 +1659,15 @@
 									"src": []
 								},
 								{
-									"key": "remove_img_indexes",
-									"value": "[1,2]",
+									"key": "remove_img_indexes[]",
+									"value": "0",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "remove_img_indexes[]",
+									"value": "1",
+									"type": "text"
 								}
 							]
 						},
@@ -1819,6 +1824,74 @@
 							"path": [
 								"orders",
 								"status-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List of Promo codes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/promo-code/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"promo-code",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Pending",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2025-05-15",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": null,
+									"disabled": true
+								}
 							]
 						}
 					},
