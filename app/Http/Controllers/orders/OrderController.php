@@ -96,7 +96,7 @@ class OrderController extends Controller
         // Check user-specific usage limit
         if ($promocode->uses_per_user) {
             $userOrderCount = Order::where('user_id', $userId)
-                ->where('promocode_id', $promocode->id)
+                ->where('promo_code_id', $promocode->id)
                 ->count();
 
             if ($userOrderCount >= $promocode->uses_per_user) {
@@ -188,6 +188,22 @@ class OrderController extends Controller
         $groupedBySeller = $cartItems->groupBy(function ($item) {
             return $item->product->seller_id;
         });
+        $totalOrderCount = $groupedBySeller->count();
+        $totalPromoCodeDisc = 0;
+        $promoCodeDiscount = 0;
+        $promocode;
+
+        if ($request->promo_code) {
+            $promocode = PromoCode::where('code', $request->promo_code)->first();
+            $result = $this->checkValidPromoCode($promocode, $cartItems, $userId);
+            
+            if ($result['isValid']) {
+                $totalPromoCodeDisc = $result['discount_amount'];
+                $promoCodeDiscount = $result['discount_amount'] / $totalOrderCount;
+            } else {
+                return response()->json(['errors' => ['promo_code' => $result['error']]], 422);
+            }
+        }
 
         DB::beginTransaction();
         try {
@@ -200,6 +216,11 @@ class OrderController extends Controller
                     'seller_id' => $sellerId,
                     'order_number' => $orderNumber,
                     'total_amount' => 0,
+                    'order_amount' => 0,
+                    'promo_code_applied' => $request->promo_code ? true : false,
+                    'promo_code_id' => $request->promo_code ? $promocode->id : null,
+                    'promo_code_name' => $request->promo_code ? $promocode->code : null,
+                    'promo_code_disount' => $promoCodeDiscount,
                     'status' => Constants::STATUS_PENDING,
                     'shipping_address' => $shippingAddressString,
                     'shipping_address_type' => $shippingAddress->type,
@@ -264,7 +285,12 @@ class OrderController extends Controller
                     $newquantity = $productVariant->stock_quantity - $cartItem->quantity;
                     $productVariant->update(['stock_quantity' => $newquantity]);
                 }
-                $order->update(['total_amount' => $totalAmount]);
+                $orderAmount = $totalAmount;
+                $totalAmount = $totalAmount - $promoCodeDiscount;
+                $order->update([
+                    'total_amount' => $totalAmount,
+                    'order_amount' => $orderAmount
+                ]);
             }
 
             ProductCart::where('user_id', $userId)
@@ -287,7 +313,7 @@ class OrderController extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews' ])
+        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews', 'promoCode' ])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc');
         
@@ -341,7 +367,8 @@ class OrderController extends Controller
             'items.product.sizes',
             'items.product.brand',
             'items.product.sizes.variants',
-            'items.product.reviews'
+            'items.product.reviews',
+            'promoCode'
         ])->find($orderId);
 
         if (!$order) {
@@ -532,7 +559,15 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Review updated successfully',
             'review' => $review->fresh(),
-            'imss' => $imagePaths
         ], 201);
+    }
+
+    public function fetchPromoCodeList(Request $request)
+    {
+         $promoCodes = PromoCode::orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'data' => $promoCodes,
+        ], 200);
     }
 }
