@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7ae7f634-076b-4c02-abd6-39646dd02827",
+		"_postman_id": "131caef7-7b5b-482b-b8ac-dd9d0e9e0623",
 		"name": "e-commerce(laravel)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "25016909"
@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\" : \"testuser123@gmail.com\",\r\n    \"password\" : \"Test@4\"\r\n}",
+							"raw": "{\r\n    \"email\" : \"admin@admin.com\",\r\n    \"password\" : \"admin@123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -856,6 +856,90 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Fetch Product Reviews",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/:id/reviews",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "68199c47c7bec7c9d1038132"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Product Review",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/:id/user-review",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id",
+								"user-review"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "68199c47c7bec7c9d1038132"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -880,7 +964,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"selected_size\" : \"M\",\r\n    \"selected_color\" : \"#FFFFFF\",\r\n    \"quantity\" : \"2\"\r\n}",
+							"raw": "{\r\n    \"product_id\" : \"6818f30dcff1e58e6f08e762\",\r\n    \"selected_size\" : \"30\",\r\n    \"selected_color\" : \"#000000\",\r\n    \"quantity\" : \"2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1545,7 +1629,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"cart_items_ids\" : [\"682821ae717fde40120a8a15\", \"68302f5199b02d39f1034012\"],\r\n    \"promo_code\" : \"FIRSTORDER250\"\r\n}",
+							"raw": "{\r\n    \"cart_items_ids\" : [\"684fc6e6826f1024d70afc96\"],\r\n    \"promo_code\" : \"INNO2020\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1596,7 +1680,7 @@
 								},
 								{
 									"key": "review",
-									"value": "Vey comfortable",
+									"value": "Vey comfortable is goodo Vey comfortable is goodo Vey comfortable is goodo",
 									"type": "text"
 								},
 								{

@@ -9,6 +9,7 @@ use App\Models\SubCategory;
 use App\Models\SubSubCategory;
 use App\Models\Product;
 use App\Models\ProductCart;
+use App\Models\ProductReview;
 use App\Models\ProductSize;
 use App\Models\ProductVariant;
 use App\Models\ProductGallery;
@@ -419,7 +420,6 @@ class ProductController extends Controller
             'sizes', 
             'sizes.variants', 
             'gallery',
-            'reviews'
         ])->where('not_available' , '!=', true);
 
         // Multiple Brands Selection
@@ -624,7 +624,6 @@ class ProductController extends Controller
             'sizes', 
             'sizes.variants', 
             'gallery',
-            'reviews'
         ])->where('not_available', '!=', true)->find($id);
 
         return response()->json([
@@ -662,6 +661,40 @@ class ProductController extends Controller
         return response()->json([
             'success' => true,
             'data' => $colors
+        ]);
+    }
+
+    public function fetchProductReviews(Request $request, $id)
+    {
+        $limit = $request->input('limit');
+        $page = $request->input('page', 1);
+
+        $query = ProductReview::where('product_id', $id)
+            ->orderBy('created_at', 'desc');
+
+        if ($limit) {
+            $reviews = $query->paginate($limit, ['*'], 'page', $page);            
+            return response()->json([
+                'data' => $reviews->items(),
+            ]);
+        }
+    
+        $reviews = $query->get();
+
+        return response()->json([
+            'data' => $reviews,
+        ]);
+    }
+
+    public function fetchUserProductReview(Request $request, $id)
+    {
+        $userId = $request->user()->id;
+        $review = ProductReview::where('product_id', $id)
+            ->where('user_id', $userId)
+            ->first();
+
+        return response()->json([
+            'data' => $review,
         ]);
     }
 }
