@@ -360,6 +360,10 @@ class OrderController extends Controller
                 ]);
             }
 
+            if ($request->promo_code) {
+                $promocode->incrementUsedCount();
+            }
+
             ProductCart::where('user_id', $userId)
                 ->whereIn('id', $request->cart_items_ids)->delete();
 
@@ -373,6 +377,7 @@ class OrderController extends Controller
                     'total_amount' => $orderTotalAmount,
                     'reference_id' => $refrenceId,
                     'payment_gateway' => 'razorpay',
+                    'redirect_url' => $request->redirect_url ? $request->redirect_url : null
                 ]);
 
                 $result = $this->generateRazorpayPaymentLink($request, $orderIds, $orderTotalAmount, $payment);
@@ -726,6 +731,9 @@ class OrderController extends Controller
                 ]);
 
             DB::commit();
+            if ($payment->redirect_url) {
+                return redirect()->away($payment->redirect_url);
+            }
 
             return response()->json([
                 'success' => true,

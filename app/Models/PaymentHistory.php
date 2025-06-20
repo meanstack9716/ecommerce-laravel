@@ -15,7 +15,8 @@ class PaymentHistory extends Model
         'reference_id',
         'payment_gateway',
         'gateway_payment_id',
-        'paid_at'
+        'paid_at',
+        'redirect_url'
     ];
 
     protected $casts = [
