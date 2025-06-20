@@ -582,7 +582,7 @@ class ProductController extends Controller
         // Pagination or full list
         if ($limit) {
             $products = $query->paginate($limit, ['*'], 'page', $page);    
-            if ($searchTerm && $products->count() > 0) {
+            if ($searchTerm && strlen($searchTerm) >= 3 && $products->count() > 0) {
                 $this->saveSearchTermAnalytics($searchTerm);
             }        
             return response()->json([
@@ -591,7 +591,7 @@ class ProductController extends Controller
         }
     
         $products = $query->get();
-         if ($searchTerm && $products->count() > 0) {
+         if ($searchTerm && strlen($searchTerm) >= 3 && $products->count() > 0) {
             $this->saveSearchTermAnalytics($searchTerm);
         }
 

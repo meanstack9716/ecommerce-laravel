@@ -19,3 +19,9 @@ Route::prefix('orders')->group(function () {
         Route::post('/validate-promo-code', [OrderController::class, 'validatePromoCode'])->middleware('validateRequest:validPromocodeSchema');;
     });
 });
+
+Route::prefix('promo-code')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/list', [OrderController::class, 'fetchPromoCodeList']);
+    });
+});
