@@ -360,8 +360,8 @@ class OrderController extends Controller
                 ]);
             }
 
-            // ProductCart::where('user_id', $userId)
-            //     ->whereIn('id', $request->cart_items_ids)->delete();
+            ProductCart::where('user_id', $userId)
+                ->whereIn('id', $request->cart_items_ids)->delete();
 
             if ($request->payment_method == Constants::RAZOR_PAY_PAYMENT) {                
 
