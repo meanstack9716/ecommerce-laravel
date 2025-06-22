@@ -85,7 +85,6 @@ class Schemas
             'addClientIdentitySchema' => [
                 'pan_number' => 'required|string|max:255',
                 'pan_front' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
-                'pan_back' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
                 'id_type' => ['required', Rule::in(IdentificationType::values())],
                 'id_number' => 'required|string|max:255',
                 'id_front' => 'required|file|mimes:jpeg,png,jpg,pdf,doc,docx|max:5120',
