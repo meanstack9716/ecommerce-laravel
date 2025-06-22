@@ -30,19 +30,6 @@
                 <p class="mt-2 text-sm text-red-600 3xl:text-base hidden" id="pan_front_error"></p>
             </div>
 
-            <div class="sm:col-span-6">
-                <label for="pan_back" class="font-medium 3xl:text-xl 3xl:font-semibold">Back Side of PAN Card
-                    <span class="text-red-600">*</span>
-                </label>
-                <input type="file" name="pan_back" id="pan_back"
-                    class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                <p class="mt-1 text-sm text-gray-500">Upload a clear photo, doc or pdf of the back side of your PAN card.</p>
-                @error('pan_back')
-                    <p class="mt-2 text-sm text-red-600 3xl:text-base">{{ $message }}</p>
-                @enderror
-                <p class="mt-2 text-sm text-red-600 3xl:text-base hidden" id="pan_back_error"></p>
-            </div>
-
             <div class="sm:col-span-4">
                 <label for="id_type" class="font-medium 3xl:text-xl 3xl:font-semibold">Select Identification Proof ID type
                     <span class="text-red-600">*</span>
@@ -168,7 +155,6 @@
 
             // Validate file uploads
             validateFile('pan_front', true);
-            validateFile('pan_back', true);
             validateFile('id_front', true);
             validateFile('id_back', false); // Not required
 

@@ -20,6 +20,7 @@ use App\Enums\Sizes;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -385,6 +386,74 @@ class ProductController extends Controller
                 ProductSize::whereIn('id', $sizesToDelete)->delete();
             }
         }
+
+        if ($request->hasFile('thumbnail_path')) {
+            if ($product->thumbnail_path && Storage::exists($product->thumbnail_path)) {
+                Storage::delete($product->thumbnail_path);
+            }
+            $path = $request->file('thumbnail_path')->store('products/'.$product->id);
+            $product->update([
+                'thumbnail_path' => $path,
+            ]);
+        }
+
+        if ($request->images) {
+            foreach ($request->file('images') as $color => $files) {
+                foreach ($files as $file) {
+                    $path = $file->store('products/'.$product->id);
+                    
+                    ProductGallery::create([
+                        'product_id' => $product->id,
+                        'img_path' => $path,
+                        'color' => $color,
+                    ]);
+                }
+            }
+        }
+
+        if ($request->colors) {
+            foreach ($request->colors as $colorName => $colorData) {
+                if (!empty($colorData['delete_images'])) {
+                    foreach ($colorData['delete_images'] as $imageId) {
+                        $galleryImage = ProductGallery::find($imageId);
+
+                        if ($galleryImage && $galleryImage->product_id === $product->id) {
+                            if ($galleryImage->img_path && Storage::exists($galleryImage->img_path)) {
+                                Storage::delete($galleryImage->img_path);
+                            }
+                            $galleryImage->delete();
+                        }
+                    }
+                }
+            }
+        }
+
+        $uniqueColors = ProductGallery::where('product_id', $product->id)
+            ->whereNotNull('color')
+            ->pluck('color')
+            ->unique()
+            ->values()
+            ->toArray();
+
+        $newColors = $request->colorsSelected;
+
+        $removedColors = array_diff($uniqueColors, $newColors);
+
+        if (!empty($removedColors)) {
+            foreach ($removedColors as $colorName) {
+                $images = ProductGallery::where('product_id', $product->id)
+                    ->where('color', $colorName)
+                    ->get();
+
+                foreach ($images as $image) {
+                    if ($image->img_path && Storage::exists($image->img_path)) {
+                        Storage::delete($image->img_path);
+                    }
+                    $image->delete();
+                }
+            }
+        }
+        
         DB::commit();
 
         return redirect()->route('products.list')->with('toast', [

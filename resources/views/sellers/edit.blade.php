@@ -148,14 +148,6 @@
             'helperText' => 'Upload a clear photo, doc or pdf of the front side of your PAN card'
         ],
         [
-            'name' => 'pan_back_path',
-            'label' => 'Back Side of PAN Card',
-            'type' => 'file',
-            'span' => 2,
-            'required' => 'true',
-            'helperText' => 'Upload a clear photo, doc or pdf of the back side of your PAN card'
-        ],
-        [
             'name' => 'id_type',
             'label' => 'Select Identification Proof ID type',
             'type' => 'select',
@@ -962,7 +954,6 @@ document.addEventListener('DOMContentLoaded', function() {
             { name: 'pan_number', type: 'pan' },
             { name: 'pan_verify_status', type: 'select' },
             { name: 'pan_front_path', type: 'file', existingFile: @json($seller['identityProof']['pan_front_path'] ?? null) },
-            { name: 'pan_back_path', type: 'file', existingFile: @json($seller['identityProof']['pan_back_path'] ?? null) },
             { name: 'id_type', type: 'select' },
             { name: 'id_number' },
             { name: 'id_verify_status', type: 'select' },
