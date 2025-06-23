@@ -14,6 +14,7 @@ class IdentityProof extends Model
         'seller_id',
         'pan_number',
         'pan_front_path',
+        'pan_back_path',
         'pan_verify_status',
         'id_type',
         'id_number',

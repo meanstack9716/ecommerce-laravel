@@ -312,14 +312,19 @@ class ProductController extends Controller
         DB::beginTransaction();
         $brandId = null;
 
+        // Handle brand creation/selection
         if (empty($request->product_brand)) {
+            // Create new brand if none selected
             $brand = ProductBrand::create([
                 'name' => $request->brand_name
             ]);
             $brandId = $brand->id;
         } else {
+            // Use existing brand
             $brandId = $request->product_brand;
         }
+
+        // Update product basic information
         $product->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -336,16 +341,18 @@ class ProductController extends Controller
         $existingSizeIds = $product->sizes()->pluck('id')->toArray();
         $updatedSizeIds = [];
 
-        foreach ($sizeDetails['sizes'] as $sizeData) {
+        // Process each size from the request
+        foreach ($sizeDetails['sizes'] as $sizeDetail) {
+            // Update or create product size
             $size = ProductSize::updateOrCreate(
                 [
                     'product_id' => $product->id,
-                    'value' => $sizeData['value'],
+                    'value' => $sizeDetail['value'],
                     'size_type' => $request->size_type
                 ],
                 [
                     'product_id' => $product->id,
-                    'value' => $sizeData['value'],
+                    'value' => $sizeDetail['value'],
                     'size_type' => $request->size_type
                 ]
             );
@@ -357,7 +364,7 @@ class ProductController extends Controller
             $updatedVariantIds = [];
     
             // Process colors/variants
-            foreach ($sizeData['colors'] ?? [] as $color) {
+            foreach ($sizeDetail['colors'] ?? [] as $color) {
                 $variant = ProductVariant::updateOrCreate(
                     [
                         'size_id' => $size->id,
@@ -371,7 +378,8 @@ class ProductController extends Controller
         
                 $updatedVariantIds[] = $variant->id;
             }
-    
+
+            // Clean up variants that were removed
             if (!empty($existingVariantIds)) {
                 $variantsToDelete = array_diff($existingVariantIds, $updatedVariantIds);
                 if (!empty($variantsToDelete)) {
@@ -380,6 +388,7 @@ class ProductController extends Controller
             }
         }
 
+        // Clean up variants that were removed
         if (!empty($existingSizeIds)) {
             $sizesToDelete = array_diff($existingSizeIds, $updatedSizeIds);
             if (!empty($sizesToDelete)) {
@@ -387,6 +396,7 @@ class ProductController extends Controller
             }
         }
 
+        // Handle thumbnail update
         if ($request->hasFile('thumbnail_path')) {
             if ($product->thumbnail_path && Storage::exists($product->thumbnail_path)) {
                 Storage::delete($product->thumbnail_path);
@@ -397,6 +407,7 @@ class ProductController extends Controller
             ]);
         }
 
+        // Handle product gallery images
         if ($request->images) {
             foreach ($request->file('images') as $color => $files) {
                 foreach ($files as $file) {
@@ -411,6 +422,7 @@ class ProductController extends Controller
             }
         }
 
+        // Handle color-specific image deletions
         if ($request->colors) {
             foreach ($request->colors as $colorName => $colorData) {
                 if (!empty($colorData['delete_images'])) {
@@ -418,6 +430,7 @@ class ProductController extends Controller
                         $galleryImage = ProductGallery::find($imageId);
 
                         if ($galleryImage && $galleryImage->product_id === $product->id) {
+                            // Delete file and database record
                             if ($galleryImage->img_path && Storage::exists($galleryImage->img_path)) {
                                 Storage::delete($galleryImage->img_path);
                             }
@@ -428,6 +441,7 @@ class ProductController extends Controller
             }
         }
 
+        // Get all unique colors currently in gallery
         $uniqueColors = ProductGallery::where('product_id', $product->id)
             ->whereNotNull('color')
             ->pluck('color')
@@ -437,8 +451,10 @@ class ProductController extends Controller
 
         $newColors = $request->colorsSelected;
 
+        // Find colors that were removed
         $removedColors = array_diff($uniqueColors, $newColors);
 
+        // Clean up images for removed colors
         if (!empty($removedColors)) {
             foreach ($removedColors as $colorName) {
                 $images = ProductGallery::where('product_id', $product->id)

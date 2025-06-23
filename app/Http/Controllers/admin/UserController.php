@@ -257,6 +257,10 @@ class UserController extends Controller
         if ($request->hasFile('pan_front')) {
             $identity['pan_front'] = $request->file('pan_front')->store('identity_proofs');
         }
+
+        if ($request->hasFile('pan_back')) {
+            $identity['pan_back'] = $request->file('pan_back')->store('identity_proofs');
+        }
         
         $request->session()->put($this->clientSessionKey.'.identity', $identity);
         
@@ -315,6 +319,7 @@ class UserController extends Controller
             'seller_id' => $seller->id,
             'pan_number' => $registrationData['identity']['pan_number'],
             'pan_front_path' => $registrationData['identity']['pan_front'],
+            'pan_back_path' => $registrationData['identity']['pan_back'],
             'id_type' => $registrationData['identity']['id_type'],
             'id_number' => $registrationData['identity']['id_number'],
             'id_front_path' => $registrationData['identity']['id_front'],
@@ -389,7 +394,7 @@ class UserController extends Controller
 
         }
 
-        $phoneExists = User::where('phone_number', $request->first_name)
+        $phoneExists = User::where('phone_number', $request->phone_number)
             ->where('id', '!=', $user->id)
             ->exists();
 
@@ -485,6 +490,14 @@ class UserController extends Controller
             }
             $img_path = $request->file('pan_front_path')->store('identity_proofs');
             $identityProof->pan_front_path = $img_path;
+        }
+
+        if ($request->hasFile('pan_back_path')) {
+            if ($identityProof->pan_back_path && Storage::exists($identityProof->pan_back_path)) {
+                Storage::delete($identityProof->pan_back_path);
+            }
+            $img_path = $request->file('pan_back_path')->store('identity_proofs');
+            $identityProof->pan_back_path = $img_path;
         }
 
         if ($request->hasFile('id_front_path')) {

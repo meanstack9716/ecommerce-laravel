@@ -336,22 +336,19 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', validateForm);
 
     // Functions
-    function addSizeBlock(event, itemSize) {
+    function addSizeBlock(event, sizeDetails) {
         const sizeId = `size_${sizeCounter++}`;
         const isNumeric = sizeTypeNumeric.checked;
         const sizeOptions = isNumeric ? config.numericSizes : config.standardSizes;
 
-        const sizeData = itemSize
-        // const variants = sizeData ? sizeData.variants.map((color) => color.value) : []
-        // let standardVariants = [];
         let customVariants = [];
 
-        if (sizeData) {
-            customVariants = sizeData.variants.filter((color) => !config.hexCodes.includes(color.value))
+        if (sizeDetails) {
+            customVariants = sizeDetails.variants.filter((color) => !config.hexCodes.includes(color.value))
         }
 
-        if (sizeData) {
-            standardVariants = sizeData.variants.filter((color) => config.hexCodes.includes(color.value))
+        if (sizeDetails) {
+            standardVariants = sizeDetails.variants.filter((color) => config.hexCodes.includes(color.value))
             standardVariants.forEach((variant) => {
                 const variantId = `variant_${sizeId}_${variant.value}`;
                 selectedColors.set(variantId, {
@@ -359,6 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     hex: variant.value,
                 });
             })
+            updateColorImageFields()
         }
        
         const sizeBlock = document.createElement('div');
@@ -373,9 +371,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="size-select cursor-pointer mt-2 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Select size</option>
                             ${sizeOptions.map(size => `
-                                <option class="disabled:text-neutral-200" value="${size}" ${sizeData && sizeData.value === size ? 'selected' : '' }>${size}</option>
+                                <option class="disabled:text-neutral-200" value="${size}" ${sizeDetails && sizeDetails.value === size ? 'selected' : '' }>${size}</option>
                             `).join('')}
-                            <option value="custom" ${sizeData && !sizeOptions.includes(sizeData.value) ? 'selected' : ''}>Custom Size</option>
+                            <option value="custom" ${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? 'selected' : ''}>Custom Size</option>
                         </select>
                         <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
                             chevron_right
@@ -385,9 +383,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         type="text" 
                         name="sizes[${sizeId}][custom_size]" 
                         id="sizes[${sizeId}][custom_size]"
-                        value="${sizeData && !sizeOptions.includes(sizeData.value) ? sizeData.value : ''}"
+                        value="${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? sizeDetails.value : ''}"
                         placeholder="Enter custom size" 
-                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeData && !sizeOptions.includes(sizeData.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     >
                     <p class="size-error mt-1 text-sm font-medium text-red-500 hidden"></p>
                 </div>
@@ -402,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <label class="font-medium 3xl:text-xl 3xl:font-semibold">Standard Colors</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
                     ${config.standardColors.map(color => {
-                        const variant = sizeData ? sizeData.variants.find((item) => item.value === color.hex) : null;
+                        const variant = sizeDetails ? sizeDetails.variants.find((item) => item.value === color.hex) : null;
                         return `
                         
                         <div class="flex items-center justify-between w-full gap-4">
@@ -415,9 +413,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <span class="w-6 h-6 mr-2 rounded-full border border-gray-300" style="background-color:${color.hex}"></span>
                                     ${color.name}
                                 </label>
-                                <input type="hidden" id="${color.hex}" name="sizes[${sizeId}][colors][standard][${color.hex}][name]" value="${color.name}">
+                                <input type="hidden" id="${sizeId}_${color.name}_detail" name="sizes[${sizeId}][colors][standard][${color.hex}][name]" value="${color.hex}">
                             </div>
-                            <input type="number" name="sizes[${sizeId}][colors][standard][${color.hex}][quantity]" 
+                            <input type="number" id="${sizeId}_${color.name}_qty" name="sizes[${sizeId}][colors][standard][${color.hex}][quantity]" 
                                 value="${variant?.stock_quantity ?? 0}" class="quantity-input ml-2 block w-2/3 border border-gray-300 rounded-md shadow-sm py-1 px-3 ${variant ? "" : "hidden" } focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                                 placeholder="Enter quantity" min="0">
                         </div>
@@ -479,13 +477,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
         colorCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
-                const quantityInput = this.closest('div').nextElementSibling;
+                const [size, sizeNum, colorName] = this.id.split('_');
+                const sizeId = `${size}_${sizeNum}`
+                const quantityInput = document.getElementById(`${this.id}_qty`);
                 quantityInput.classList.toggle('hidden', !this.checked);
 
-                const colorName = this.closest('div').querySelector('input[type="hidden"]').value;
-                const colorHex = this.closest('div').querySelector('input[type="hidden"]').id;
-
-                const sizeId = this.closest('.size-block').dataset.sizeId;
+                const colorDetailsInput = document.getElementById(`${this.id}_detail`)
+                const colorHex = colorDetailsInput.value;
                 const variantId = `variant_${sizeId}_${colorHex}`;
                 if (this.checked) {
                     selectedColors.set(variantId, {
@@ -573,6 +571,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // replace each spaces to _ and convert to lower case
     function sanitizeColorName(name) {
         return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
     }
@@ -813,6 +812,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const colorGroups = document.querySelectorAll('.color-image-group');
 
+        // Validate images for each color
         colorGroups.forEach(group => {
             const colorName = group.dataset.color;
             const colorClass = sanitizeColorName(colorName)
