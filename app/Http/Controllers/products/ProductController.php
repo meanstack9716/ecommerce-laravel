@@ -587,6 +587,10 @@ class ProductController extends Controller
             }        
             return response()->json([
                 'data' => $products->items(),
+                'total_items' => $products->total(),
+                'per_page' => $products->perPage(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
             ]);
         }
     
@@ -597,6 +601,10 @@ class ProductController extends Controller
 
         return response()->json([
             'data' => $products,
+            'total_items' => $products->count(),
+            'per_page' => $products->count(),
+            'current_page' => 1,
+            'last_page' => 1,
         ]);
     }
 
@@ -676,6 +684,10 @@ class ProductController extends Controller
             $reviews = $query->paginate($limit, ['*'], 'page', $page);            
             return response()->json([
                 'data' => $reviews->items(),
+                'total_items' => $reviews->total(),
+                'per_page' => $reviews->perPage(),
+                'current_page' => $reviews->currentPage(),
+                'last_page' => $reviews->lastPage(),
             ]);
         }
     
@@ -683,6 +695,10 @@ class ProductController extends Controller
 
         return response()->json([
             'data' => $reviews,
+            'total_items' => $reviews->count(),
+            'per_page' => $reviews->count(),
+            'current_page' => 1,
+            'last_page' => 1,
         ]);
     }
 
