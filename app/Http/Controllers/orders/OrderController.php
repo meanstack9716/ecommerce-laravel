@@ -148,10 +148,17 @@ class OrderController extends Controller
                 'isValid' => false
             ];
         }
+
+        if (!is_numeric($totalAmount)) {
+            return [
+                'error' => 'Total amount must be a numeric value.',
+                'isValid' => false
+            ];
+        }
         
         $payload = [
-            "amount" => $totalAmount * 100,
-            "currency" => "INR",
+            "amount" => (float)$totalAmount * 100, // amount is in paise not in rupees
+            "currency" => Constants::RAZOR_PAY_CURRENCY,
             "expire_by" => now()->addMinutes(30)->timestamp, // ⏳ Expires in 30 minutes
             "reference_id" => $payment->reference_id,
             "description" => "Payment for order(s) #" . implode(', ', $orderIds),
@@ -367,32 +374,38 @@ class OrderController extends Controller
             ProductCart::where('user_id', $userId)
                 ->whereIn('id', $request->cart_items_ids)->delete();
 
-            if ($request->payment_method == Constants::RAZOR_PAY_PAYMENT) {                
+            try {
+                if ($request->payment_method == Constants::RAZOR_PAY_PAYMENT) {                
 
-                $refrenceId = 'PAY-' . Str::upper(Str::random(12));
-                $payment = PaymentHistory::create([
-                    'user_id' => $request->user()->id,
-                    'status' => Constants::STATUS_PENDING,
-                    'order_ids' => $orderIds,
-                    'total_amount' => $orderTotalAmount,
-                    'reference_id' => $refrenceId,
-                    'payment_gateway' => 'razorpay',
-                    'redirect_url' => $request->redirect_url ? $request->redirect_url : null
-                ]);
+                    $refrenceId = 'PAY-' . Str::upper(Str::random(12));
+                    $payment = PaymentHistory::create([
+                        'user_id' => $request->user()->id,
+                        'status' => Constants::STATUS_PENDING,
+                        'order_ids' => $orderIds,
+                        'total_amount' => $orderTotalAmount,
+                        'reference_id' => $refrenceId,
+                        'payment_gateway' => 'razorpay',
+                        'redirect_url' => $request->redirect_url ? $request->redirect_url : null
+                    ]);
 
-                $result = $this->generateRazorpayPaymentLink($request, $orderIds, $orderTotalAmount, $payment);
+                    $result = $this->generateRazorpayPaymentLink($request, $orderIds, $orderTotalAmount, $payment);
 
-                if ($result['isValid']) {
-                    DB::commit();
-                    return response()->json([
-                        'message' => 'Order created successfully',
-                        'payment_link' => $result['data']['short_url'],
-                    ], 200);
-                } else {
-                    DB::rollBack();
-                    return response()->json(['errors' => ['order' => $result['error']]], 422);
+                    if ($result['isValid']) {
+                        DB::commit();
+                        return response()->json([
+                            'message' => 'Order created successfully',
+                            'payment_link' => $result['data']['short_url'],
+                        ], 200);
+                    } else {
+                        DB::rollBack();
+                        return response()->json(['errors' => ['order' => $result['error']]], 422);
+                    }
                 }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['errors' => ['server' => 'Failed to create order: ' . $e->getMessage()]], 500);
             }
+
             DB::commit();
             return response()->json([
                 'message' => 'Order created successfully',
