@@ -55,7 +55,7 @@
         <form method="GET" action="{{ route('orders.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
-            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 @if(auth()->user()->is_admin)
                 <x-seller-filter />
@@ -117,7 +117,7 @@
                                     {{ $order->payment_method == 'COD' || $order->payment_method == 'Cash On Delivery' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600' }}">
                                     {{ $order->payment_method }}
                                 </span>
-                                <div class="text-sm mt-1 {{ $order->payment_status == 'Paid' ? 'text-green-600' : 'text-yellow-600' }}">
+                                <div class="text-sm mt-1 {{ $order->payment_status == 'Received' ? 'text-green-600' : 'text-yellow-600' }}">
                                     {{ $order->payment_status }}
                                 </div>
                             </td>
@@ -171,7 +171,7 @@
             <input type="hidden" name="seller_term" value="{{ request('seller_term') }}">
             <input type="hidden" name="sellerId" value="{{ request('sellerId') }}">
             <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
-            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}"/>
             <label for="limit">Orders per page:</label>
                 <select name="limit" id="limit" onchange="this.form.submit()" class="border border-gray-200 py-3 px-2 rounded-lg">
                     @foreach([5, 10, 25, 50, 100] as $option)

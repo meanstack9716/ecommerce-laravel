@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Models\Address;
 use App\Models\Product;
+use App\Models\PaymentHistory;
 use App\Models\ProductSize;
 use App\Models\ProductCart;
 use App\Models\ProductReview;
@@ -18,7 +19,10 @@ use App\Models\OrderItem;
 use App\Models\Seller;
 use App\Constants\Constants;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentType;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -128,7 +132,71 @@ class OrderController extends Controller
 
     }
 
-    public function validatePromoCode(Request $request) {
+    private function generateRazorpayPaymentLink(Request $request, $ids, $totalAmount, $payment)
+    {
+        $razorpayBaseUrl = env('RAZOR_PAY_BASE_URL');
+        $razorpayKeyId = env('RAZOR_PAY_KEY_ID');
+        $razorpayKeySecret = env('RAZOR_PAY_KEY_SECRET');
+        
+        $orderIds = array_filter($ids, function ($id) {
+            return !empty($id) && is_string($id);
+        });
+        
+        if (empty($orderIds)) {
+            return [
+                'error' => 'OrderIds cannot be empty',
+                'isValid' => false
+            ];
+        }
+
+        if (!is_numeric($totalAmount)) {
+            return [
+                'error' => 'Total amount must be a numeric value.',
+                'isValid' => false
+            ];
+        }
+        
+        $payload = [
+            "amount" => (float)$totalAmount * 100, // amount is in paise not in rupees
+            "currency" => Constants::RAZOR_PAY_CURRENCY,
+            "expire_by" => now()->addMinutes(30)->timestamp, // ⏳ Expires in 30 minutes
+            "reference_id" => $payment->reference_id,
+            "description" => "Payment for order(s) #" . implode(', ', $orderIds),
+            "customer" => [
+                "email" => $request->user()->email,
+            ],
+            "notes" => [
+                "payment_transaction" => $payment->id,
+                "user_id" => $request->user()->id,
+            ],
+            "callback_url" => route('razorpay.payment.callback'),
+            "callback_method" => "get"
+        ];
+
+
+        $response = Http::withBasicAuth($razorpayKeyId, $razorpayKeySecret)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+            ])
+            ->post($razorpayBaseUrl . 'payment_links', $payload);
+
+        $responseData = $response->json();
+
+        if ($response->successful()) {
+            return [
+                'isValid' => true,
+                'data' => $responseData
+            ];
+        }
+
+        return [
+            'error' => 'Failed to create payment link: ' . ($responseData['error']['description'] ?? 'Unknown error'),
+            'isValid' => false
+        ];
+    }
+
+    public function validatePromoCode(Request $request) 
+    {
         $userId = $request->user()->id;
 
         $cartItems = ProductCart::where('user_id', $userId)
@@ -163,7 +231,8 @@ class OrderController extends Controller
         }
     }
 
-    public function createNewOrder(Request $request) {
+    public function createNewOrder(Request $request) 
+    {
         
         $userId = $request->user()->id;
         $shippingAddress = Address::where('id', $request->shipping_address_id)->where('user_id', $userId)->first();
@@ -204,6 +273,9 @@ class OrderController extends Controller
                 return response()->json(['errors' => ['promo_code' => $result['error']]], 422);
             }
         }
+
+        $orderTotalAmount = 0;
+        $orderIds = [];
 
         DB::beginTransaction();
         try {
@@ -285,16 +357,54 @@ class OrderController extends Controller
                     $newquantity = $productVariant->stock_quantity - $cartItem->quantity;
                     $productVariant->update(['stock_quantity' => $newquantity]);
                 }
+                $orderIds[] = $order->id;
                 $orderAmount = $totalAmount;
                 $totalAmount = $totalAmount - $promoCodeDiscount;
+                $orderTotalAmount += $totalAmount;
                 $order->update([
                     'total_amount' => $totalAmount,
                     'order_amount' => $orderAmount
                 ]);
             }
 
+            if ($request->promo_code) {
+                $promocode->incrementUsedCount();
+            }
+
             ProductCart::where('user_id', $userId)
                 ->whereIn('id', $request->cart_items_ids)->delete();
+
+            try {
+                if ($request->payment_method == Constants::RAZOR_PAY_PAYMENT) {                
+
+                    $refrenceId = 'PAY-' . Str::upper(Str::random(12));
+                    $payment = PaymentHistory::create([
+                        'user_id' => $request->user()->id,
+                        'status' => Constants::STATUS_PENDING,
+                        'order_ids' => $orderIds,
+                        'total_amount' => $orderTotalAmount,
+                        'reference_id' => $refrenceId,
+                        'payment_gateway' => 'razorpay',
+                        'redirect_url' => $request->redirect_url ? $request->redirect_url : null
+                    ]);
+
+                    $result = $this->generateRazorpayPaymentLink($request, $orderIds, $orderTotalAmount, $payment);
+
+                    if ($result['isValid']) {
+                        DB::commit();
+                        return response()->json([
+                            'message' => 'Order created successfully',
+                            'payment_link' => $result['data']['short_url'],
+                        ], 200);
+                    } else {
+                        DB::rollBack();
+                        return response()->json(['errors' => ['order' => $result['error']]], 422);
+                    }
+                }
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return response()->json(['errors' => ['server' => 'Failed to create order: ' . $e->getMessage()]], 500);
+            }
 
             DB::commit();
             return response()->json([
@@ -359,6 +469,13 @@ class OrderController extends Controller
         ]);
     }
 
+    public function fetchAvailablePaymentTypes()
+    {
+        return response()->json([
+            'data' => PaymentType::values()
+        ]);
+    }
+
     public function fetchOrderDetailsById(Request $request, $orderId)
     {
         $order = Order::with([
@@ -399,7 +516,7 @@ class OrderController extends Controller
         $sellerId = $request->input('sellerId');
         $sellers =  Seller::where('status', Constants::STATUS_APPROVED )->get();
         $sortBy = $request->input('sort_by', 'created_at');
-        $sortOrder = $request->input('sort_order', 'asc');
+        $sortOrder = $request->input('sort_order', 'desc');
         if (empty($sortBy)) {
             $sortBy = 'created_at';
         }
@@ -560,6 +677,92 @@ class OrderController extends Controller
             'message' => 'Review updated successfully',
             'review' => $review->fresh(),
         ], 201);
+    }
+
+    public function handleRazorpayCallback(Request $request)
+    {
+
+        Log::info('Razorpay Callback Received:', $request->all());
+
+        if (!$request->has(['razorpay_payment_id', 'razorpay_payment_link_id', 'razorpay_payment_link_reference_id'])) {
+            Log::error('Missing required parameters in callback', $request->all());
+            return response()->json(['error' => 'Invalid callback parameters'], 400);
+        }
+
+        $paymentId = $request->razorpay_payment_id;
+        $paymentLinkId = $request->razorpay_payment_link_id;
+        $referenceId = $request->razorpay_payment_link_reference_id;
+
+        try {
+            DB::beginTransaction();
+
+            $payment = PaymentHistory::where('reference_id', $referenceId)
+                ->where('status', Constants::STATUS_PENDING)
+                ->first();
+
+            if (!$payment) {
+                Log::error('Payment record not found', ['reference_id' => $referenceId]);
+                DB::rollBack();
+                return response()->json(['error' => 'Payment record not found'], 404);
+            }
+
+            // Verify payment with Razorpay API
+            $razorpayKeyId = env('RAZOR_PAY_KEY_ID');
+            $razorpayKeySecret = env('RAZOR_PAY_KEY_SECRET');
+            $razorpayBaseUrl = env('RAZOR_PAY_BASE_URL');
+
+            $response = Http::withBasicAuth($razorpayKeyId, $razorpayKeySecret)
+                ->get($razorpayBaseUrl . 'payments/' . $paymentId);
+
+            if (!$response->successful()) {
+                Log::error('Failed to verify payment with Razorpay', [
+                    'payment_id' => $paymentId,
+                    'response' => $response->json()
+                ]);
+                DB::rollBack();
+                return response()->json(['error' => 'Payment verification failed'], 400);
+            }
+
+            $paymentData = $response->json();
+
+            if ($paymentData['status'] !== 'captured') {
+                Log::error('Payment not captured', ['payment_data' => $paymentData]);
+                DB::rollBack();
+                return response()->json(['error' => 'Payment not captured'], 400);
+            }
+
+            $payment->update([
+                'status' => Constants::STATUS_RECEIVED,
+                'gateway_payment_id' => $paymentId,
+                'paid_at' => now(),
+            ]);
+
+            $orderIds = $payment->order_ids;
+            Order::whereIn('id', $orderIds)
+                ->update([
+                    'payment_status' => Constants::STATUS_RECEIVED,
+                ]);
+
+            DB::commit();
+            if ($payment->redirect_url) {
+                return redirect()->away($payment->redirect_url);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment processed successfully',
+                'payment_id' => $paymentId,
+                'order_ids' => $orderIds
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Payment callback processing failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Internal server error'], 500);
+        }
+
     }
 
     public function fetchPromoCodeList(Request $request)

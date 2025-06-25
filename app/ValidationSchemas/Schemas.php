@@ -5,6 +5,7 @@ namespace App\ValidationSchemas;
 use Illuminate\Validation\Rule;
 use App\Enums\BusinessType;
 use App\Enums\AddressType;
+use App\Enums\PaymentType;
 use App\Enums\IdentificationType;
 
 class Schemas
@@ -200,7 +201,7 @@ class Schemas
             ],
             'createNewOrderSchema' => [
                 'shipping_address_id' => 'required|exists:addresses,id',
-                'payment_method' => 'required',
+                'payment_method' => ['required', Rule::in(PaymentType::values())],
                 'cart_items_ids' => 'required|array|min:1',
                 'cart_items_ids.*' => 'required|exists:product_carts,id'
             ],
