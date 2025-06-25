@@ -39,7 +39,7 @@ class ProductReview extends Model
         return [];
     }
 
-    public function by()
+    public function reviewedBy()
     {
         return $this->belongsTo(User::class, 'user_id', '_id')
             ->select(['first_name', 'last_name', 'email', 'profile_url', 'id']);
@@ -55,7 +55,7 @@ class ProductReview extends Model
         return $this->belongsTo(Order::class, 'order_id', '_id');
     }
 
-    protected $with = ['by'];
+    protected $with = ['reviewedBy'];
     public $timestamps = true;
 
 }

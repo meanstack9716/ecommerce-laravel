@@ -36,7 +36,8 @@ class Product extends Model
         'thumbnail_path',
         'not_available',
         'sub_category_id',
-        'sub_sub_category_id'
+        'sub_sub_category_id',
+        'reviews'
     ];
 
     protected $appends = [
