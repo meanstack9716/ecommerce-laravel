@@ -242,6 +242,31 @@
                             + Add Another Size
                         </button>
                     </div>
+                    <div class="">
+                        <x-file-upload 
+                            id="default_img"
+                            name="default_img"
+                            label="Product Default Image"
+                            :required="false"
+                            helpText="Image (PNG, JPG, JPEG) up to 5MB"
+                            accept="image/png,image/jpeg,image/jpg"
+                        />
+                            
+                        @if($product->thumbnail_path)
+                            <div class="mt-2">
+                                <p class="text-sm font-medium text-gray-700">Current Image:</p>
+                                <img src="{{ asset('storage/' . $product->thumbnail_path) }}" 
+                                     alt="{{ $product->title }}" 
+                                     class="mt-1 h-32 w-32 object-cover rounded-md">
+                            </div>                            
+                        @endif
+                            
+                        @error('default_img')
+                            <p class="text-sm text-red-600 3xl:text-base">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div id="color-image-container">
+                    </div>
                 </div>
                 <div class="mt-8 flex justify-center space-x-4">
                     <button id="submitButton" type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#334a8b] hover:bg-blue-950 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#334a8b] cursor-pointer">
@@ -266,6 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupBrandAutocomplete();
 
     const product = @json($product);
+    let selectedColors = new Map();
 
     const config = {
         standardColors : [
@@ -294,6 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const form = document.getElementById('product-submit-form');
     const sizeContainer = document.getElementById('size-container');
+    const colorImagesContainer = document.getElementById('color-image-container');
     const addSizeBtn = document.getElementById('add-size-btn');
     const sizeTypeStandard = document.getElementById('size_type_standard');
     const sizeTypeNumeric = document.getElementById('size_type_numeric');
@@ -309,18 +336,27 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', validateForm);
 
     // Functions
-    function addSizeBlock(event, itemSize) {
+    function addSizeBlock(event, sizeDetails) {
         const sizeId = `size_${sizeCounter++}`;
         const isNumeric = sizeTypeNumeric.checked;
         const sizeOptions = isNumeric ? config.numericSizes : config.standardSizes;
 
-        const sizeData = itemSize
-        // const variants = sizeData ? sizeData.variants.map((color) => color.value) : []
-        // let standardVariants = [];
         let customVariants = [];
 
-        if (sizeData) {
-            customVariants = sizeData.variants.filter((color) => !config.hexCodes.includes(color.value))
+        if (sizeDetails) {
+            customVariants = sizeDetails.variants.filter((color) => !config.hexCodes.includes(color.value))
+        }
+
+        if (sizeDetails) {
+            standardVariants = sizeDetails.variants.filter((color) => config.hexCodes.includes(color.value))
+            standardVariants.forEach((variant) => {
+                const variantId = `variant_${sizeId}_${variant.value}`;
+                selectedColors.set(variantId, {
+                    name: variant.name,
+                    hex: variant.value,
+                });
+            })
+            updateColorImageFields()
         }
        
         const sizeBlock = document.createElement('div');
@@ -335,9 +371,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             class="size-select cursor-pointer mt-2 block appearance-none w-full border border-gray-300 rounded-md shadow-sm py-2 pl-3 pr-8 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="">Select size</option>
                             ${sizeOptions.map(size => `
-                                <option class="disabled:text-neutral-200" value="${size}" ${sizeData && sizeData.value === size ? 'selected' : '' }>${size}</option>
+                                <option class="disabled:text-neutral-200" value="${size}" ${sizeDetails && sizeDetails.value === size ? 'selected' : '' }>${size}</option>
                             `).join('')}
-                            <option value="custom" ${sizeData && !sizeOptions.includes(sizeData.value) ? 'selected' : ''}>Custom Size</option>
+                            <option value="custom" ${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? 'selected' : ''}>Custom Size</option>
                         </select>
                         <span class="material-symbols-outlined absolute top-1/2 -translate-y-1/2 right-3 text-gray-500 rotate-90 pointer-events-none">
                             chevron_right
@@ -347,9 +383,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         type="text" 
                         name="sizes[${sizeId}][custom_size]" 
                         id="sizes[${sizeId}][custom_size]"
-                        value="${sizeData && !sizeOptions.includes(sizeData.value) ? sizeData.value : ''}"
+                        value="${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? sizeDetails.value : ''}"
                         placeholder="Enter custom size" 
-                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeData && !sizeOptions.includes(sizeData.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                        class="custom-size-input mt-3 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 ${sizeDetails && !sizeOptions.includes(sizeDetails.value) ? '' : 'hidden'} focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     >
                     <p class="size-error mt-1 text-sm font-medium text-red-500 hidden"></p>
                 </div>
@@ -364,7 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <label class="font-medium 3xl:text-xl 3xl:font-semibold">Standard Colors</label>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-4">
                     ${config.standardColors.map(color => {
-                        const variant = sizeData ? sizeData.variants.find((item) => item.value === color.hex) : null;
+                        const variant = sizeDetails ? sizeDetails.variants.find((item) => item.value === color.hex) : null;
                         return `
                         
                         <div class="flex items-center justify-between w-full gap-4">
@@ -377,9 +413,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <span class="w-6 h-6 mr-2 rounded-full border border-gray-300" style="background-color:${color.hex}"></span>
                                     ${color.name}
                                 </label>
-                                <input type="hidden" name="sizes[${sizeId}][colors][standard][${color.hex}][name]" value="${color.name}">
+                                <input type="hidden" id="${sizeId}_${color.name}_detail" name="sizes[${sizeId}][colors][standard][${color.hex}][name]" value="${color.hex}">
                             </div>
-                            <input type="number" name="sizes[${sizeId}][colors][standard][${color.hex}][quantity]" 
+                            <input type="number" id="${sizeId}_${color.name}_qty" name="sizes[${sizeId}][colors][standard][${color.hex}][quantity]" 
                                 value="${variant?.stock_quantity ?? 0}" class="quantity-input ml-2 block w-2/3 border border-gray-300 rounded-md shadow-sm py-1 px-3 ${variant ? "" : "hidden" } focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" 
                                 placeholder="Enter quantity" min="0">
                         </div>
@@ -419,8 +455,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         removeBtn.addEventListener('click', function() {
             sizeBlock.remove();
+            const sizeId = sizeBlock.dataset.sizeId;
+            let allColors = selectedColors; 
+            allColors.forEach((colorData, colorKey) => {
+                if(colorKey.includes(sizeId)) {
+                    selectedColors.delete(colorKey);
+                }
+            })
             updateRemoveButtons();
             updateDisabledSizeOptions();
+            updateColorImageFields();
         });
 
         customVariants.forEach((customColor) => {
@@ -433,8 +477,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
         colorCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', function() {
-                const quantityInput = this.closest('div').nextElementSibling;
+                const [size, sizeNum, colorName] = this.id.split('_');
+                const sizeId = `${size}_${sizeNum}`
+                const quantityInput = document.getElementById(`${this.id}_qty`);
                 quantityInput.classList.toggle('hidden', !this.checked);
+
+                const colorDetailsInput = document.getElementById(`${this.id}_detail`)
+                const colorHex = colorDetailsInput.value;
+                const variantId = `variant_${sizeId}_${colorHex}`;
+                if (this.checked) {
+                    selectedColors.set(variantId, {
+                        name: colorName,
+                        hex: colorHex,
+                    });
+                } else {
+                    selectedColors.delete(variantId);
+                }
+
+                updateColorImageFields();
             });
         });
     }
@@ -452,12 +512,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <input type="text" name="sizes[${sizeId}][colors][custom][${colorId}][name]" 
                     value="${customColor?.name || ''}"
-                    placeholder="Color name" class="ml-2 block w-1/2 border-none focus:outline-none">
+                    placeholder="Color name" class="ml-2 block w-1/2 border-none focus:outline-none custom-color-name">
             </div>
             <input type="number" name="sizes[${sizeId}][colors][custom][${colorId}][quantity]"
                value="${customColor?.stock_quantity || '#000000'}"
                 min="0" class="block w-1/2 border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter Quantity">
-            <button type="button" class="remove-color-btn ml-2">
+            <button type="button" class="remove-color-btn ml-2 cursor-pointer">
                 <span class="material-symbols-outlined text-red-600 bg-red-100 rounded-full">cancel</span>
             </button>
         `;
@@ -466,6 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const colorInputDiv = colorField.querySelector('.color-picker-wrapper')
         const colorInput = colorField.querySelector('input[type="color"]');
         const hexValue = colorField.querySelector('.hex-value');
+        const colorName = colorField.querySelector('.custom-color-name');
         const removeBtn = colorField.querySelector('.remove-color-btn');
 
         colorInputDiv.addEventListener('click', () => {
@@ -473,9 +534,129 @@ document.addEventListener('DOMContentLoaded', function() {
                 colorInput.click();
             }
         });
+        const variantId = `variant_${sizeId}_${colorId}`;
+        selectedColors.set(variantId, {
+            name: customColor ? customColor.name : null,
+            hex: customColor ? customColor.value : hexValue.textContent,
+        })
 
-        colorInput.addEventListener('input', () => hexValue.textContent = colorInput.value);
-        removeBtn.addEventListener('click', () => colorField.remove());
+        if (customColor) {
+            updateColorImageFields();
+        }
+
+        colorInput.addEventListener('input', () => {
+            hexValue.textContent = colorInput.value
+            if (selectedColors.has(variantId)) {
+                const colorData = selectedColors.get(variantId);
+                colorData.hex = colorInput.value;
+
+                updateColorImageFields();
+            }
+        });
+
+        colorName.addEventListener('input', () => {
+            if (selectedColors.has(variantId)) {
+                const colorData = selectedColors.get(variantId);
+                colorData.name = colorName.value;
+
+                updateColorImageFields();
+            }
+        })
+
+        removeBtn.addEventListener('click', () => {
+            selectedColors.delete(variantId);
+
+            updateColorImageFields();
+            colorField.remove()
+        });
+    }
+
+    // replace each spaces to _ and convert to lower case
+    function sanitizeColorName(name) {
+        return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9\-]/g, '');
+    }
+
+    function updateColorImageFields () {
+        const existingContainers = Array.from(document.querySelectorAll('.color-images-block'));
+        let currentColorNames = [];
+
+        selectedColors.forEach((colorData) => {
+            if (!currentColorNames.includes(colorData.name)) {
+                currentColorNames.push(colorData.name);
+            }
+        });
+
+        existingContainers.forEach(container => {
+            const colorName = container.dataset.colorName;
+            if (!currentColorNames.includes(colorName)) {
+                container.remove();
+            }
+        });
+
+        selectedColors.forEach((colorData, colorKey) => {
+            const colorImages = product.gallery?.filter(img => img.color === colorData.name) || [];
+            const existingContainer = document.querySelector(`.color-images-block[data-color-name="${colorData.name}"]`);
+
+            if (!existingContainer) {
+                const colorBlock = document.createElement('div');
+                colorBlock.className = 'color-images-block mb-6 p-4 border border-gray-200 rounded-lg';
+                const colorClass = sanitizeColorName(colorData.name)
+                colorBlock.dataset.colorId = colorKey;
+                colorBlock.dataset.colorName = colorData.name;
+                colorBlock.innerHTML = `
+                    <div class="color-image-group" data-color="${ colorClass }">
+                        <input type="checkbox" name="colorsSelected[]" value="${colorData.name}" class="hidden" checked>
+                        <x-file-upload 
+                            id="product-images-${ colorClass }"
+                            name="images[${ colorData.name }][]"
+                            label="Upload Images for ${ colorData.name } color"
+                            multiple
+                            helpText="Multiple images (PNG, JPG, JPEG) up to 5MB each"
+                            accept="image/png,image/jpeg,image/jpg"
+                        />
+                        <p class="${colorClass}-color-error mt-1 text-sm font-medium text-red-500 hidden"></p>
+                        ${colorImages.length ? 
+                            `<div class="mt-2 existing-images-container">
+                                <p class="text-sm font-medium text-gray-700">Current Images:</p>
+                                <div class="existing-images flex flex-wrap gap-5 mb-3 mt-2">
+                                    ${colorImages.map(img => `
+                                        <div class="relative shadow-md rounded-md">
+                                            <img src="${img.img_url}" alt="${colorData.name}" class="h-32 w-32 object-cover rounded-md">
+                                            <button type="button" 
+                                                class="absolute -top-2 -right-2 cursor-pointer shadow-2xl"
+                                                data-image-id="${img.id}"
+                                            >
+                                                <span class="material-symbols-outlined text-red-600">
+                                                    cancel
+                                                </span>
+                                            </button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>`
+                        : ''}
+                    </div>
+                `;
+                colorImagesContainer.appendChild(colorBlock);
+
+                colorBlock.querySelectorAll('button[data-image-id]').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const imageId = this.getAttribute('data-image-id');
+                        const deleteInput = document.createElement('input');
+                        deleteInput.type = 'hidden';
+                        deleteInput.name = `colors[${colorData.name}][delete_images][]`;
+                        deleteInput.value = imageId;
+                        colorBlock.appendChild(deleteInput);
+                        this.parentElement.remove();
+
+                        const existingImagesContainer = colorBlock.querySelector('.existing-images');
+                        if (existingImagesContainer && existingImagesContainer.children.length === 0) {
+                            existingImagesContainer.parentElement.remove();
+                        }
+                    });
+                });
+            }
+        })
     }
 
     function updateAllSizeOptions() {
@@ -626,6 +807,27 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!hasValidColor) {
                 errors.push(`At least one color with quantity > 0 is required for size ${sizeValue || sizeId}`);
                 showErrorInBlock(block, 'color-error', 'Please add at least one color with quantity > 0.');
+            }
+        });
+
+        const colorGroups = document.querySelectorAll('.color-image-group');
+
+        // Validate images for each color
+        colorGroups.forEach(group => {
+            const colorName = group.dataset.color;
+            const colorClass = sanitizeColorName(colorName)
+            const fileInput = group.querySelector('input[type="file"]');
+            const existingImages = group.querySelectorAll('.existing-images img');
+            const errorElement = document.querySelector(`.${colorClass}-color-error`);
+        
+            if (fileInput.files.length === 0 && existingImages.length === 0) {
+                isValid = false;
+                if (errorElement) {
+                    errorElement.textContent = `Please upload at least one image for ${colorName} color`;
+                    errorElement.classList.remove('hidden');
+                }
+            } else {
+                if (errorElement) errorElement.classList.add('hidden');
             }
         });
 
