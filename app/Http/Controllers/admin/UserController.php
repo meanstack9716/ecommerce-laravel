@@ -257,7 +257,7 @@ class UserController extends Controller
         if ($request->hasFile('pan_front')) {
             $identity['pan_front'] = $request->file('pan_front')->store('identity_proofs');
         }
-        
+
         if ($request->hasFile('pan_back')) {
             $identity['pan_back'] = $request->file('pan_back')->store('identity_proofs');
         }
@@ -394,7 +394,7 @@ class UserController extends Controller
 
         }
 
-        $phoneExists = User::where('phone_number', $request->first_name)
+        $phoneExists = User::where('phone_number', $request->phone_number)
             ->where('id', '!=', $user->id)
             ->exists();
 
