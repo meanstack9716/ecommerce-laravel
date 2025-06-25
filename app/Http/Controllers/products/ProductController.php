@@ -21,6 +21,7 @@ use App\Enums\Sizes;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Constants\Constants;
 
 class ProductController extends Controller
 {
@@ -395,7 +396,7 @@ class ProductController extends Controller
     }
 
     public function fetchProductsList(Request $request) {
-        $limit = $request->input('limit');
+        $limit = $request->input('limit', Constants::PRODUCTS_DEFAULT_LIMIT); // Default limit for products
         $page = $request->input('page', 1);
         $searchTerm = $request->input('searchTerm');
         
@@ -580,31 +581,16 @@ class ProductController extends Controller
     
     
         // Pagination or full list
-        if ($limit) {
-            $products = $query->paginate($limit, ['*'], 'page', $page);    
-            if ($searchTerm && strlen($searchTerm) >= 3 && $products->count() > 0) {
-                $this->saveSearchTermAnalytics($searchTerm);
-            }        
-            return response()->json([
-                'data' => $products->items(),
-                'total_items' => $products->total(),
-                'per_page' => $products->perPage(),
-                'current_page' => $products->currentPage(),
-                'last_page' => $products->lastPage(),
-            ]);
-        }
-    
-        $products = $query->get();
-         if ($searchTerm && strlen($searchTerm) >= 3 && $products->count() > 0) {
+        $products = $query->paginate($limit, ['*'], 'page', $page);    
+        if ($searchTerm && strlen($searchTerm) >= 3 && $products->count() > 0) {
             $this->saveSearchTermAnalytics($searchTerm);
-        }
-
+        }        
         return response()->json([
-            'data' => $products,
-            'total_items' => $products->count(),
-            'per_page' => $products->count(),
-            'current_page' => 1,
-            'last_page' => 1,
+            'data' => $products->items(),
+            'total_items' => $products->total(),
+            'per_page' => $products->perPage(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
         ]);
     }
 
@@ -674,31 +660,19 @@ class ProductController extends Controller
 
     public function fetchProductReviews(Request $request, $id)
     {
-        $limit = $request->input('limit');
+        $limit = $request->input('limit', Constants::REVIEWS_DEFAULT_LIMIT);
         $page = $request->input('page', 1);
 
         $query = ProductReview::where('product_id', $id)
             ->orderBy('created_at', 'desc');
 
-        if ($limit) {
-            $reviews = $query->paginate($limit, ['*'], 'page', $page);            
-            return response()->json([
-                'data' => $reviews->items(),
-                'total_items' => $reviews->total(),
-                'per_page' => $reviews->perPage(),
-                'current_page' => $reviews->currentPage(),
-                'last_page' => $reviews->lastPage(),
-            ]);
-        }
-    
-        $reviews = $query->get();
-
+        $reviews = $query->paginate($limit, ['*'], 'page', $page);            
         return response()->json([
-            'data' => $reviews,
-            'total_items' => $reviews->count(),
-            'per_page' => $reviews->count(),
-            'current_page' => 1,
-            'last_page' => 1,
+            'data' => $reviews->items(),
+            'total_items' => $reviews->total(),
+            'per_page' => $reviews->perPage(),
+            'current_page' => $reviews->currentPage(),
+            'last_page' => $reviews->lastPage(),
         ]);
     }
 

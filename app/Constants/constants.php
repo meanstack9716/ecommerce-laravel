@@ -24,5 +24,6 @@ class Constants
     public const STATUS_ACTIVATED = "Activated";
     public const STATUS_DEACTIVATED = "Deactivated";
     public const STATUS_ON_HOLD = "On Hold";
-
+    public const PRODUCTS_DEFAULT_LIMIT = 10;
+    public const REVIEWS_DEFAULT_LIMIT = 10;
 }
