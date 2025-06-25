@@ -397,11 +397,11 @@ class ProductController extends Controller
         }
 
         // Handle thumbnail update
-        if ($request->hasFile('thumbnail_path')) {
+        if ($request->hasFile('default_img')) {
             if ($product->thumbnail_path && Storage::exists($product->thumbnail_path)) {
                 Storage::delete($product->thumbnail_path);
             }
-            $path = $request->file('thumbnail_path')->store('products/'.$product->id);
+            $path = $request->file('default_img')->store('products/'.$product->id);
             $product->update([
                 'thumbnail_path' => $path,
             ]);

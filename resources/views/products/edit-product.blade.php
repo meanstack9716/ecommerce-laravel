@@ -244,9 +244,9 @@
                     </div>
                     <div class="">
                         <x-file-upload 
-                            id="thumbnail_path"
-                            name="thumbnail_path"
-                            label="Thumbnail Image"
+                            id="default_img"
+                            name="default_img"
+                            label="Product Default Image"
                             :required="false"
                             helpText="Image (PNG, JPG, JPEG) up to 5MB"
                             accept="image/png,image/jpeg,image/jpg"
@@ -254,14 +254,14 @@
                             
                         @if($product->thumbnail_path)
                             <div class="mt-2">
-                                <p class="text-sm font-medium text-gray-700">Current Thumbnail Image:</p>
+                                <p class="text-sm font-medium text-gray-700">Current Image:</p>
                                 <img src="{{ asset('storage/' . $product->thumbnail_path) }}" 
                                      alt="{{ $product->title }}" 
                                      class="mt-1 h-32 w-32 object-cover rounded-md">
                             </div>                            
                         @endif
                             
-                        @error('thumbnail_path')
+                        @error('default_img')
                             <p class="text-sm text-red-600 3xl:text-base">{{ $message }}</p>
                         @enderror
                     </div>
