@@ -21,6 +21,7 @@ class User extends Authenticatable
         'password',
         'gender',
         'profile_path',
+        'referral_code',
         'is_admin',
         'status',
         'role_id'
