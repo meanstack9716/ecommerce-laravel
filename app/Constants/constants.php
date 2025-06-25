@@ -24,5 +24,8 @@ class Constants
     public const STATUS_ACTIVATED = "Activated";
     public const STATUS_DEACTIVATED = "Deactivated";
     public const STATUS_ON_HOLD = "On Hold";
+    public const CASH_ON_DELIVERY_PAYMENT = "Cash On Delivery";
+    public const RAZOR_PAY_PAYMENT = "Razorpay";
+    public const RAZOR_PAY_CURRENCY = "INR";
 
 }
