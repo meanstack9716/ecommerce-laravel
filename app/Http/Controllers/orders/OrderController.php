@@ -23,6 +23,7 @@ use App\Enums\PaymentType;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 
 class OrderController extends Controller
 {
@@ -767,7 +768,19 @@ class OrderController extends Controller
 
     public function fetchPromoCodeList(Request $request)
     {
-         $promoCodes = PromoCode::orderBy('created_at', 'desc')->get();
+         $now = Carbon::now();
+
+         $promoCodes = PromoCode::where('is_active', true)
+            ->where(function ($query) use ($now) {
+                $query->whereNull('start_date')
+                    ->orWhere('start_date', '<=', $now);
+                })
+            ->where(function ($query) use ($now) {
+                $query->whereNull('expiry_date')
+                    ->orWhere('expiry_date', '>=', $now);
+                })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'data' => $promoCodes,
