@@ -12,6 +12,7 @@ Route::prefix('products')->group(function () {
     Route::get('/list', [ProductController::class, 'fetchProductsList']);
     Route::get('/colors-list', [ProductController::class, 'fetchProductsColorsList']);
     Route::get('/{id}', [ProductController::class, 'fetchProductDetailsById']);
+    Route::get('/{id}/similar', [ProductController::class, 'fetchSimilarProducts']);
     Route::get('/{id}/reviews', [ProductController::class, 'fetchProductReviews']);
     Route::middleware(['auth:sanctum'])->group(function () {
         

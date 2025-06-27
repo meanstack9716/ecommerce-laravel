@@ -772,4 +772,99 @@ class ProductController extends Controller
             'data' => $review,
         ]);
     }
+
+    public function fetchSimilarProducts(Request $request, $id)
+    {
+        $limit = $request->input('limit', Constants::PRODUCTS_DEFAULT_LIMIT); // Default limit for products
+        $page = $request->input('page', 1);
+        $color = $request->input('color');
+
+        $refProduct = Product::where('not_available', '!=', true)->find($id);
+
+        if (!$refProduct) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
+        $refSubSubCategoryId = $refProduct->sub_sub_category_id;
+
+        $query = Product::query()->with([
+            'brand', 
+            'sizes', 
+            'sizes.variants',
+        ])->where('not_available' , '!=', true)
+            ->where('id','!=', $refProduct->id)
+            ->where('sub_sub_category_id', $refSubSubCategoryId)
+            ->orderBy('purchase_count', 'desc');
+
+        if ($color) {
+
+            // Normalize input color to lowercase
+            $color = strtolower($color);
+
+            $query->whereHas('sizes.variants', function ($q) use ($color) {
+                $q->whereRaw([
+                    '$expr' => [
+                        '$or' => [
+                            [
+                                '$eq' => [
+                                    ['$toLower' => '$name'],
+                                    $color
+                                ]
+                            ],
+                            [
+                                '$regexMatch' => [
+                                    'input' => ['$toLower' => '$name'],
+                                    'regex' => $color
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            });
+
+            $query->with(['gallery' => function($q) use ($color) {
+                $q->whereRaw([
+                    '$expr' => [
+                        '$eq' => [
+                            ['$toLower' => '$color'],
+                            $color
+                        ]
+                    ]
+                ]);
+            }]);
+        }
+
+        $products = $query->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $products->items(),
+            'total_items' => $products->total(),
+            'per_page' => $products->perPage(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+        ]);
+
+        // $products = $query->get();
+
+        // $products = $products->sortByDesc(function($product) {
+        //     // sort based on purchase count
+        //     return [$product->orderItems->sum('quantity')];
+        // });
+
+        // // paginate
+        // $paginated = new \Illuminate\Pagination\LengthAwarePaginator(
+        //     $products->forPage($page, $limit),
+        //     $products->count(),
+        //     $limit,
+        //     $page
+        // );
+
+        // return response()->json([
+        //     'data' => collect($paginated->items())->values()->all(),
+        //     'total_items' => $paginated->total(),
+        //     'per_page' => $paginated->perPage(),
+        //     'current_page' => $paginated->currentPage(),
+        //     'last_page' => $paginated->lastPage(),
+        // ]);
+    }
 }
