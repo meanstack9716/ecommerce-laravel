@@ -15,6 +15,7 @@ class RewardPoint extends Model
 
     protected $hidden = [
         'updated_at',
+        'user_id'
     ];
 
     public function user()

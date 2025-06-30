@@ -5,10 +5,12 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\RewardPoint;
 use App\Models\Address;
 use App\Enums\AddressType;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Storage;
+use App\Constants\Constants;
 
 class UserController extends Controller
 {
@@ -169,5 +171,59 @@ class UserController extends Controller
         $address->update($fields);
 
         return response()->json(['message' => 'Address updated successfully.']);
+    }
+
+    public function fetchCurrentAvailablePoints(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        // Sum of valid earned points
+        $totalEarned = RewardPoint::where('user_id', $userId)
+            ->where('points', '>', 0)
+            ->sum('points');
+
+        // Sum of all redeemed points (negative points)
+        $redeemed = RewardPoint::where('user_id', $userId)
+            ->where('points', '<', 0)
+            ->sum('points'); // will be negative
+
+        $available = $totalEarned + $redeemed;
+
+        return response()->json([
+            'available_points' => max(0, $available), // Prevent negative balance
+            'total_earned' => $totalEarned,
+            'total_redeemed' => abs($redeemed),
+        ]);
+    }
+
+    public function fetchRewardPointsHistory(Request $request)
+    {
+        $userId = $request->user()->id;
+        $limit = $request->input('limit', Constants::REWARD_HISTORY_DEFAULT_LIMIT);
+        $page = $request->input('page', 1);
+
+        // Optional filters
+        $fromDate = $request->input('from_date'); // format: YYYY-MM-DD
+        $toDate = $request->input('to_date');     // format: YYYY-MM-DD
+
+        $query = RewardPoint::where('user_id', $userId)->orderBy('created_at', 'desc');
+
+        if ($fromDate) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+
+        if ($toDate) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+
+        $history = $query->paginate($limit, ['*'], 'page', $page);
+
+        return response()->json([
+            'data' => $history->items(),
+            'total_items' => $history->total(),
+            'per_page' => $history->perPage(),
+            'current_page' => $history->currentPage(),
+            'last_page' => $history->lastPage(),
+        ]);
     }
 }

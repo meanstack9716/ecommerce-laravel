@@ -22,6 +22,8 @@ class User extends Authenticatable
         'gender',
         'profile_path',
         'referral_code',
+        'referred_by',
+        'has_logged_in',
         'is_admin',
         'status',
         'role_id'
@@ -32,6 +34,8 @@ class User extends Authenticatable
         'remember_token',
         'updated_at',
         'created_at',
+        'referred_by',
+        'has_logged_in',
         'role_id',
         'profile_path'
     ];

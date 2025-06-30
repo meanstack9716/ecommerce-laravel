@@ -244,6 +244,84 @@
 					"response": []
 				},
 				{
+					"name": "User Available Point",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/reward-points",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"reward-points"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Reward History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/reward-history?limit=10&page=1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"reward-history"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "from_date",
+									"value": "2025-06-25",
+									"disabled": true
+								},
+								{
+									"key": "to_date",
+									"value": "2025-06-26",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get Roles List",
 					"request": {
 						"method": "GET",
@@ -632,7 +710,7 @@
 								},
 								{
 									"key": "searchTerm",
-									"value": "men",
+									"value": "footwear",
 									"disabled": true
 								},
 								{
@@ -674,6 +752,157 @@
 									"key": "colors",
 									"value": "Beige",
 									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Products list",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/products/list?colors=Green",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"products",
+										"list"
+									],
+									"query": [
+										{
+											"key": "limit",
+											"value": "10",
+											"disabled": true
+										},
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "searchTerm",
+											"value": "men",
+											"disabled": true
+										},
+										{
+											"key": "minPrice",
+											"value": "2000",
+											"disabled": true
+										},
+										{
+											"key": "maxPrice",
+											"value": "4000",
+											"disabled": true
+										},
+										{
+											"key": "brandIds",
+											"value": "brandId1, brandId2, brandId3",
+											"disabled": true
+										},
+										{
+											"key": "categoryIds",
+											"value": "id1, id2, id3",
+											"disabled": true
+										},
+										{
+											"key": "subCategoryIds",
+											"value": "id1, id2, id3",
+											"disabled": true
+										},
+										{
+											"key": "subSubCategoryIds",
+											"value": "id1, id2, id3",
+											"disabled": true
+										},
+										{
+											"key": "sizes",
+											"value": "",
+											"disabled": true
+										},
+										{
+											"key": "colors",
+											"value": "Green"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Host",
+									"value": "127.0.0.1:8000"
+								},
+								{
+									"key": "Connection",
+									"value": "close"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 06 Jun 2025 06:18:06 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"data\": [\n        {\n            \"title\": \"Men Regular Fit Casual Trendy Shirt\",\n            \"description\": \"Ideal for casual outings, everyday wear for a stylish ensemble.\",\n            \"details\": \"<p><strong>This is the and fashionable designs</strong></p>\",\n            \"price\": 1200,\n            \"discount_percent\": 5,\n            \"sku\": \"1234567890\",\n            \"stock_quantity\": \"40\",\n            \"final_price\": 1140,\n            \"delivery_days\": \"3\",\n            \"id\": \"6818f30dcff1e58e6f08e762\",\n            \"thumbnail_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/HAC0D2AzzsYvMDs8YBdz20DwgKAqn63rqU2RWg0S.jpg\",\n            \"total_rating\": 4.5,\n            \"category\": {\n                \"name\": \"Men\",\n                \"description\": \"Fashion and essentials for men.\",\n                \"id\": \"681221b40d4159e5190a2942\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/categories/mens-wear.jpg\",\n                \"sub_category_count\": 7,\n                \"sub_sub_category_count\": 40\n            },\n            \"sub_category\": {\n                \"name\": \"Shirt\",\n                \"description\": \"Shirts, T-shirts, and more\",\n                \"category_id\": \"681221b40d4159e5190a2942\",\n                \"id\": \"681462825e3e9c27c70c8ab2\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_categories/681221b40d4159e5190a2942/lOl064HXzLdjFVTHEamwTmKMN3H1PlYznAu6ekH6.jpg\",\n                \"sub_sub_category_count\": 7\n            },\n            \"sub_sub_category\": {\n                \"name\": \"T-shirts\",\n                \"description\": \"Casual and printed T-shirts\",\n                \"category_id\": \"681221b40d4159e5190a2942\",\n                \"sub_category_id\": \"681462825e3e9c27c70c8ab2\",\n                \"id\": \"681462825e3e9c27c70c8ab3\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_sub_categories/681462825e3e9c27c70c8ab2/tshirt.jpeg\"\n            },\n            \"seller\": {\n                \"business_name\": \"Innovative\",\n                \"business_type\": \"Partnership\",\n                \"business_email\": \"innovative@gmail.com\",\n                \"business_mobile\": \"+919876543210\",\n                \"id\": \"6810773f2b3bb45d350183f4\"\n            },\n            \"gallery\": [\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"6818f30ecff1e58e6f08e76e\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/gtSjupZllb80flZLstXAcqjrPY1FE8zNawjuSKcL.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"6818f30fcff1e58e6f08e76f\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/zfXxB8ubgebzxOLHkPfDHpgMbrndr5HoizePREhs.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"6818f30fcff1e58e6f08e770\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/bEOyWXRGTHoaqv0IhEvdpK2WkpgfSVnt12OGskJ5.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"6818f30fcff1e58e6f08e771\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/1IHjflsWEV37SloGSxcatKmz7I8GBy5OqYE9J8Sy.jpg\"\n                },\n                {\n                    \"color\": \"White\",\n                    \"id\": \"6818f30fcff1e58e6f08e772\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/pkia8htKsx11hnniZibBtPmsMHMRJJfAwRsyB7Si.jpg\"\n                },\n                {\n                    \"color\": \"White\",\n                    \"id\": \"6818f30fcff1e58e6f08e773\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/XrIg8mu2VAsSjwUFKQLhoWprtCg1781oIrj5SLhY.jpg\"\n                },\n                {\n                    \"color\": \"White\",\n                    \"id\": \"6818f30fcff1e58e6f08e774\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/l6oKXKCRjcGSG64H1OqLDYhsvTeFvLLpzajhmNRu.jpg\"\n                },\n                {\n                    \"color\": \"White\",\n                    \"id\": \"6818f30fcff1e58e6f08e775\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/ii68WCziQ673hlqYNOYL9GNsILvR6j1GGpJsOphH.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"6818f310cff1e58e6f08e776\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/sj3CvvhQhVZiQr1fMunBB6wmgeAwjpXWMDDnMeoR.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"6818f310cff1e58e6f08e777\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/NuEgvYbLCqHkXw53diqMjhMoUXLR20iYSPg534Dp.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"6818f310cff1e58e6f08e778\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/hQLMFT70ULXuC0u7oshyvbYcTwv67TJgDvMxv4qE.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"6818f310cff1e58e6f08e779\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/9um6OCAvqFAMgJgcnYsXNp5WpbXqdI2q20NZ2aRm.jpg\"\n                },\n                {\n                    \"color\": \"Maroon\",\n                    \"id\": \"6818f310cff1e58e6f08e77a\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/J0yEEucI7arH9g93XKbAvv2G5qwfQCE7NveIxaCn.jpg\"\n                },\n                {\n                    \"color\": \"Maroon\",\n                    \"id\": \"6818f310cff1e58e6f08e77b\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/d3EnPIRRmSFG3BAONenMKeOa74Mmbqpb9JXh8UJx.jpg\"\n                },\n                {\n                    \"color\": \"Maroon\",\n                    \"id\": \"6818f311cff1e58e6f08e77c\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/dvito04IR5vBiH0zuypl7J4VYCgSrSMtLCbxBiGO.jpg\"\n                },\n                {\n                    \"color\": \"Maroon\",\n                    \"id\": \"6818f311cff1e58e6f08e77d\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/aeAN27DCTQw5Z7zvyJ3WRrF1zd9oyeBZLlCw0lcE.jpg\"\n                },\n                {\n                    \"color\": \"Aqua\",\n                    \"id\": \"6818f311cff1e58e6f08e77e\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/Esir6Zoks6PzXJ3voobxEryaH9cvKPF9jkOFZdjj.jpg\"\n                },\n                {\n                    \"color\": \"Aqua\",\n                    \"id\": \"6818f311cff1e58e6f08e77f\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/AgXdD7hZ5ESm1mT4C5ZBqJNPRnHbJpjUs6fEMMOy.jpg\"\n                },\n                {\n                    \"color\": \"Aqua\",\n                    \"id\": \"6818f311cff1e58e6f08e780\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/6818f30dcff1e58e6f08e762/ejqPRFVyn79yuL6pFp916LkoQeLC1pR8jctY8nKp.jpg\"\n                }\n            ],\n            \"brand\": {\n                \"name\": \"Raymond\",\n                \"description\": \"Raymond is a diversified group with majority business interests in Textile & Apparel sectors and a presence across varying segments such as Consumer Care, Realty and Engineering in national and international markets.\",\n                \"id\": \"6815f251013c62b1020688a6\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/brands/raymond.png\"\n            },\n            \"sizes\": [\n                {\n                    \"product_id\": \"6818f30dcff1e58e6f08e762\",\n                    \"value\": \"30\",\n                    \"size_type\": \"numeric\",\n                    \"id\": \"6830707624a418620a0e6a83\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": \"8\",\n                            \"id\": \"6830707624a418620a0e6a84\"\n                        },\n                        {\n                            \"value\": \"#FFFFFF\",\n                            \"name\": \"White\",\n                            \"stock_quantity\": \"0\",\n                            \"id\": \"6830707624a418620a0e6a85\"\n                        },\n                        {\n                            \"value\": \"#0000FF\",\n                            \"name\": \"Blue\",\n                            \"stock_quantity\": \"0\",\n                            \"id\": \"6830707624a418620a0e6a86\"\n                        },\n                        {\n                            \"value\": \"#008000\",\n                            \"name\": \"Green\",\n                            \"stock_quantity\": \"0\",\n                            \"id\": \"6830707724a418620a0e6a87\"\n                        },\n                        {\n                            \"value\": \"#FFC0CB\",\n                            \"name\": \"Pink\",\n                            \"stock_quantity\": \"0\",\n                            \"id\": \"6830707724a418620a0e6a88\"\n                        },\n                        {\n                            \"value\": \"#F5F5DC\",\n                            \"name\": \"Beige\",\n                            \"stock_quantity\": 68,\n                            \"id\": \"6830707724a418620a0e6a89\"\n                        },\n                        {\n                            \"value\": \"#6e1c1c\",\n                            \"name\": \"Maroon\",\n                            \"stock_quantity\": \"3\",\n                            \"id\": \"6830707724a418620a0e6a8a\"\n                        },\n                        {\n                            \"value\": \"#e3e3e3\",\n                            \"name\": \"Cream\",\n                            \"stock_quantity\": 3,\n                            \"id\": \"6830707724a418620a0e6a8b\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"6818f30dcff1e58e6f08e762\",\n                    \"value\": \"32\",\n                    \"size_type\": \"numeric\",\n                    \"id\": \"6830707724a418620a0e6a8c\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#FFFFFF\",\n                            \"name\": \"White\",\n                            \"stock_quantity\": \"0\",\n                            \"id\": \"6830707724a418620a0e6a8d\"\n                        },\n                        {\n                            \"value\": \"#82cdce\",\n                            \"name\": \"Aqua\",\n                            \"stock_quantity\": \"5\",\n                            \"id\": \"6830707724a418620a0e6a8e\"\n                        }\n                    ]\n                }\n            ],\n            \"reviews\": [\n                {\n                    \"product_id\": \"6818f30dcff1e58e6f08e762\",\n                    \"order_id\": \"6825f4f98acb84132309318a\",\n                    \"rating\": \"4\",\n                    \"review\": \"Vey comfortable\",\n                    \"id\": \"682a1c710ecbdc97840f23f3\",\n                    \"img_urls\": [],\n                    \"by\": {\n                        \"email\": \"admin@admin.com\",\n                        \"first_name\": \"Admin\",\n                        \"last_name\": \"Inno\",\n                        \"id\": \"6800cfce25c1bbc35f047e9b\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                },\n                {\n                    \"product_id\": \"6818f30dcff1e58e6f08e762\",\n                    \"order_id\": \"682c788f78b7162b810b89d5\",\n                    \"rating\": \"5\",\n                    \"review\": \"Nice fabric, perfect fit, stylish look—great value for money. Highly recommended!\\n\\nNice fabric, perfect fit, stylish look—great value for money. Highly recommended!\\nNice fabric, perfect fit, stylish look—great value for money. Highly recommended!\",\n                    \"id\": \"683055e824a418620a0e6a32\",\n                    \"img_urls\": [],\n                    \"by\": {\n                        \"email\": \"kaushaki.kumari@innotechteam.in\",\n                        \"first_name\": \"Kaushaki\",\n                        \"last_name\": \"kumari\",\n                        \"id\": \"681b0901ca828eecf501d798\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                }\n            ]\n        },\n        {\n            \"title\": \"Bewakoof Official Garfield Merchandise\",\n            \"description\": \"Women's Graphic Printed Oversized Fit Half Sleeve Round Neck Cotton Jersey T-Shirt\",\n            \"details\": \"<ul><li><strong>Material composition:</strong> Single_jersey_100%_cotton</li><li><strong>Pattern: </strong>Graphic</li><li><strong>Fit type </strong>Oversized Fit</li><li><strong>Sleeve type: </strong>Half Sleeve</li><li><strong>Collar style: </strong>Club Collar</li><li><strong>Length: </strong>Standard Length</li></ul><p><br></p>\",\n            \"price\": 800,\n            \"discount_percent\": 10,\n            \"sku\": \"1234567890\",\n            \"stock_quantity\": \"40\",\n            \"final_price\": 720,\n            \"delivery_days\": \"2\",\n            \"id\": \"68199c47c7bec7c9d1038132\",\n            \"thumbnail_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/TOV4QOqL6l6PQLixpIeaPQY0qiRMxFrraSgYzjHw.jpg\",\n            \"total_rating\": 5,\n            \"category\": {\n                \"name\": \"Women\",\n                \"description\": \"Fashion and essentials for women\",\n                \"id\": \"681221b70d4159e5190a296a\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/categories/women-wear.jpg\",\n                \"sub_category_count\": 6,\n                \"sub_sub_category_count\": 38\n            },\n            \"sub_category\": {\n                \"name\": \"Western Wear\",\n                \"description\": \"Trendy and cool designs with great popularity\",\n                \"category_id\": \"681221b70d4159e5190a296a\",\n                \"id\": \"681462855e3e9c27c70c8ad9\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_categories/681221b70d4159e5190a296a/women-westernwear.jpg\",\n                \"sub_sub_category_count\": 11\n            },\n            \"sub_sub_category\": {\n                \"name\": \"Tops\",\n                \"description\": \"\",\n                \"category_id\": \"681221b70d4159e5190a296a\",\n                \"sub_category_id\": \"681462855e3e9c27c70c8ad9\",\n                \"id\": \"681462855e3e9c27c70c8adb\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_sub_categories/681462855e3e9c27c70c8ad9/top.jpg\"\n            },\n            \"seller\": {\n                \"business_name\": \"InnoSales\",\n                \"business_type\": \"Corporation\",\n                \"business_email\": \"innoSales@gmail.com\",\n                \"business_mobile\": \"9876543211\",\n                \"id\": \"68258bf51a4d5a065b035202\"\n            },\n            \"gallery\": [\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"68199c48c7bec7c9d103813f\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/nccHI6xcC1SHmZ5aWLAAdDmsjhbvj2GoVDEl4MmV.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"68199c48c7bec7c9d1038140\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/H5AktFQnwaGUEZOshUHWTELbScxqVegNblaXC4fs.jpg\"\n                },\n                {\n                    \"color\": \"Granite Green\",\n                    \"id\": \"68199c48c7bec7c9d1038141\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/MbKtGdjBsm0mOML0psVkPJRh7s7evNmuQKxI7Bzz.jpg\"\n                },\n                {\n                    \"color\": \"Granite Green\",\n                    \"id\": \"68199c48c7bec7c9d1038142\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/LzXYDjDaeVenJqIsYlYhan6gxw9ZvwkZNhT1fGuu.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"68199c48c7bec7c9d1038143\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/9D7P1C9AGFJytmzy5ewPqsaRr20pZFB4zcuIs23b.jpg\"\n                },\n                {\n                    \"color\": \"Cream\",\n                    \"id\": \"68199c48c7bec7c9d1038144\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/7hR4dP1qLT09lLx4lP6kc90b8vHNGLtRLcDL6cDx.jpg\"\n                },\n                {\n                    \"color\": \"Sea Green\",\n                    \"id\": \"68199c48c7bec7c9d1038145\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/qdVDYd4DWOPviEL0TvNqFHjZt58BFsF3HpoXP31a.jpg\"\n                },\n                {\n                    \"color\": \"Sea Green\",\n                    \"id\": \"68199c48c7bec7c9d1038146\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/1LUjUOoghZrJaVJKCaeSiWGqtpS1sltReXgypTXp.jpg\"\n                },\n                {\n                    \"color\": \"Sea Green\",\n                    \"id\": \"68199c48c7bec7c9d1038147\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68199c47c7bec7c9d1038132/GdW2zUwdWAJT2jwakJBo37HhtVAQecQgkbRdbRO6.jpg\"\n                }\n            ],\n            \"brand\": {\n                \"name\": \"Bewakoof\",\n                \"description\": \"Bewakoof is a youth-centric brand known for its quirky and humorous graphic t-shirts, casual wear, and accessories.\",\n                \"id\": \"6815eb9aed44d7e45f00a0d5\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/brands/bewakoof.png\"\n            },\n            \"sizes\": [\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"value\": \"S\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68199c47c7bec7c9d1038133\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 3,\n                            \"id\": \"68199c47c7bec7c9d1038134\"\n                        },\n                        {\n                            \"value\": \"#25ad9d\",\n                            \"name\": \"Granite Green\",\n                            \"stock_quantity\": 1,\n                            \"id\": \"68199c47c7bec7c9d1038135\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"value\": \"M\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68199c47c7bec7c9d1038136\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 4,\n                            \"id\": \"68199c47c7bec7c9d1038137\"\n                        },\n                        {\n                            \"value\": \"#fafafa\",\n                            \"name\": \"Cream\",\n                            \"stock_quantity\": \"7\",\n                            \"id\": \"68199c48c7bec7c9d1038138\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"value\": \"L\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68199c48c7bec7c9d1038139\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#d3eee2\",\n                            \"name\": \"Sea Green\",\n                            \"stock_quantity\": \"5\",\n                            \"id\": \"68199c48c7bec7c9d103813a\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"value\": \"XL\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68199c48c7bec7c9d103813b\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 4,\n                            \"id\": \"68199c48c7bec7c9d103813c\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"value\": \"XXL\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68199c48c7bec7c9d103813d\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#fafafa\",\n                            \"name\": \"Cream\",\n                            \"stock_quantity\": 4,\n                            \"id\": \"68199c48c7bec7c9d103813e\"\n                        }\n                    ]\n                }\n            ],\n            \"reviews\": [\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"order_id\": \"682c536778b7162b810b89aa\",\n                    \"rating\": \"5\",\n                    \"review\": \"Gshajman ahyakakaj hajmanbs hajamnwheh hsuskannansh hayajwnns hayajwnns hahajwj hwuisksnsh bahauaj uauajsjha\",\n                    \"id\": \"6830595324a418620a0e6a33\",\n                    \"img_urls\": [],\n                    \"by\": {\n                        \"email\": \"kaushaki.kumari@innotechteam.in\",\n                        \"first_name\": \"Kaushaki\",\n                        \"last_name\": \"kumari\",\n                        \"id\": \"681b0901ca828eecf501d798\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                },\n                {\n                    \"product_id\": \"68199c47c7bec7c9d1038132\",\n                    \"order_id\": \"6825f4f98acb84132309318c\",\n                    \"rating\": \"5\",\n                    \"review\": \"Vey comfortable\",\n                    \"imagePaths\": null,\n                    \"id\": \"683855708230445aeb001d87\",\n                    \"img_urls\": [\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/68199c47c7bec7c9d1038132/rWZrjOYqJ05p9LtFSWnpaayTp27pWURg5YscpkxL.jpg\",\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/68199c47c7bec7c9d1038132/24Kw5CBCdjMMg58iK7K6AZDexPPm0sC14A06ccxD.jpg\"\n                    ],\n                    \"by\": {\n                        \"email\": \"admin@admin.com\",\n                        \"first_name\": \"Admin\",\n                        \"last_name\": \"Inno\",\n                        \"id\": \"6800cfce25c1bbc35f047e9b\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                }\n            ]\n        },\n        {\n            \"title\": \"Summer wear shirts\",\n            \"description\": \"Ideal for casual outings, everyday wear for a stylish ensemble.\",\n            \"details\": \"<p>Best in market</p>\",\n            \"price\": 1200,\n            \"discount_percent\": 10,\n            \"delivery_days\": 3,\n            \"sku\": \"1234567890\",\n            \"stock_quantity\": \"40\",\n            \"final_price\": 1080,\n            \"id\": \"68282e8a717fde40120a8a20\",\n            \"thumbnail_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68282e8a717fde40120a8a20/JJxOuytOfIH4XJ0SHhw4n97P3XL5Iso9z4JjpqkH.jpg\",\n            \"total_rating\": 4,\n            \"category\": {\n                \"name\": \"Men\",\n                \"description\": \"Fashion and essentials for men.\",\n                \"id\": \"681221b40d4159e5190a2942\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/categories/mens-wear.jpg\",\n                \"sub_category_count\": 7,\n                \"sub_sub_category_count\": 40\n            },\n            \"sub_category\": {\n                \"name\": \"Shirt\",\n                \"description\": \"Shirts, T-shirts, and more\",\n                \"category_id\": \"681221b40d4159e5190a2942\",\n                \"id\": \"681462825e3e9c27c70c8ab2\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_categories/681221b40d4159e5190a2942/lOl064HXzLdjFVTHEamwTmKMN3H1PlYznAu6ekH6.jpg\",\n                \"sub_sub_category_count\": 7\n            },\n            \"sub_sub_category\": {\n                \"name\": \"Casual Shirts\",\n                \"description\": \"Casual Shirts\",\n                \"category_id\": \"681221b40d4159e5190a2942\",\n                \"sub_category_id\": \"681462825e3e9c27c70c8ab2\",\n                \"id\": \"681462825e3e9c27c70c8ab4\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_sub_categories/681462825e3e9c27c70c8ab2/casual-shirt.jpg\"\n            },\n            \"seller\": {\n                \"business_name\": \"InnoSales\",\n                \"business_type\": \"Corporation\",\n                \"business_email\": \"innoSales@gmail.com\",\n                \"business_mobile\": \"9876543211\",\n                \"id\": \"68258bf51a4d5a065b035202\"\n            },\n            \"gallery\": [\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"68282e8b717fde40120a8a29\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68282e8a717fde40120a8a20/wpl5ZfYPqaxOuWXysAYWcKQRSpiHTw9mpfNUzH1P.jpg\"\n                },\n                {\n                    \"color\": \"Green\",\n                    \"id\": \"68282e8b717fde40120a8a2a\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68282e8a717fde40120a8a20/Sf5BGgc75f4aeKziBGpVoVp3SoEDlOuzugp7EnQn.jpg\"\n                },\n                {\n                    \"color\": \"Blue\",\n                    \"id\": \"68282e8b717fde40120a8a2b\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68282e8a717fde40120a8a20/wf0BCdcqO3Oj5jsKmssPH3xP1toFsf2sPLB4sXSM.jpg\"\n                },\n                {\n                    \"color\": \"Gray\",\n                    \"id\": \"68282e8b717fde40120a8a2c\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/68282e8a717fde40120a8a20/EZSAqeMV5VG2w34wfIxNK1M27BjCVm0vivlFazef.jpg\"\n                }\n            ],\n            \"brand\": {\n                \"name\": \"Adidas\",\n                \"description\": \"Adidas is a German multinational corporation that designs and manufactures shoes, clothing, and accessories, known for its performance and sportswear lines.\",\n                \"id\": \"6815ebdd4b3e4b82000b1992\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/brands/adidas.png\"\n            },\n            \"sizes\": [\n                {\n                    \"product_id\": \"68282e8a717fde40120a8a20\",\n                    \"value\": \"M\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68282e8a717fde40120a8a21\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 5,\n                            \"id\": \"68282e8b717fde40120a8a22\"\n                        },\n                        {\n                            \"value\": \"#008000\",\n                            \"name\": \"Green\",\n                            \"stock_quantity\": 4,\n                            \"id\": \"68282e8b717fde40120a8a23\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68282e8a717fde40120a8a20\",\n                    \"value\": \"L\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68282e8b717fde40120a8a24\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#0000FF\",\n                            \"name\": \"Blue\",\n                            \"stock_quantity\": 6,\n                            \"id\": \"68282e8b717fde40120a8a25\"\n                        },\n                        {\n                            \"value\": \"#808080\",\n                            \"name\": \"Gray\",\n                            \"stock_quantity\": \"10\",\n                            \"id\": \"68282e8b717fde40120a8a26\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"68282e8a717fde40120a8a20\",\n                    \"value\": \"XL\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"68282e8b717fde40120a8a27\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 9,\n                            \"id\": \"68282e8b717fde40120a8a28\"\n                        }\n                    ]\n                }\n            ],\n            \"reviews\": [\n                {\n                    \"product_id\": \"68282e8a717fde40120a8a20\",\n                    \"order_id\": \"682ef042ca817025880102ec\",\n                    \"rating\": \"4\",\n                    \"review\": \"Vey comfortable Vey comfortable Vey comfortable Vey comfortable Vey comfortable Vey comfortableVey comfortable\",\n                    \"id\": \"68304b0e0167b9e99d0e3522\",\n                    \"img_urls\": [],\n                    \"by\": {\n                        \"email\": \"kaushaki.kumari@innotechteam.in\",\n                        \"first_name\": \"Kaushaki\",\n                        \"last_name\": \"kumari\",\n                        \"id\": \"681b0901ca828eecf501d798\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                }\n            ]\n        },\n        {\n            \"title\": \"Draped Crop Top\",\n            \"description\": \"Cotton Stretchable Draped Crop Top\",\n            \"details\": \"<p><span style=\\\"color: rgb(102, 102, 102);\\\">Cowl&nbsp;neck sleeveless top&nbsp;made with&nbsp;super soft and stretchable cotton fabric. You can wear it with the sleeves pulled up or off shoulder style.&nbsp;Featuring&nbsp;a seamless design, this top provides a smooth, sleek silhouette</span></p>\",\n            \"price\": 450,\n            \"discount_percent\": 5,\n            \"delivery_days\": 7,\n            \"sku\": \"PRD-4WOYDM1G3TNQ\",\n            \"stock_quantity\": \"6\",\n            \"final_price\": 427.5,\n            \"id\": \"683d4fa6cf110609490c0b4a\",\n            \"thumbnail_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/OqeHw2JQoY4DHGmRLy4Lov345UYNtq67XevA4DiK.jpg\",\n            \"total_rating\": 4,\n            \"category\": {\n                \"name\": \"Women\",\n                \"description\": \"Fashion and essentials for women\",\n                \"id\": \"681221b70d4159e5190a296a\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/categories/women-wear.jpg\",\n                \"sub_category_count\": 6,\n                \"sub_sub_category_count\": 38\n            },\n            \"sub_category\": {\n                \"name\": \"Western Wear\",\n                \"description\": \"Trendy and cool designs with great popularity\",\n                \"category_id\": \"681221b70d4159e5190a296a\",\n                \"id\": \"681462855e3e9c27c70c8ad9\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_categories/681221b70d4159e5190a296a/women-westernwear.jpg\",\n                \"sub_sub_category_count\": 11\n            },\n            \"sub_sub_category\": {\n                \"name\": \"Tshirts\",\n                \"description\": \"\",\n                \"category_id\": \"681221b70d4159e5190a296a\",\n                \"sub_category_id\": \"681462855e3e9c27c70c8ad9\",\n                \"id\": \"681462855e3e9c27c70c8adc\",\n                \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/sub_sub_categories/681462855e3e9c27c70c8ad9/tshirt.jpg\"\n            },\n            \"seller\": {\n                \"business_name\": \"InnoSales\",\n                \"business_type\": \"Corporation\",\n                \"business_email\": \"innoSales@gmail.com\",\n                \"business_mobile\": \"9876543211\",\n                \"id\": \"68258bf51a4d5a065b035202\"\n            },\n            \"gallery\": [\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"683d4fa6cf110609490c0b54\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/7d5P71cGGmLaisyiaxdNnWfNkOlFecjbddXC2Dju.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"683d4fa6cf110609490c0b55\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/IFclHropPBAaw32LpBSLFSsEp956igfF4Ku0h0wL.jpg\"\n                },\n                {\n                    \"color\": \"Black\",\n                    \"id\": \"683d4fa6cf110609490c0b56\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/77x0vZFuNPJX48XuadnNW34olX3XksCVrCnSIVTv.jpg\"\n                },\n                {\n                    \"color\": \"Pink\",\n                    \"id\": \"683d4fa6cf110609490c0b57\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/pTUYcYv8p9ESk0RhXl8kqSAVPTi2oKAs2LduY6W8.jpg\"\n                },\n                {\n                    \"color\": \"Pink\",\n                    \"id\": \"683d4fa6cf110609490c0b58\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/t4leJ1EfJNIY4ZkdtR1sUu0vhufQjF1847hRatC2.jpg\"\n                },\n                {\n                    \"color\": \"Pink\",\n                    \"id\": \"683d4fa6cf110609490c0b59\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/vo7Tu1e8PslD7P3mLg05B04VdFrfALf5HrsOCL4y.jpg\"\n                },\n                {\n                    \"color\": \"Green\",\n                    \"id\": \"683d4fa6cf110609490c0b5a\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/HYWarr9usrC6tvFooyCd42fFAE0LxkC3a3v5Gu51.jpg\"\n                },\n                {\n                    \"color\": \"Green\",\n                    \"id\": \"683d4fa6cf110609490c0b5b\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/5EgKt0BbFh1fLMQAP0mrnQwHsZ0AliTuj5c13TBN.jpg\"\n                },\n                {\n                    \"color\": \"Green\",\n                    \"id\": \"683d4fa6cf110609490c0b5c\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/amKW8t87rSQHtq2hyUXTHjEfZ3PnmnvjAmzB5R6t.jpg\"\n                },\n                {\n                    \"color\": \"Green\",\n                    \"id\": \"683d4fa6cf110609490c0b5d\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/9qEhHh21pfaLdjS63ZmByRSCEvgja98yPX5gnZ4A.jpg\"\n                },\n                {\n                    \"color\": \"Blue\",\n                    \"id\": \"683d4fa6cf110609490c0b5e\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/bj1SnGU67xnoN9P9FWxHQbxU5QzlGw7Aw8TIVDpN.jpg\"\n                },\n                {\n                    \"color\": \"Blue\",\n                    \"id\": \"683d4fa6cf110609490c0b5f\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/5o7pnxWax6DgovBy4pVZn6mEEpZE1AeJdFQEq4Qx.jpg\"\n                },\n                {\n                    \"color\": \"Blue\",\n                    \"id\": \"683d4fa6cf110609490c0b60\",\n                    \"img_url\": \"https://1897-180-151-18-234.ngrok-free.app/storage/products/683d4fa6cf110609490c0b4a/kmfcyr26hYdBaoqG03BnmG5NT0Mqqe2Fc89FtRg6.jpg\"\n                }\n            ],\n            \"brand\": {\n                \"name\": \"Draped Crop Top\",\n                \"id\": \"683d4fa5cf110609490c0b49\",\n                \"img_url\": null\n            },\n            \"sizes\": [\n                {\n                    \"product_id\": \"683d4fa6cf110609490c0b4a\",\n                    \"value\": \"S\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"683d4fa6cf110609490c0b4b\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#000000\",\n                            \"name\": \"Black\",\n                            \"stock_quantity\": 2,\n                            \"id\": \"683d4fa6cf110609490c0b4c\"\n                        },\n                        {\n                            \"value\": \"#FFC0CB\",\n                            \"name\": \"Pink\",\n                            \"stock_quantity\": \"5\",\n                            \"id\": \"683d4fa6cf110609490c0b4d\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"683d4fa6cf110609490c0b4a\",\n                    \"value\": \"M\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"683d4fa6cf110609490c0b4e\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#008000\",\n                            \"name\": \"Green\",\n                            \"stock_quantity\": \"7\",\n                            \"id\": \"683d4fa6cf110609490c0b4f\"\n                        },\n                        {\n                            \"value\": \"#FFC0CB\",\n                            \"name\": \"Pink\",\n                            \"stock_quantity\": \"6\",\n                            \"id\": \"683d4fa6cf110609490c0b50\"\n                        }\n                    ]\n                },\n                {\n                    \"product_id\": \"683d4fa6cf110609490c0b4a\",\n                    \"value\": \"XXL\",\n                    \"size_type\": \"standard\",\n                    \"id\": \"683d4fa6cf110609490c0b51\",\n                    \"variants\": [\n                        {\n                            \"value\": \"#0000FF\",\n                            \"name\": \"Blue\",\n                            \"stock_quantity\": \"4\",\n                            \"id\": \"683d4fa6cf110609490c0b52\"\n                        },\n                        {\n                            \"value\": \"#008000\",\n                            \"name\": \"Green\",\n                            \"stock_quantity\": \"7\",\n                            \"id\": \"683d4fa6cf110609490c0b53\"\n                        }\n                    ]\n                }\n            ],\n            \"reviews\": [\n                {\n                    \"product_id\": \"683d4fa6cf110609490c0b4a\",\n                    \"order_id\": \"683d50b6cf110609490c0b63\",\n                    \"rating\": \"4\",\n                    \"review\": \"Vey comfortable Value for money and durable Great product\",\n                    \"id\": \"683d52edcf110609490c0b66\",\n                    \"img_urls\": [\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/683d4fa6cf110609490c0b4a/iMvdlzF6hh5OdP8yDL5h890pZbWNIWSY0DkDsowC.jpg\",\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/683d4fa6cf110609490c0b4a/J7g140QHqIdAfcfAIqsgJYcrucchihzKyvDas7dW.jpg\",\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/683d4fa6cf110609490c0b4a/GD5sa5ynswtYKarTkhU9PdeyoIhbCFK07NWAdvb0.jpg\",\n                        \"https://1897-180-151-18-234.ngrok-free.app/storage/reviews/683d4fa6cf110609490c0b4a/4FCIWhoJxdI0NyaBaKd5CuF4sr0JLK36IrJn7foq.jpg\"\n                    ],\n                    \"by\": {\n                        \"email\": \"kaushaki.kumari@innotechteam.in\",\n                        \"first_name\": \"Kaushaki\",\n                        \"last_name\": \"kumari\",\n                        \"id\": \"681b0901ca828eecf501d798\",\n                        \"profile_url\": null,\n                        \"role\": null\n                    }\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Similar Products List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/products/:id/similar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								":id",
+								"similar"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "color",
+									"value": "Black",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6818f30dcff1e58e6f08e762"
 								}
 							]
 						}
@@ -1949,33 +2178,6 @@
 							"path": [
 								"promo-code",
 								"list"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "1",
-									"disabled": true
-								},
-								{
-									"key": "page",
-									"value": null,
-									"disabled": true
-								},
-								{
-									"key": "status",
-									"value": "Pending",
-									"disabled": true
-								},
-								{
-									"key": "fromDate",
-									"value": "2025-05-15",
-									"disabled": true
-								},
-								{
-									"key": "toDate",
-									"value": null,
-									"disabled": true
-								}
 							]
 						}
 					},
