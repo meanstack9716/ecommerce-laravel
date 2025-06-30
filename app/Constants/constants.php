@@ -27,6 +27,7 @@ class Constants
     public const PRODUCTS_DEFAULT_LIMIT = 10;
     public const ORDERS_DEFAULT_LIMIT = 10;
     public const REVIEWS_DEFAULT_LIMIT = 10;
+    public const REWARD_HISTORY_DEFAULT_LIMIT = 10;
     public const CASH_ON_DELIVERY_PAYMENT = "Cash On Delivery";
     public const RAZOR_PAY_PAYMENT = "Razorpay";
     public const RAZOR_PAY_CURRENCY = "INR";

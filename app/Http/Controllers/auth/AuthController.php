@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\RewardPoint;
 use App\Models\VerificationCode;
 use App\Constants\Constants;
 use App\Mail\EmailVerification;
@@ -12,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -30,18 +33,55 @@ class AuthController extends Controller
         Mail::to($email)->send(new EmailVerification($verificationCode));
     }
 
+    private function generateUniqueReferralCode()
+    {
+        do {
+            // Generate a random alphanumeric code
+            $code = 'REF-' . Str::upper(Str::random(12));
+        } while (User::where('referral_code', $code)->exists());
+
+        return $code;
+    }
+
     public function registerUser(Request $request) 
     {
-        $user = User::create([
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        DB::beginTransaction();
+        try {
 
-        $this->sendOtpToEmail($request->email);
+            // Generate unique referral code for user
+            $referralCode = $this->generateUniqueReferralCode();
 
-        return response()->json([
-            'message' => 'User registered successfully',
-        ]);
+            $user = User::create([
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'referral_code' => $referralCode
+            ]);
+
+            // If user uses someone referral code while registering redeem it
+            if ($request->referral_code) {
+                $referralUser = User::where('referral_code', $request->referral_code)->first();
+
+                // check if referral code is valid or not and user status is active or not
+                if (!$referralUser || $referralUser->status == Constants::STATUS_DEACTIVATED || $referralUser->status == Constants::STATUS_ON_HOLD ) {
+                    DB::rollBack();
+                    return response()->json(['message' => 'The provided referral code is incorrect'], 401);
+                }
+
+                $user->referred_by = $referralUser->id;
+                $user->save();
+            }
+            DB::commit();
+
+            $this->sendOtpToEmail($request->email);
+
+            return response()->json([
+                'message' => 'User registered successfully',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => ['server' => 'Failed to register user: ' . $e->getMessage()]], 500);
+        }
     }
 
     public function login(Request $request) 
@@ -88,14 +128,53 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid or expired verification code.'], 401);
         }
 
-        $verificationCode->delete();
-        $token = $user->createToken('auth_token')->plainTextToken;
+        DB::beginTransaction();
+        try {
+            // Mark code as used
+            $verificationCode->delete();
 
-        return response()->json([
-            'message' => 'You have successfully logged in.',
-            'user' => $user->fresh(),
-            'token' => "Bearer $token"
-        ]);
+            // Award referral points if this is first login and user was referred
+            if ($user->referred_by && !$user->has_logged_in) {
+                $referralUser = User::find($user->referred_by);
+            
+                if ($referralUser && !in_array($referralUser->status, [Constants::STATUS_DEACTIVATED, Constants::STATUS_ON_HOLD])) {
+                    // Award points to referrer
+                    RewardPoint::create([
+                        'user_id' => $referralUser->id,
+                        'points' => config('rewards.referral.referrer.points'),
+                        'reason' => config('rewards.referral.referrer.reason') . ' (' . $user->email . ')',
+                    ]);
+
+                    // Award points to new user
+                    RewardPoint::create([
+                        'user_id' => $user->id,
+                        'points' => config('rewards.referral.referred.points'),
+                        'reason' => config('rewards.referral.referred.reason') . ' (by ' . $referralUser->email . ')',
+                    ]);
+                }
+            }
+            
+            // Mark user as having logged in to prevent duplicate rewards
+            $user->has_logged_in = true;
+            $user->save();
+
+            // Create auth token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'You have successfully logged in.',
+                'user' => $user->fresh(),
+                'token' => "Bearer $token"
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => ['server' => 'Failed to authenticate: ' . $e->getMessage()]], 500);
+        }
+
+        $token = $user->createToken('auth_token')->plainTextToken;
     }
 
     public function logout(Request $request)
