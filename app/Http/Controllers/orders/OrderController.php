@@ -23,6 +23,7 @@ use App\Enums\PaymentType;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 
 class OrderController extends Controller
 {
@@ -417,7 +418,7 @@ class OrderController extends Controller
     }
 
     public function fetchAllOrderItems(Request $request) {
-        $limit = $request->input('limit');
+        $limit = $request->input('limit', Constants::ORDERS_DEFAULT_LIMIT);
         $page = $request->input('page', 1);
         $status = $request->input('status');
         $fromDate = $request->input('fromDate');
@@ -439,26 +440,24 @@ class OrderController extends Controller
             $query->whereDate('created_at', '<=', $toDate);
         }
 
-        if ($limit) {
-            $orders = $query->paginate($limit, ['*'], 'page', $page);            
-            return response()->json([
-                'data' => $orders->items(),
-            ]);
-        }
-    
-        $orders = $query->get();
-
-        $orders->each(function ($order) {
-            $order->items->each(function ($item) {
-                if ($item->product && $item->selected_color_name) {
-                    $item->gallery = $item->product->galleryForColor($item->selected_color_name)->get();
-                } else {
-                    $item->gallery = collect([]);
-                }
+        $orders = $query->paginate($limit, ['*'], 'page', $page);
+        
+        $orders->getCollection()->transform(function ($order) {
+            $order->items->transform(function ($item) {
+                $item->gallery = ($item->product && $item->selected_color_name)
+                    ? $item->product->galleryForColor($item->selected_color_name)->get()
+                    : collect([]);
+                return $item;
             });
+            return $order;
         });
+
         return response()->json([
-            'data' => $orders,
+            'data' => $orders->items(),
+            'total_items' => $orders->total(),
+            'per_page' => $orders->perPage(),
+            'current_page' => $orders->currentPage(),
+            'last_page' => $orders->lastPage(),
         ]);
     }
 
@@ -767,7 +766,19 @@ class OrderController extends Controller
 
     public function fetchPromoCodeList(Request $request)
     {
-         $promoCodes = PromoCode::orderBy('created_at', 'desc')->get();
+         $now = Carbon::now();
+
+         $promoCodes = PromoCode::where('is_active', true)
+            ->where(function ($query) use ($now) {
+                $query->whereNull('start_date')
+                    ->orWhere('start_date', '<=', $now);
+                })
+            ->where(function ($query) use ($now) {
+                $query->whereNull('expiry_date')
+                    ->orWhere('expiry_date', '>=', $now);
+                })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return response()->json([
             'data' => $promoCodes,
