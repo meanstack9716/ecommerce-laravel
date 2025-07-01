@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Orders\OrderController;
+use App\Http\Controllers\Orders\OrderReturnController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\ValidateRequest;
@@ -15,6 +16,7 @@ Route::prefix('orders')->group(function () {
         Route::post('/new', [OrderController::class, 'createNewOrder'])->middleware('validateRequest:createNewOrderSchema');
         Route::get('/list', [OrderController::class, 'fetchAllOrderItems']);
         Route::get('/{orderId}', [OrderController::class, 'fetchOrderDetailsById']);
+        Route::post('/{orderId}/return', [OrderReturnController::class, 'createReturnRequest'])->middleware('validateRequest:createOrderReturnSchema');
 
         Route::post('/validate-promo-code', [OrderController::class, 'validatePromoCode'])->middleware('validateRequest:validPromocodeSchema');;
     });

@@ -248,6 +248,13 @@ class Schemas
                 'cart_items_ids' => 'required|array|min:1',
                 'cart_items_ids.*' => 'required|exists:product_carts,id'
             ],
+            'createOrderReturnSchema' => [
+                'reason' => 'required|string|min:10|max:1000',
+                'order_item_id' => 'required|exists:order_items,id',
+                'return_quantity' => 'required|numeric|min:1',
+                'images' => 'required|array|min:1',
+                'images.*' => 'required|mimes:jpeg,png,jpg,gif|max:5120'
+            ],
 
             // custom error messages
             'errorMessages' => [

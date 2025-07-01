@@ -10,6 +10,7 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'selected_size',
+        'exchange_days',
         'selected_color',
         'selected_color_name',
         'quantity',
