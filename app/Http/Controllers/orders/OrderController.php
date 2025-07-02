@@ -347,6 +347,7 @@ class OrderController extends Controller
                         'order_id' => $order->id,
                         'product_id' => $cartItem->product_id,
                         'selected_size' => $cartItem->selected_size,
+                        'exchange_days' => mt_rand(1, 12),
                         'selected_color' => $cartItem->selected_color,
                         'selected_color_name' => $cartItem->selected_color_name,
                         'quantity' => (float)$cartItem->quantity,
@@ -424,7 +425,7 @@ class OrderController extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews', 'promoCode' ])
+        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'promoCode' ])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc');
         
@@ -546,7 +547,9 @@ class OrderController extends Controller
         $order = Order::findOrFail($orderId);
 
         $order->update(['status' => $request->status]);
-        
+        if ($request->status == Constants::STATUS_DELIVERED) {
+            $order->update(['delivery_date', now()]);
+        }
         return back()->with('success', 'Order status updated successfully');
     }
 

@@ -13,9 +13,12 @@ class Constants
     public const STATUS_PENDING = "Pending";
     public const STATUS_CONFIRMED = "Confirmed";
     public const STATUS_PROCESSING = "Processing";
+    public const STATUS_PROCESSED = "Processed";
+    public const STATUS_FAILED = "Failed";
     public const STATUS_SHIPPED = "Shipped";
     public const STATUS_DELIVERED = "Delivered";
     public const STATUS_CANCELLED = "Cancelled";
+    public const STATUS_FOR_RETURN = "For Return";
     public const STATUS_RETURNED = "Returned";
     public const STATUS_REFUNDED = "Refunded";
     public const STATUS_RECEIVED = "Received";

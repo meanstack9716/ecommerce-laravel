@@ -20,6 +20,7 @@ class Order extends Model
         'promo_code_id',
         'promo_code_name',
         'promo_code_applied',
+        'delivery_date',
         'promo_code_disount',
         'payment_method',
         'payment_status',
@@ -49,5 +50,10 @@ class Order extends Model
     public function promoCode()
     {
         return $this->belongsTo(PromoCode::class, 'promo_code_id', '_id');
+    }
+
+    public function returnRequests()
+    {
+        return $this->hasMany(ReturnRequest::class);
     }
 }

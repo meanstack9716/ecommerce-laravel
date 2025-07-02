@@ -141,8 +141,22 @@
                 [
                     'title' => 'Orders',
                     'icon' => 'receipt_long',
-                    'route' =>  route('orders.list'),
-                    'active' => Request::is('*orders*'),
+                    'submenu' => true,
+                    'active' => Request::is('orders*'),
+                    'items' => [
+                        [
+                            'title' => 'Order List',
+                            'icon' => 'list_alt',
+                            'route' => route('orders.list'),
+                            'active' => Request::is('orders/list*'),
+                        ],
+                        [
+                            'title' => 'Return Requests',
+                            'icon' => 'table',
+                            'route' => route('orders.return.list'),
+                            'active' => Request::is('orders/return/list*'),
+                        ],
+                    ],
                 ],
                 [
                     'title' => 'Promo codes',
