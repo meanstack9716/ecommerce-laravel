@@ -21,6 +21,7 @@ class Product extends Model
         'delivery_days',
         'brand_id',
         'thumbnail_path',
+        'purchase_count',
         'category_id',
         'sub_category_id',
         'sub_sub_category_id',
@@ -34,6 +35,7 @@ class Product extends Model
         'seller_id',
         'brand_id',
         'thumbnail_path',
+        'purchase_count',
         'not_available',
         'sub_category_id',
         'sub_sub_category_id',
@@ -60,6 +62,10 @@ class Product extends Model
         // Calculate and store final_price when creating or updating
         static::saving(function ($product) {
             $product->calculateAndStoreFinalPrice();
+        });
+
+        static::creating(function ($product) {
+            $product->purchase_count = 0;
         });
     }
 

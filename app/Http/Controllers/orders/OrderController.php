@@ -355,6 +355,9 @@ class OrderController extends Controller
                         'final_price' => $product->final_price
                     ]);
 
+                    Product::where('_id', $cartItem->product_id)
+                        ->increment('purchase_count', (float)$cartItem->quantity);
+
                     $newquantity = $productVariant->stock_quantity - $cartItem->quantity;
                     $productVariant->update(['stock_quantity' => $newquantity]);
                 }
