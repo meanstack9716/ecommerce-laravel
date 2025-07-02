@@ -18,7 +18,9 @@ Route::prefix('orders')->group(function () {
         Route::get('/{orderId}', [OrderController::class, 'fetchOrderDetailsById']);
         Route::post('/{orderId}/return', [OrderReturnController::class, 'createReturnRequest'])->middleware('validateRequest:createOrderReturnSchema');
 
-        Route::post('/validate-promo-code', [OrderController::class, 'validatePromoCode'])->middleware('validateRequest:validPromocodeSchema');;
+        Route::post('/validate-promo-code', [OrderController::class, 'validatePromoCode'])->middleware('validateRequest:validPromocodeSchema');
+
+        Route::get('/return/list', [OrderReturnController::class, 'fetchAllOrderReturnItems']);
     });
 });
 

@@ -27,6 +27,13 @@ class ReturnRequest extends Model
         'images'
     ];
 
+    protected $hidden = [
+        'updated_at',
+        'created_at',
+        'product_id',
+        'user_id',
+    ];
+
 
     public function order()
     {

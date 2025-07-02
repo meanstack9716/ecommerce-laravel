@@ -13,7 +13,7 @@
             'allow_sort' => false
         ],
         [
-            'label' => 'Customer Name',
+            'label' => 'Customer Details',
             'field' => '',
             'allow_sort' => false
         ],
@@ -130,7 +130,7 @@
                                 {{ \Carbon\Carbon::parse($request->requested_at)->format('d M Y') }}
                             </td>
                             <td class="px-4 py-4 border text-center border-gray-200">
-                                <form method="POST">
+                                <form action="{{ route('orders.return.update-status', $request->id) }}" method="POST">
                                     @csrf
                                     @method('PATCH')
                                     <div class="relative">
@@ -149,7 +149,7 @@
                                 </form>
                             </td>
                             <td class="px-4 py-2 border text-center border-gray-200 font-medium">
-                                <a href=""
+                                <a href="{{ route('orders.return.details.show', $request->id) }}"
                                     class="text-sm font-medium  px-4 py-2 text-blue-600">
                                     <span class="material-symbols-outlined">
                                         open_in_new

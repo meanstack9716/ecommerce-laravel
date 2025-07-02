@@ -17,6 +17,9 @@ Route::middleware(['auth:sanctum', 'web'])->group(function () {
 
             Route::prefix('return')->group(function () {
                 Route::get('/list', [OrderReturnController::class, 'getAllOrderReturnRequestList'])->name('orders.return.list');
+                Route::patch('/{id}/update', [OrderReturnController::class, 'updateReturnRequestDetails'])->name('orders.return.update');
+                Route::patch('/{id}/update-status', [OrderReturnController::class, 'updateReturnRequestStatus'])->name('orders.return.update-status');
+                Route::get('/{id}/details', [OrderReturnController::class, 'getReturnRequestDetails'])->name('orders.return.details.show');
             });
 
         });

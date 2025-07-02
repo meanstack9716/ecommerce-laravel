@@ -148,4 +148,79 @@ class OrderReturnController extends Controller
         $requests = $query->paginate($limit);
         return view('order.return.list', compact('requests', 'limit', 'sellers'));
     }
+
+    public function getReturnRequestDetails(Request $request, $id)
+    {
+        $return = ReturnRequest::findOrFail($id);        
+        return view('order.return.details', compact('return'));
+    }
+
+    public function updateReturnRequestStatus(Request $request, $id)
+    {
+        $return = ReturnRequest::findOrFail($id);
+
+        $return->update([
+            'status' => $request->status,
+            'processed_by' => $request->user()->sellerDetails->id
+        ]);
+        if ($request->status == Constants::STATUS_APPROVED) {
+            $return->update(['approved_at' => now()]);
+        }
+        return back()->with('success', 'Return Order status updated successfully');
+    }
+
+    public function updateReturnRequestDetails(Request $request, $id)
+    {
+        $return = ReturnRequest::findOrFail($id);
+
+        $return->update([
+            'status' => $request->status,
+            'processed_by' => $request->user()->sellerDetails->id,
+            'admin_notes' => $request->admin_notes ?? $return->admin_notes,
+            'refund_amount' => $request->refund_amount,
+            'refund_status' => $request->refund_status
+        ]);
+        if ($request->status == Constants::STATUS_APPROVED) {
+            $return->update(['approved_at' => now()]);
+        }
+        if ($request->status == Constants::STATUS_REFUNDED) {
+            $return->update(['refunded_at' => now()]);
+        }
+        return back()->with('success', 'Return Order status updated successfully');
+    }
+
+    public function fetchAllOrderReturnItems(Request $request) {
+
+        $limit = $request->input('limit', Constants::ORDERS_DEFAULT_LIMIT);
+        $page = $request->input('page', 1);
+        $status = $request->input('status');
+        $fromDate = $request->input('fromDate');
+        $toDate = $request->input('toDate');
+
+        $query = ReturnRequest::with(['order', 'orderItem', 'product'])
+            ->where('user_id', $request->user()->id)
+            ->orderBy('created_at', 'desc');
+        
+        if ($status) {
+            $query->where('status', $status);
+        }
+
+        if ($fromDate) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+    
+        if ($toDate) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+
+        $orders = $query->paginate($limit, ['*'], 'page', $page);
+        
+        return response()->json([
+            'data' => $orders->items(),
+            'total_items' => $orders->total(),
+            'per_page' => $orders->perPage(),
+            'current_page' => $orders->currentPage(),
+            'last_page' => $orders->lastPage(),
+        ]);
+    }
 }
