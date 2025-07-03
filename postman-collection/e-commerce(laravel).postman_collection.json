@@ -1169,6 +1169,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Generate Random product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/products/generate-random/:count",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"products",
+								"generate-random",
+								":count"
+							],
+							"variable": [
+								{
+									"key": "count",
+									"value": "10",
+									"description": "Min value 1 max value 10"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1998,6 +2035,72 @@
 					"response": []
 				},
 				{
+					"name": "Return order item",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "order_item_id",
+									"value": "685d3536ca8bf8b6b40cd171",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "The size is wrong",
+									"type": "text"
+								},
+								{
+									"key": "return_quantity",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"type": "file",
+									"src": "/C:/Users/means/Downloads/Screenshot_1750921511.png"
+								},
+								{
+									"key": "additional_notes",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/:orderId/return",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								":orderId",
+								"return"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "685d3536ca8bf8b6b40cd170"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "List All Orders",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -2032,6 +2135,75 @@
 							],
 							"path": [
 								"orders",
+								"list"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Pending",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2025-05-15",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List All Return request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/orders/return/list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"orders",
+								"return",
 								"list"
 							],
 							"query": [

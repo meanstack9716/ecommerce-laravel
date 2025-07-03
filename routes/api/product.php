@@ -18,5 +18,8 @@ Route::prefix('products')->group(function () {
         Route::get('/{id}/user-review', [ProductController::class, 'fetchUserProductReview']);
         Route::post('/review', [OrderController::class, 'createProductReview'])->middleware('validateRequest:postNewReviewSchema');
         Route::post('/update-review', [OrderController::class, 'updateProductReview'])->middleware('validateRequest:postNewReviewSchema');
+
+        // Generate random product by calling API
+        Route::post('/generate-random/{count}', [ProductController::class, 'generateRandomProduct'])->middleware('is_admin_or_client');
     });
 });

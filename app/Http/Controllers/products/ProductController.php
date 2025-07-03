@@ -17,7 +17,8 @@ use App\Models\ProductBrand;
 use App\Models\Seller;
 use App\Models\SearchTermAnalytic;
 use App\Models\Wishlist;
-use App\Enums\Sizes;
+use App\Enums\Size;
+use App\Enums\Color;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -252,7 +253,7 @@ class ProductController extends Controller
         $subCategoryId = $request->input('subCategoryId');
         $subSubCategoryId = $request->input('subSubCategoryId');
         $sortBy = $request->input('sort_by', 'created_at');
-        $sortOrder = $request->input('sort_order', 'asc');
+        $sortOrder = $request->input('sort_order', 'desc');
         if (empty($sortBy)) {
             $sortBy = 'created_at';
         }
@@ -506,7 +507,7 @@ class ProductController extends Controller
             'sizes', 
             'sizes.variants', 
             'gallery',
-        ])->where('not_available' , '!=', true);
+        ])->where('not_available' , '!=', true)->orderBy('created_at', 'desc');
 
         // Multiple Brands Selection
         if ($brandIds) {
@@ -771,5 +772,239 @@ class ProductController extends Controller
         return response()->json([
             'data' => $review,
         ]);
+    }
+
+    public function generateRandomProduct(Request $request, $count)
+    {
+         if (!is_numeric($count)) {
+            return response()->json([
+                'error' => 'Invalid input. Count must be a numeric value.'
+            ], 422);
+        }
+
+        $count = intval($count);
+
+        if ($count < 1 || $count > 10) {
+            return response()->json([
+                'error' => 'Count must be a number between 1 and 10.'
+            ], 422);
+        }
+
+        $createdProducts = [];
+
+        DB::beginTransaction();
+        try {
+            for ($i = 0; $i < $count; $i++) {
+                // randomly select a seller 
+                $sellerCount = Seller::where('status', Constants::STATUS_APPROVED)->count();
+
+                if ($sellerCount === 0) {
+                    DB::rollBack();
+                    throw new \Exception('No approved sellers found');
+                }
+
+                $randomOffset = rand(0, $sellerCount - 1);
+
+                $seller = Seller::where('status', Constants::STATUS_APPROVED)
+                    ->skip($randomOffset)
+                    ->first();
+
+                // Select a random category that has at least one sub-subcategory
+                $categoryCount = Category::whereHas('subCategories.subSubCategories')->count();
+
+                if ($categoryCount === 0) {
+                    DB::rollBack();
+                    throw new \Exception('No categories with sub-subcategories found.');
+                }
+
+                $randomOffset = rand(0, $categoryCount - 1);
+
+                $category = Category::whereHas('subCategories.subSubCategories')
+                    ->skip($randomOffset)
+                    ->first();
+
+                // Randomly select a subcategory that has at least one sub-subcategory
+                $subCategoryCount = SubCategory::where('category_id', $category->id)
+                    ->whereHas('subSubCategories')->count();
+
+                if ($subCategoryCount === 0) {
+                    DB::rollBack();
+                    throw new \Exception('No Sub categories with sub-subcategories found.');
+                }
+
+                $randomOffset = rand(0, $subCategoryCount - 1);
+
+                $subCategory = SubCategory::where('category_id', $category->id)
+                    ->whereHas('subSubCategories')
+                    ->skip($randomOffset)
+                    ->first();
+
+                // Randomly select a sub-subcategory
+                $subSubCategoryCount = SubSubCategory::where('sub_category_id', $subCategory->id)->count();
+
+                if ($subSubCategoryCount === 0) {
+                    DB::rollBack();
+                    throw new \Exception('No Sub Sub categories found.');
+                }
+
+                $randomOffset = rand(0, $subSubCategoryCount - 1);
+
+                $subSubCategory = SubSubCategory::where('sub_category_id', $subCategory->id)
+                    ->skip($randomOffset)
+                    ->first();
+
+                // Randomly select a brand
+                $brandCount = ProductBrand::count();
+
+                if ($brandCount === 0) {
+                    DB::rollBack();
+                    throw new \Exception('No brand found.');
+                }
+
+                $randomOffset = rand(0, $brandCount - 1);
+
+                $brand = ProductBrand::skip($randomOffset)->first();
+
+                // Randomly select size type and sizes
+                $sizeType = rand(0, 1) ? 'standard' : 'numeric';
+                $availableSizes = $sizeType === 'standard' ? Size::standardSizes() : Size::numericSizes();
+                shuffle($availableSizes);
+                $selectedSizes = array_slice($availableSizes, 0, rand(1, 4));
+
+                // Randomly select colors
+                $availableColors = Color::values();
+                shuffle($availableColors);
+                $selectedColors = array_slice($availableColors, 0, rand(1, 5));
+
+                // Generate varied product title
+                $adjectives = ['Stylish', 'Premium', 'Modern', 'Classic', 'Luxury', 'Elegant', 'Trendy', 'Chic', 'Bold', 'Vibrant', 'Sleek', 'Casual', 'Comfortable'];
+                $productTypes = ['Apparel', 'Gear', 'Wear', 'Essentials', 'Collection', 'Style', 'Fashion', 'Item', 'Piece', 'Design'];
+                $useCases = ['for Daily Use', 'with Modern Design', 'for All Occasions', 'Limited Edition', 'with Extra Features', 'Essentials'];
+                $materials = ['Cotton', 'Leather', 'Denim', 'Silk', 'Polyester', 'Wool', 'Linen', 'Suede', 'Canvas'];
+                $features = ['Breathable Fabric', 'Durable Stitching', 'Water-Resistant Coating', 'Lightweight Design', 'Eco-Friendly Materials', 'Enhanced Comfort'];
+
+                // Random pieces
+                $adj = $adjectives[array_rand($adjectives)];
+                $type = $productTypes[array_rand($productTypes)];
+                $use = $useCases[array_rand($useCases)];
+                $material = $materials[array_rand($materials)];
+                $feature = $features[array_rand($features)];
+
+                // Random title format templates
+                $titlePatterns = [
+                    "$adj {$subSubCategory->name} $type $use",
+                    "{$brand->name} $adj {$subSubCategory->name} $type",
+                    "$adj {$category->name} {$subSubCategory->name} $use",
+                    "{$subCategory->name} $adj {$subSubCategory->name} $type",
+                    "$adj {$subSubCategory->name} {$brand->name} $type",
+                    "{$category->name} $type $use",
+                    "$adj {$brand->name} {$subSubCategory->name} for {$subCategory->name}",
+                    "{$brand->name} {$subSubCategory->name} $type $use",
+                    "$adj {$category->name} $type $use",
+                    "{$subSubCategory->name} $type by {$brand->name} $use",
+                ];
+                $productTitle = ucfirst($titlePatterns[array_rand($titlePatterns)]);
+
+                // Random description format templates
+                $descriptionTemplates = [
+                    "High-quality {$category->name} product designed for comfort and durability.",
+                    "Experience unmatched style with this {$subCategory->name} perfect for all occasions.",
+                    "A must-have {$subSubCategory->name} that combines function and fashion.",
+                    "Top-rated {$category->name} for those who value both design and performance.",
+                    "{$adj} {$subCategory->name} that elevates your lifestyle.",
+                    "Designed for modern living, this {$subSubCategory->name} stands out in every setting.",
+                    "Enhance your collection with this standout {$category->name} piece.",
+                    "Discover our $adj {$subSubCategory->name} $type, crafted $use.",
+                    "Elevate your {$category->name} collection with this $adj {$subSubCategory->name} $type.",
+                    "A $adj {$subSubCategory->name} designed $use, perfect for {$subCategory->name}.",
+                    "Experience {$brand->name}'s $adj {$subSubCategory->name} $type $use.",
+                    "This {$subSubCategory->name} $type offers $adj styling for {$category->name} enthusiasts.",
+                    "Premium {$subSubCategory->name} $type, ideal $use.",
+                    "$adj {$subCategory->name} {$subSubCategory->name} crafted for {$use}.",
+                    "Our {$brand->name} {$subSubCategory->name} is a $adj $type $use.",
+                    "Versatile {$category->name} {$subSubCategory->name} $type, designed $use.",
+                    "Bold and $adj, this {$subSubCategory->name} $type is perfect for {$use}.",
+                ];
+
+                $productDescription = $descriptionTemplates[array_rand($descriptionTemplates)];
+
+                // Generate varied product details
+                $detailsPatterns = [
+                    "Crafted from $material with $feature, ideal for {$use}.",
+                    "Made with premium $material, offering $feature for {$subCategory->name}.",
+                    "Features $feature using high-quality $material, perfect $use.",
+                    "Designed with $material and $feature for {$subSubCategory->name} lovers.",
+                    "$material construction with $feature, suitable for {$category->name} use.",
+                    "Premium $material {$subSubCategory->name} with $feature $use.",
+                    "Combines $material durability with $feature for {$subCategory->name}.",
+                    "$feature enhances this $material {$subSubCategory->name} $type.",
+                    "Built for {$use} with $material and $feature.",
+                    "High-quality $material and $feature make this {$subSubCategory->name} stand out."
+                ];
+
+                $productDetails = $detailsPatterns[array_rand($detailsPatterns)];
+
+                //image paths for sample images to be used
+                $imagePaths = Storage::files('/sample_products');
+
+                // Generate product data 
+                $product = Product::create([
+                    'seller_id' => $seller->id,
+                    'title' => $productTitle,
+                    'description' => $productDescription,
+                    'details' => $productDetails,
+                    'price' => rand(500, 10000),
+                    'discount_percent' => rand(0, 20),
+                    'delivery_days' => mt_rand(1, 9),
+                    'sku' => 'PRD-' . Str::upper(Str::random(12)),                    
+                    'stock_quantity' => rand(10, 100),
+                    'brand_id' => $brand->id,
+                    'category_id' => $category->id,
+                    'sub_category_id' => $subCategory->id,
+                    'sub_sub_category_id'=> $subSubCategory->id,
+                    'thumbnail_path' => $imagePaths[array_rand($imagePaths)]
+                ]);
+
+                // Generate sizes and colors
+                foreach ($selectedSizes as $sizeValue) {
+                    $size = ProductSize::create([
+                        'product_id' => $product->id,
+                        'value' => $sizeValue,
+                        'size_type' => $sizeType
+                    ]);
+
+                    foreach ($selectedColors as $color) {
+                        ProductVariant::create([
+                            'size_id' => $size->id,
+                            'value' => Color::getHexCode($color),
+                            'name' => $color,
+                            'stock_quantity' => rand(5, 50)
+                        ]);
+                    }
+                }
+
+                // Generate gallery for each color
+                foreach ($selectedColors as $color) {
+                    shuffle($imagePaths);
+                    $selectedImages = array_slice($imagePaths, 0, rand(1, 5));
+                    foreach ($selectedImages as $path) {
+                        ProductGallery::create([
+                            'product_id' => $product->id,
+                            'img_path' => $path,
+                            'color' => $color,
+                        ]);
+                    }
+                }
+            }
+            DB::commit();
+
+            return response()->json([
+                'message' => "$count product(s) created successfully.",
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => ['server' => 'Failed to create product: ' . $e->getMessage()]], 500);
+        }
     }
 }

@@ -49,7 +49,7 @@
         <form method="GET" action="{{ route('products.list') }}" class="flex flex-col sm:flex-row justify-between gap-3 mb-4">
             <input type="text" name="limit" value="{{ $limit }}" class="hidden"/>
             <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
-            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
+            <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}"/>
             <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-y-3 gap-x-8 w-full">
                 <div class="flex flex-col items-start gap-2 w-full">
                     <p class="m-0 text-gray-600 font-medium">Search Products</p>
@@ -155,7 +155,7 @@
                 <input type="hidden" name="sub_sub_category_term" value="{{ request('sub_sub_category_term') }}">
                 <input type="hidden" name="subSubCategoryId" value="{{ request('subSubCategoryId') }}">
                 <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"/>
-                <input type="hidden" name="sort_order" value="{{ request('sort_order', 'asc') }}"/>
+                <input type="hidden" name="sort_order" value="{{ request('sort_order', 'desc') }}"/>
                 <div class="flex items-center gap-2 relative w-fit">
                     <span class="text-sm text-gray-600">Items per page:</span>
                     <div class="relative">
