@@ -947,6 +947,11 @@ class ProductController extends Controller
                 //image paths for sample images to be used
                 $imagePaths = Storage::files('/sample_products');
 
+                if (empty($imagePaths) || count($imagePaths) < 10) {
+                    DB::rollBack();
+                    throw new \Exception('At least 10 sample images are required in the sample_products folder.');
+                }
+
                 // Generate product data 
                 $product = Product::create([
                     'seller_id' => $seller->id,
