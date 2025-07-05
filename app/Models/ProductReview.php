@@ -42,7 +42,7 @@ class ProductReview extends Model
     public function reviewedBy()
     {
         return $this->belongsTo(User::class, 'user_id', '_id')
-            ->select(['first_name', 'last_name', 'email', 'profile_url', 'id']);
+            ->select(['first_name', 'last_name', 'email', 'profile_path', 'profile_url', 'id']);
     }
 
     public function product()

@@ -88,7 +88,7 @@ class Product extends Model
     public function seller()
     {
         return $this->belongsTo(Seller::class, 'seller_id', '_id')
-            ->select(['business_name', 'business_type', 'business_email', 'business_mobile']);
+            ->select(['business_name', 'business_email', 'business_mobile']);
     }
 
     public function category()
@@ -132,7 +132,7 @@ class Product extends Model
             ->where('color', $color);
     }
     
-    protected $with = ['category', 'subCategory', 'subSubCategory', 'seller', 'gallery'];
+    // protected $with = ['category', 'subCategory', 'subSubCategory', 'seller', 'gallery'];
 
     public $timestamps = true;
 

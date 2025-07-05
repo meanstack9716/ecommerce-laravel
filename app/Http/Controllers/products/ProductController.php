@@ -303,7 +303,16 @@ class ProductController extends Controller
 
     public function getEditProductForm($id)
     {
-        $product = Product::findOrFail($id);    
+        $product = Product::with([
+            'category',
+            'subCategory',
+            'subSubCategory',
+            'brand',
+            'sizes',
+            'sizes.variants',
+            'gallery'
+        ])->findOrFail($id);
+    
         return view('products.edit-product', compact('product'));
     }
 
@@ -500,13 +509,10 @@ class ProductController extends Controller
         $colors = $request->input('colors');        
         
         $query = Product::query()->with([
-            'category', 
-            'subCategory', 
-            'subSubCategory', 
-            'brand', 
+            'subSubCategory',
+            'seller',            
             'sizes', 
             'sizes.variants', 
-            'gallery',
         ])->where('not_available' , '!=', true)->orderBy('created_at', 'desc');
 
         // Multiple Brands Selection
@@ -697,9 +703,8 @@ class ProductController extends Controller
 
     public function fetchProductDetailsById(Request $request, $id) {
         $product = Product::with([
-            'category', 
-            'subCategory', 
             'subSubCategory', 
+            'seller',
             'brand', 
             'sizes', 
             'sizes.variants', 

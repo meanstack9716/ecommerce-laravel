@@ -77,7 +77,6 @@ class ProductCartController extends Controller
         $cartItems = ProductCart::with([
             'product.sizes',
             'product.sizes.variants',
-            'product.reviews',
             'product.gallery',
         ])->where('user_id', $userId)
         ->get();

@@ -424,7 +424,7 @@ class OrderController extends Controller
         $fromDate = $request->input('fromDate');
         $toDate = $request->input('toDate');
 
-        $query = Order::with(['items', 'items.product', 'items.product.sizes', 'items.product.sizes.variants', 'items.product.reviews', 'promoCode' ])
+        $query = Order::with(['items', 'items.product', 'promoCode' ])
             ->where('user_id', $request->user()->id)
             ->orderBy('created_at', 'desc');
         
@@ -483,7 +483,6 @@ class OrderController extends Controller
             'items.product.sizes',
             'items.product.brand',
             'items.product.sizes.variants',
-            'items.product.reviews',
             'promoCode'
         ])->find($orderId);
 
